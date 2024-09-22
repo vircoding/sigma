@@ -1,23 +1,20 @@
-# Nuxt 3 Minimal Starter
+# Sigma
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Sigma is a platform designed for buying and selling properties (houses) in Cuba. This project aims to facilitate access to information about available properties in the Cuban market.
+
+## Features
+
+- Intuitive and user-friendly interface.
+- Property search by location, price, and features.
+- Detailed information about each property.
+- User management system.
 
 ## Setup
 
 Make sure to install the dependencies:
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
 ## Development Server
@@ -25,17 +22,7 @@ bun install
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production
@@ -43,34 +30,26 @@ bun run dev
 Build the application for production:
 
 ```bash
-# npm
 npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-# npm
 npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Socials
+
+Connect with us through our social media:
+
+- [Instagram](https://www.instagram.com/sigmacuba)
+- [Youtube](https://www.youtube.com/@SigmaCasasCuba)
+- [Facebook](https://m.facebook.com/groups/249539844657857)
+
+## License
+
+No licence will be used. This code should not be used without the permission of Sigma.
 

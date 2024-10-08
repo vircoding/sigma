@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const slideoverOpen = ref(false);
+import type { RouteLocationRaw } from 'vue-router';
+const isSlideoverOpen = ref(false);
 
 const slideoverConfig = {
   width: 'w-max min-w-[55%] max-w-max sm:min-w-[45%] md:min-w-[40%]',
@@ -7,6 +8,11 @@ const slideoverConfig = {
 
 const linkIconStyles =
   'relative top-px h-[22px] w-[22px] text-azure-950 md:h-[26px] md:w-[26px] dark:text-gray-200';
+
+const handleNavigate = async (to: RouteLocationRaw) => {
+  await useRouter().push(to);
+  isSlideoverOpen.value = false;
+};
 </script>
 
 <template>
@@ -17,7 +23,7 @@ const linkIconStyles =
     <!-- Slideover Navbar -->
     <div class="flex items-center">
       <!-- Open Slideover Button -->
-      <ButtonIcon @click="slideoverOpen = true">
+      <ButtonIcon @click="isSlideoverOpen = true">
         <UIcon
           name="i-charm-menu-hamburger"
           class="h-8 w-8 text-azure-950 sm:h-9 sm:w-9 md:h-10 md:w-10 dark:text-gray-200"
@@ -25,7 +31,7 @@ const linkIconStyles =
       </ButtonIcon>
 
       <USlideover
-        v-model="slideoverOpen"
+        v-model="isSlideoverOpen"
         :ui="slideoverConfig"
         class="text-azure-950 dark:text-gray-200"
       >
@@ -33,7 +39,7 @@ const linkIconStyles =
         <UContainer class="flex w-full flex-col items-end">
           <div class="flex items-center py-5 sm:py-6 md:py-7">
             <!-- Close Slideover Button -->
-            <ButtonIcon @click="slideoverOpen = false">
+            <ButtonIcon @click="isSlideoverOpen = false">
               <UIcon
                 name="i-charm-cross"
                 class="h-8 w-8 text-azure-950 sm:h-9 sm:w-9 md:h-10 md:w-10 dark:text-gray-200"
@@ -84,10 +90,13 @@ const linkIconStyles =
 
               <!-- Signup -->
               <li class="py-1">
-                <div class="flex items-center justify-end gap-1.5 py-1">
+                <button
+                  class="flex w-full items-center justify-end gap-1.5 py-1"
+                  @click="handleNavigate({ name: 'auth-register' })"
+                >
                   <h4 class="text-lg font-semibold md:text-xl">Registrarse</h4>
                   <UIcon name="i-solar-cursor-square-broken" :class="linkIconStyles" />
-                </div>
+                </button>
               </li>
 
               <!-- Login -->

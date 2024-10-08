@@ -59,10 +59,10 @@ const linkIconStyles =
 
         <!-- Signup -->
         <li>
-          <div class="flex items-center justify-end">
+          <NuxtLink :to="{ name: 'auth-register' }" class="flex items-center justify-end">
             <h4 class="text-lg font-semibold md:text-xl">Registrarse</h4>
             <UIcon name="i-solar-cursor-square-broken" :class="linkIconStyles" />
-          </div>
+          </NuxtLink>
         </li>
 
         <!-- Login -->

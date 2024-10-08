@@ -1,0 +1,120 @@
+<script setup lang="ts">
+const companyLinks = [
+  [
+    {
+      label: '¿Quiénes somos?',
+    },
+    {
+      label: 'Nuestro equipo',
+    },
+  ],
+];
+
+const contactLinks = [
+  [
+    {
+      label: 'Whatsapp',
+    },
+    {
+      label: 'Email',
+    },
+  ],
+];
+
+const year = new Date().getFullYear();
+</script>
+
+<template>
+  <div
+    class="grid grid-cols-2 grid-rows-2 items-center justify-between gap-y-3 pb-6 pt-3 md:grid-cols-3 md:grid-rows-1"
+  >
+    <!-- Copyrights -->
+    <div class="justify-self-start">
+      <span class="select-none text-sm font-semibold md:text-base"
+        >© {{ year }}, La Habana, Cuba</span
+      >
+    </div>
+
+    <!-- Links -->
+    <nav class="relative top-px flex items-center justify-self-end md:justify-self-center">
+      <ul class="flex gap-4 lg:gap-8">
+        <!-- Company -->
+        <li>
+          <UDropdown
+            :items="companyLinks"
+            mode="click"
+            :popper="{ offsetDistance: 15, placement: 'top' }"
+            :ui="{ width: 'w-min' }"
+          >
+            <button class="flex items-center justify-end">
+              <UIcon name="i-charm-chevron-up" class="mr-0.5 md:mr-1" />
+              <h4 class="text-lg font-semibold md:text-xl">Empresa</h4>
+            </button>
+
+            <template #item="{ item }">
+              <span
+                class="w-full truncate pl-1 pr-2 text-left text-sm text-gray-500 md:text-base dark:text-gray-300"
+                >{{ item.label }}</span
+              >
+            </template>
+          </UDropdown>
+        </li>
+
+        <!-- Contact us -->
+        <li>
+          <UDropdown
+            :items="contactLinks"
+            mode="click"
+            :popper="{ offsetDistance: 15, placement: 'top' }"
+            :ui="{ width: 'w-min' }"
+          >
+            <button class="flex items-center justify-end">
+              <UIcon name="i-charm-chevron-up" class="mr-0.5 md:mr-1" />
+              <h4 class="text-lg font-semibold md:text-xl">Contáctanos</h4>
+            </button>
+
+            <template #item="{ item }">
+              <span
+                class="w-full truncate pl-2 pr-1 text-right text-sm text-gray-500 md:text-base dark:text-gray-300"
+                >{{ item.label }}</span
+              >
+            </template>
+          </UDropdown>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Socials -->
+    <nav class="col-span-2 flex items-center justify-self-center md:col-span-1 md:justify-self-end">
+      <ul class="flex items-center gap-3 md:gap-1">
+        <!-- Instagram -->
+        <li class="p-1">
+          <a href="https://www.instagram.com/sigmacuba" class="flex items-center">
+            <UIcon name="i-fa6-brands-instagram" class="h-6 w-6 md:h-[26px] md:w-[26px]" />
+          </a>
+        </li>
+
+        <!-- Facebook -->
+        <li class="p-1">
+          <a href="https://m.facebook.com/groups/249539844657857" class="flex items-center">
+            <UIcon name="i-fa6-brands-facebook-f" class="h-5 w-5 md:h-[22px] md:w-[22px]" />
+          </a>
+        </li>
+
+        <!-- Youtube -->
+        <li class="p-1">
+          <a href="https://www.youtube.com/@SigmaCasasCuba" class="flex items-center">
+            <UIcon name="i-fa6-brands-youtube" class="h-6 w-6 md:h-[26px] md:w-[26px]" />
+          </a>
+        </li>
+
+        <!-- Twitter-X -->
+        <li class="p-1">
+          <a href="https://twitter.com" class="flex items-center">
+            <UIcon name="i-fa6-brands-x-twitter" class="h-6 w-6 md:h-[26px] md:w-[26px]" />
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</template>

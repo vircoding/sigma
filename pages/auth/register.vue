@@ -1,26 +1,7 @@
 <script setup lang="ts">
-import { z, ZodError } from 'zod';
+import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-
-const schema = z
-  .object({
-    email: z
-      .string({ message: 'Requerido' })
-      .trim()
-      .min(1, 'Requerido')
-      .email('Debe ser un correo electrónico válido'),
-    password: z
-      .string({ message: 'Requerido' })
-      .trim()
-      .min(1, 'Requerido')
-      .min(6, 'Debe contener entre 6 y 20 caracteres')
-      .max(20, 'Debe contener entre 6 y 20 caracteres'),
-    repassword: z.string({ message: 'Requerido' }).trim().min(1, 'Requerido'),
-  })
-  .refine((data) => data.password === data.repassword, {
-    message: 'Passwords do not match',
-    path: ['repassword'],
-  });
+import { registerSchema, type RegisterSchema } from '~/schemas/register';
 
 const errors = computed<{
   email: {
@@ -37,7 +18,7 @@ const errors = computed<{
   };
 }>(() => {
   try {
-    schema.parse(state);
+    registerSchema.parse(state);
     return {
       email: { error: false },
       password: { error: false },
@@ -75,8 +56,6 @@ const errorVisibility = ref({
   repassword: false,
 });
 
-type Schema = z.output<typeof schema>;
-
 const state = reactive({
   email: '',
   password: '',
@@ -85,7 +64,7 @@ const state = reactive({
 
 const passwordVisibility = ref(false);
 
-async function onSubmit(event: FormSubmitEvent<Schema>) {
+async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
   errorVisibility.value.email = true;
   errorVisibility.value.password = true;
   errorVisibility.value.repassword = true;

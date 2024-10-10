@@ -5,7 +5,7 @@
     <Header />
 
     <!-- Content -->
-    <div class="grow py-10">
+    <div class="flex grow flex-col justify-center pb-16 pt-14">
       <slot />
     </div>
 

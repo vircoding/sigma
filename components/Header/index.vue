@@ -7,6 +7,6 @@
     <HeaderDesktop v-else />
 
     <!-- Divider -->
-    <UDivider type="dotted" />
+    <UDivider type="dashed" />
   </header>
 </template>

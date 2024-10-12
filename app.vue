@@ -1,6 +1,7 @@
 <template>
   <div
-    class="bg-lbackground font-quicksand text-azure-950 md:text-lg dark:bg-dbackground dark:text-gray-200"
+    class="bg-lbackground font-quicksand dark:bg-dbackground"
+    :class="[useStyles().textColorSecondary, useStyles().textSizeBase]"
   >
     <NuxtLayout>
       <NuxtPage />

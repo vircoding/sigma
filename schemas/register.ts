@@ -17,7 +17,7 @@ export const registerSchema = z
     repassword: z.string({ message: 'Requerido' }).trim().min(1, 'Requerido'),
   })
   .refine((data) => data.password === data.repassword, {
-    message: 'Passwords do not match',
+    message: 'Las contraseñas deben coincidir',
     path: ['repassword'],
   });
 

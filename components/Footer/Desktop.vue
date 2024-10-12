@@ -21,6 +21,9 @@ const contactLinks = [
   ],
 ];
 
+const linkTitleStyles = `font-semibold ${useStyles().textSizeLG} ${useStyles().textColorPrimary}`;
+const brandIconStyles = 'h-6 w-6 md:h-[26px] md:w-[26px]';
+
 const year = new Date().getFullYear();
 </script>
 
@@ -30,7 +33,9 @@ const year = new Date().getFullYear();
   >
     <!-- Copyrights -->
     <div class="justify-self-start">
-      <span class="select-none text-sm font-semibold md:text-base"
+      <span
+        class="select-none font-semibold"
+        :class="[useStyles().textColorPrimary, useStyles().textSizeSM]"
         >© {{ year }}, La Habana, Cuba</span
       >
     </div>
@@ -47,13 +52,18 @@ const year = new Date().getFullYear();
             :ui="{ width: 'w-min' }"
           >
             <button class="flex items-center justify-end">
-              <UIcon name="i-charm-chevron-up" class="mr-0.5 md:mr-1" />
-              <h4 class="text-lg font-semibold md:text-xl">Empresa</h4>
+              <UIcon
+                name="i-charm-chevron-up"
+                class="mr-0.5 md:mr-1"
+                :class="useStyles().textColorPrimary"
+              />
+              <h4 :class="[linkTitleStyles]">Empresa</h4>
             </button>
 
             <template #item="{ item }">
               <span
-                class="w-full truncate pl-1 pr-2 text-left text-sm text-gray-500 md:text-base dark:text-gray-300"
+                class="w-full truncate pl-1 pr-2 text-left"
+                :class="[useStyles().textColorSecondary, useStyles().textSizeSM]"
                 >{{ item.label }}</span
               >
             </template>
@@ -69,13 +79,18 @@ const year = new Date().getFullYear();
             :ui="{ width: 'w-min' }"
           >
             <button class="flex items-center justify-end">
-              <UIcon name="i-charm-chevron-up" class="mr-0.5 md:mr-1" />
-              <h4 class="text-lg font-semibold md:text-xl">Contáctanos</h4>
+              <UIcon
+                name="i-charm-chevron-up"
+                class="mr-0.5 md:mr-1"
+                :class="useStyles().textColorPrimary"
+              />
+              <h4 :class="[linkTitleStyles]">Contáctanos</h4>
             </button>
 
             <template #item="{ item }">
               <span
-                class="w-full truncate pl-2 pr-1 text-right text-sm text-gray-500 md:text-base dark:text-gray-300"
+                class="w-full truncate pl-2 pr-1 text-right"
+                :class="[useStyles().textColorSecondary, useStyles().textSizeSM]"
                 >{{ item.label }}</span
               >
             </template>
@@ -86,11 +101,11 @@ const year = new Date().getFullYear();
 
     <!-- Socials -->
     <nav class="col-span-2 flex items-center justify-self-center md:col-span-1 md:justify-self-end">
-      <ul class="flex items-center gap-3 md:gap-1">
+      <ul class="flex items-center gap-3 md:gap-1" :class="[useStyles().textColorPrimary]">
         <!-- Instagram -->
         <li class="p-1">
           <a href="https://www.instagram.com/sigmacuba" class="flex items-center">
-            <UIcon name="i-fa6-brands-instagram" class="h-6 w-6 md:h-[26px] md:w-[26px]" />
+            <UIcon name="i-fa6-brands-instagram" :class="[brandIconStyles]" />
           </a>
         </li>
 
@@ -104,14 +119,14 @@ const year = new Date().getFullYear();
         <!-- Youtube -->
         <li class="p-1">
           <a href="https://www.youtube.com/@SigmaCasasCuba" class="flex items-center">
-            <UIcon name="i-fa6-brands-youtube" class="h-6 w-6 md:h-[26px] md:w-[26px]" />
+            <UIcon name="i-fa6-brands-youtube" :class="[brandIconStyles]" />
           </a>
         </li>
 
         <!-- Twitter-X -->
         <li class="p-1">
           <a href="https://twitter.com" class="flex items-center">
-            <UIcon name="i-fa6-brands-x-twitter" class="h-6 w-6 md:h-[26px] md:w-[26px]" />
+            <UIcon name="i-fa6-brands-x-twitter" :class="[brandIconStyles]" />
           </a>
         </li>
       </ul>

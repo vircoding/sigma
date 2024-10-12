@@ -80,10 +80,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
   <UContainer>
     <!-- Hero -->
     <section class="mb-7 flex flex-col gap-2">
-      <h2 class="font-ubuntu text-3xl font-bold">Regístrate como Propietario</h2>
-      <p class="text-gray-500 dark:text-gray-400">
-        Crea tu cuenta como Propietario si deseas vender o rentar tu casa.
-      </p>
+      <h2 class="font-ubuntu text-3xl font-bold" :class="[useStyles().textColorPrimary]">
+        Regístrate como Propietario
+      </h2>
+      <p>Crea tu cuenta como Propietario si deseas vender o rentar tu casa.</p>
     </section>
 
     <UForm :state="state" @submit="onSubmit">
@@ -106,7 +106,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
         </template>
 
         <template #error="{ error }">
-          <span class="text-sm text-red-500 dark:text-red-400">
+          <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
             {{ error }}
           </span>
         </template>
@@ -131,23 +131,23 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
               <UIcon
                 v-if="error"
                 name="i-heroicons-exclamation-circle"
-                class="mr-2 h-5 w-5 text-red-500 dark:text-red-400"
+                class="mr-2 h-5 w-5 text-red-500 md:h-6 md:w-6 dark:text-red-400"
               />
               <UIcon
-                v-if="!passwordVisibility"
                 name="i-solar-eye-broken"
-                class="z-50 h-5 w-5 cursor-pointer"
+                class="z-50 h-5 w-5 cursor-pointer md:h-6 md:w-6"
                 :class="[
-                  error ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400',
+                  error ? 'text-red-500 dark:text-red-400' : useStyles().textColorSecondary,
+                  passwordVisibility ? 'hidden' : undefined,
                 ]"
                 @click="passwordVisibility = true"
               />
               <UIcon
-                v-else
                 name="i-solar-eye-closed-broken"
-                class="relative top-0.5 z-50 h-5 w-5 cursor-pointer"
+                class="relative top-0.5 z-50 h-5 w-5 cursor-pointer md:h-6 md:w-6"
                 :class="[
-                  error ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400',
+                  error ? 'text-red-500 dark:text-red-400' : useStyles().textColorSecondary,
+                  !passwordVisibility ? 'hidden' : undefined,
                 ]"
                 @click="passwordVisibility = false"
               />
@@ -156,7 +156,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
         </template>
 
         <template #error="{ error }">
-          <span class="text-sm text-red-500 dark:text-red-400">
+          <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
             {{ error }}
           </span>
         </template>
@@ -181,7 +181,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
         </template>
 
         <template #error="{ error }">
-          <span class="text-sm text-red-500 dark:text-red-400">
+          <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
             {{ error }}
           </span>
         </template>
@@ -189,11 +189,13 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
 
       <UButton type="submit" size="md" block class="mb-6 font-semibold">Registrarse</UButton>
 
-      <div class="px-4 text-center text-xs">
-        <p class="text-gray-500 dark:text-gray-400">
+      <div class="px-4 text-center" :class="[useStyles().textSizeXS]">
+        <p :class="[useStyles().textColorSecondary]">
           Al registrarte en nuestro sitio, aceptas nuestras
-          <span class="font-bold text-azure-950 dark:text-gray-200">políticas de cookies</span> y
-          <span class="font-bold text-azure-950 dark:text-gray-200">privacidad</span>.
+          <span class="font-bold" :class="[useStyles().textColorPrimary]"
+            >políticas de cookies</span
+          >
+          y <span class="font-bold" :class="[useStyles().textColorPrimary]">privacidad</span>.
         </p>
       </div>
     </UForm>

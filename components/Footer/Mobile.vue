@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const linkTitleStyles = `font-semibold ${useStyles().textSizeLG} ${useStyles().textColorPrimary}`;
+const brandIconStyles = 'h-7 w-7 md:h-[30px] md:w-[30px]';
+
 const year = new Date().getFullYear();
 </script>
 
@@ -14,13 +17,17 @@ const year = new Date().getFullYear();
         <!-- Company -->
         <li class="col-start-1 row-start-1 justify-self-start min-[520px]:justify-self-center">
           <span class="flex items-center">
-            <h4 class="text-lg font-semibold md:text-xl">Empresa</h4>
-            <UIcon name="i-charm-chevron-down" class="relative top-px ml-0.5 md:top-0.5 md:ml-1" />
+            <h4 :class="[linkTitleStyles]">Empresa</h4>
+            <UIcon
+              name="i-charm-chevron-down"
+              class="relative top-px ml-0.5 md:top-0.5 md:ml-1"
+              :class="useStyles().textColorPrimary"
+            />
           </span>
           <ul>
-            <li class="text-sm md:text-base">¿Quiénes somos?</li>
+            <li :class="[useStyles().textSizeSM]">¿Quiénes somos?</li>
 
-            <li class="text-sm md:text-base">Nuestro equipo</li>
+            <li :class="[useStyles().textSizeSM]">Nuestro equipo</li>
           </ul>
         </li>
 
@@ -29,13 +36,17 @@ const year = new Date().getFullYear();
           class="col-start-1 row-start-2 justify-self-start min-[520px]:col-start-2 min-[520px]:row-start-1 min-[520px]:justify-self-center"
         >
           <span class="flex items-center justify-center">
-            <h4 class="text-lg font-semibold md:text-xl">Contáctanos</h4>
-            <UIcon name="i-charm-chevron-down" class=":top-px relative ml-0.5 md:top-0.5 md:ml-1" />
+            <h4 :class="[linkTitleStyles]">Contáctanos</h4>
+            <UIcon
+              name="i-charm-chevron-down"
+              class="relative top-px ml-0.5 md:top-0.5 md:ml-1"
+              :class="useStyles().textColorPrimary"
+            />
           </span>
           <ul>
-            <li class="text-sm md:text-base">Whatsapp</li>
+            <li :class="[useStyles().textSizeSM]">Whatsapp</li>
 
-            <li class="text-sm md:text-base">Email</li>
+            <li :class="[useStyles().textSizeSM]">Email</li>
           </ul>
         </li>
 
@@ -43,18 +54,21 @@ const year = new Date().getFullYear();
         <li
           class="col-start-2 row-span-2 row-start-1 self-center justify-self-end min-[520px]:col-start-3 min-[520px]:row-span-1 min-[520px]:justify-self-center"
         >
-          <ul class="grid grid-cols-2 grid-rows-2 gap-4 min-[520px]:gap-2">
+          <ul
+            class="grid grid-cols-2 grid-rows-2 gap-4 min-[520px]:gap-2"
+            :class="[useStyles().textColorPrimary]"
+          >
             <!-- Instagram -->
             <li class="place-content-center p-1">
               <a href="https://www.instagram.com/sigmacuba" class="flex items-center">
-                <UIcon name="i-fa6-brands-instagram" class="h-7 w-7 md:h-[30px] md:w-[30px]" />
+                <UIcon name="i-fa6-brands-instagram" :class="[brandIconStyles]" />
               </a>
             </li>
 
             <!-- Youtube -->
             <li class="place-content-center p-1">
               <a href="https://www.youtube.com/@SigmaCasasCuba" class="flex items-center">
-                <UIcon name="i-fa6-brands-youtube" class="h-7 w-7 md:h-[30px] md:w-[30px]" />
+                <UIcon name="i-fa6-brands-youtube" :class="[brandIconStyles]" />
               </a>
             </li>
 
@@ -68,7 +82,7 @@ const year = new Date().getFullYear();
             <!-- Twitter-X -->
             <li class="place-content-center p-1">
               <a href="https://twitter.com" class="flex items-center">
-                <UIcon name="i-fa6-brands-x-twitter" class="h-7 w-7 md:h-[30px] md:w-[30px]" />
+                <UIcon name="i-fa6-brands-x-twitter" :class="[brandIconStyles]" />
               </a>
             </li>
           </ul>
@@ -78,7 +92,9 @@ const year = new Date().getFullYear();
 
     <!-- Copyrights -->
     <div class="text-center">
-      <span class="select-none text-sm font-semibold md:text-base"
+      <span
+        class="select-none font-semibold"
+        :class="[useStyles().textColorPrimary, useStyles().textSizeSM]"
         >© {{ year }}, La Habana, Cuba</span
       >
     </div>

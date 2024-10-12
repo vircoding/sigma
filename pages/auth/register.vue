@@ -77,15 +77,33 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
 </script>
 
 <template>
-  <UContainer>
-    <!-- Hero -->
-    <section class="mb-7 flex flex-col gap-2">
-      <h2 class="font-ubuntu text-3xl font-bold" :class="[useStyles().textColorPrimary]">
-        Regístrate como Propietario
-      </h2>
-      <p>Crea tu cuenta como Propietario si deseas vender o rentar tu casa.</p>
-    </section>
+  <UContainer
+    class="max-w-lg grid-cols-2 lg:grid lg:max-w-full lg:gap-x-12 lg:px-12 xl:gap-x-20 xl:px-20"
+  >
+    <div class="flex-col gap-10 lg:flex lg:self-center">
+      <!-- Hero -->
+      <section class="mb-7 flex flex-col gap-2 lg:mb-0">
+        <h2
+          class="font-ubuntu text-3xl font-bold md:text-4xl"
+          :class="[useStyles().textColorPrimary]"
+        >
+          Regístrate como Propietario
+        </h2>
+        <p class="lg:pr-12">Crea tu cuenta como Propietario si deseas vender o rentar tu casa.</p>
+      </section>
 
+      <!-- Desktop CTA's -->
+      <div class="hidden flex-col gap-1 lg:flex">
+        <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+          >¿Ya tienes cuenta?</span
+        >
+        <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+          >¿Eres agente?</span
+        >
+      </div>
+    </div>
+
+    <!-- Form -->
     <UForm :state="state" @submit="onSubmit">
       <!-- Email -->
       <UFormGroup
@@ -187,9 +205,11 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
         </template>
       </UFormGroup>
 
+      <!-- Submit -->
       <UButton type="submit" size="md" block class="mb-6 font-semibold">Registrarse</UButton>
 
-      <div class="px-4 text-center" :class="[useStyles().textSizeXS]">
+      <!-- Cookies and privacy -->
+      <div class="mb-6 px-4 text-center lg:mb-0" :class="[useStyles().textSizeXS]">
         <p :class="[useStyles().textColorSecondary]">
           Al registrarte en nuestro sitio, aceptas nuestras
           <span class="font-bold" :class="[useStyles().textColorPrimary]"
@@ -197,6 +217,16 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
           >
           y <span class="font-bold" :class="[useStyles().textColorPrimary]">privacidad</span>.
         </p>
+      </div>
+
+      <!-- Mobile CTA's -->
+      <div class="flex flex-col text-center lg:hidden">
+        <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+          >¿Ya tienes cuenta?</span
+        >
+        <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+          >¿Eres agente?</span
+        >
       </div>
     </UForm>
   </UContainer>

@@ -97,8 +97,11 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
         <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Ya tienes cuenta?</span
         >
-        <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
-          >¿Eres agente?</span
+        <NuxtLink
+          :to="{ name: 'auth-register-agent' }"
+          class="font-medium"
+          :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+          >¿Eres agente?</NuxtLink
         >
       </div>
     </div>
@@ -224,8 +227,11 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
         <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Ya tienes cuenta?</span
         >
-        <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
-          >¿Eres agente?</span
+        <NuxtLink
+          :to="{ name: 'auth-register-agent' }"
+          class="font-medium"
+          :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+          >¿Eres agente?</NuxtLink
         >
       </div>
     </UForm>

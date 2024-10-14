@@ -6,5 +6,6 @@ export default function useStyles() {
     textSizeSM: 'text-sm md:text-base',
     textSizeBase: 'text-base md:text-lg',
     textSizeLG: 'text-lg md:text-xl',
+    container: 'max-w-lg lg:max-w-full lg:px-12 xl:px-20',
   };
 }

@@ -1,7 +1,10 @@
 <template>
-  <UContainer class="flex items-center gap-x-12" :class="[useStyles().pageContainer]">
+  <UContainer
+    class="items-center gap-x-12 gap-y-10 lg:flex lg:flex-row"
+    :class="[useStyles().pageContainer]"
+  >
     <!-- Hero -->
-    <section class="flex w-1/3 flex-col gap-2">
+    <section class="mb-7 flex flex-col gap-2 lg:mb-0 lg:w-1/3">
       <h2
         class="font-ubuntu font-bold"
         :class="[useStyles().textColorPrimary, useStyles().textSize4XL]"
@@ -14,13 +17,15 @@
       </p>
     </section>
 
-    <section class="flex grow items-center justify-center gap-x-10">
+    <section class="flex grow flex-col items-center justify-center gap-x-10 gap-y-7 lg:flex-row">
       <!-- Client -->
       <NuxtLink
         :to="{ name: 'auth-register-client' }"
-        class="card-shadow relative h-[350px] w-72 overflow-hidden rounded-2xl bg-cover bg-center p-0 text-azure-50 transition-transform hover:scale-110"
+        class="card-shadow relative h-[250px] w-full overflow-hidden rounded-2xl bg-cover bg-center p-0 text-azure-50 transition-transform lg:h-[350px] lg:w-72"
+        :class="{ 'hover:scale-110': $device.isDesktop }"
         style="
           background-image: url('https://images.unsplash.com/photo-1611244419377-b0a760c19719?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGFydGlzdHxlbnwwfHwwfHx8MA%3D%3D');
+          background-position: top;
         "
       >
         <div
@@ -43,9 +48,11 @@
       <!-- Agent -->
       <NuxtLink
         :to="{ name: 'auth-register-agent' }"
-        class="card-shadow relative h-[350px] w-72 overflow-hidden rounded-2xl bg-cover bg-center p-0 text-azure-50 transition-transform hover:scale-110"
+        class="card-shadow relative h-[250px] w-full overflow-hidden rounded-2xl bg-cover bg-center p-0 text-azure-50 transition-transform lg:h-[350px] lg:w-72"
+        :class="{ 'hover:scale-110': $device.isDesktop }"
         style="
           background-image: url('https://images.unsplash.com/photo-1545209536-c79b0603d7ad?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjd8fGxhdWdoaW5nfGVufDB8fDB8fHww');
+          background-position: top;
         "
       >
         <div

@@ -81,9 +81,9 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
     class="grid-cols-2 lg:grid lg:gap-x-12 xl:gap-x-20"
     :class="[useStyles().pageContainer]"
   >
-    <section class="flex-col gap-10 lg:flex lg:self-center">
+    <div class="flex-col gap-10 lg:flex lg:self-center">
       <!-- Hero -->
-      <div class="mb-7 flex flex-col gap-2 lg:mb-0">
+      <section class="mb-7 flex flex-col gap-2 lg:mb-0">
         <h2
           class="font-ubuntu font-bold"
           :class="[useStyles().textColorPrimary, useStyles().textSize4XL]"
@@ -91,10 +91,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
           Regístrate como Propietario
         </h2>
         <p>Crea tu cuenta como Propietario si deseas vender o rentar tu casa.</p>
-      </div>
+      </section>
 
       <!-- Desktop CTA's -->
-      <div class="hidden flex-col gap-1 lg:flex">
+      <section class="hidden flex-col gap-1 lg:flex">
         <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Ya tienes cuenta?</span
         >
@@ -104,8 +104,8 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
           :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Eres agente?</NuxtLink
         >
-      </div>
-    </section>
+      </section>
+    </div>
 
     <!-- Form -->
     <UForm :state="state" @submit="onSubmit">
@@ -224,7 +224,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
       </div>
 
       <!-- Mobile CTA's -->
-      <div class="flex flex-col text-center lg:hidden">
+      <section class="flex flex-col text-center lg:hidden">
         <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Ya tienes cuenta?</span
         >
@@ -234,7 +234,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
           :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Eres agente?</NuxtLink
         >
-      </div>
+      </section>
     </UForm>
   </UContainer>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="font-quicksand text-azure-950 md:text-lg dark:text-gray-200">
+  <div class="font-quicksand" :class="[useStyles().textColorSecondary, useStyles().textSizeBase]">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

@@ -1,8 +1,8 @@
 <template>
   <footer class="flex flex-col">
     <!-- Divider -->
-    <UDivider type="dotted">
-      <LogoHorizontal class="w-28 text-azure-950 sm:w-32 dark:text-gray-200" />
+    <UDivider type="dashed">
+      <LogoHorizontal class="w-28 sm:w-32 md:w-[136px]" :class="[useStyles().textColorPrimary]" />
     </UDivider>
 
     <!-- Mobile -->

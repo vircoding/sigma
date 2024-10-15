@@ -20,7 +20,8 @@
     "@nuxtjs/device": "^3.2.4",
     "nuxt": "^3.13.0",
     "vue": "^3.5.8",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "eslint-config-prettier": "^9.1.0",

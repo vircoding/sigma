@@ -15,8 +15,8 @@ export default defineAppConfig({
         size: { md: 'h-5 w-5 md:h-6 md:w-6' },
         trailing: { pointer: 'pointer-events-auto' },
       },
-      color: { white: { outline: 'text-gray-500 dark:text-gray-400' } },
-      variant: { outline: 'text-gray-500 dark:text-gray-400' },
+      color: { white: { outline: 'text-azure-950 dark:text-gray-200' } },
+      variant: { outline: 'text-azure-950 dark:text-gray-200' },
     },
     button: {
       rounded: 'rounded-xl',

@@ -159,7 +159,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
                 name="i-solar-eye-broken"
                 class="z-50 h-5 w-5 cursor-pointer md:h-6 md:w-6"
                 :class="[
-                  error ? 'text-red-500 dark:text-red-400' : useStyles().textColorSecondary,
+                  error ? 'text-red-500 dark:text-red-400' : useStyles().textColorPrimary,
                   passwordVisibility ? 'hidden' : undefined,
                 ]"
                 @click="passwordVisibility = true"
@@ -168,7 +168,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
                 name="i-solar-eye-closed-broken"
                 class="relative top-0.5 z-50 h-5 w-5 cursor-pointer md:h-6 md:w-6"
                 :class="[
-                  error ? 'text-red-500 dark:text-red-400' : useStyles().textColorSecondary,
+                  error ? 'text-red-500 dark:text-red-400' : useStyles().textColorPrimary,
                   !passwordVisibility ? 'hidden' : undefined,
                 ]"
                 @click="passwordVisibility = false"
@@ -210,7 +210,14 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
       </UFormGroup>
 
       <!-- Submit -->
-      <UButton type="submit" size="md" block class="mb-6 font-semibold">Registrarse</UButton>
+      <UButton
+        type="submit"
+        size="md"
+        block
+        :ui="useStyles().formSubmitButtonConfig"
+        class="mb-6 font-semibold transition-colors duration-75"
+        >Registrarse</UButton
+      >
 
       <!-- Cookies and privacy -->
       <div class="mb-6 px-4 text-center lg:mb-0" :class="[useStyles().textSizeXS]">

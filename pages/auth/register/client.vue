@@ -84,7 +84,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
       <!-- Hero -->
       <section class="mb-7 flex flex-col gap-2 lg:mb-0">
         <h2
-          class="font-ubuntu text-3xl font-bold md:text-4xl"
+          class="font-ubuntu text-4xl font-black md:text-4xl"
           :class="[useStyles().textColorPrimary]"
         >
           Regístrate como Propietario

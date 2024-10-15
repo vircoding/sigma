@@ -215,7 +215,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
         size="md"
         block
         :ui="useStyles().formSubmitButtonConfig"
-        class="mb-6 font-semibold transition-colors duration-75"
+        class="mb-6 font-semibold"
         >Registrarse</UButton
       >
 

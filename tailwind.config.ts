@@ -5,7 +5,8 @@ export default <Partial<Config>>{
     extend: {
       fontFamily: {
         quicksand: ['Quicksand', 'sans-serif'], // 300, 400, 500, 600, 700
-        ubuntu: ['Ubuntu', 'sans-serif'], // 300, 400, 500, 700, (italic)
+        ubuntu: ['Ubuntu Sans', 'sans-serif'],
+        archivo: ['Archivo', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'], // All weights (italic)
       },
       colors: {

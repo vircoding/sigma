@@ -78,19 +78,20 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
 
 <template>
   <UContainer
-    class="max-w-lg grid-cols-2 lg:grid lg:max-w-full lg:gap-x-12 lg:px-12 xl:gap-x-20 xl:px-20"
+    class="grid-cols-2 lg:grid lg:gap-x-12 xl:gap-x-20"
+    :class="[useStyles().pageContainer]"
   >
-    <div class="flex-col gap-10 lg:flex lg:self-center">
+    <section class="flex-col gap-10 lg:flex lg:self-center">
       <!-- Hero -->
-      <section class="mb-7 flex flex-col gap-2 lg:mb-0">
+      <div class="mb-7 flex flex-col gap-2 lg:mb-0">
         <h2
-          class="font-ubuntu text-4xl font-bold md:text-5xl"
-          :class="[useStyles().textColorPrimary]"
+          class="font-ubuntu font-bold"
+          :class="[useStyles().textColorPrimary, useStyles().textSize4XL]"
         >
           Regístrate como Propietario
         </h2>
-        <p class="lg:pr-12">Crea tu cuenta como Propietario si deseas vender o rentar tu casa.</p>
-      </section>
+        <p>Crea tu cuenta como Propietario si deseas vender o rentar tu casa.</p>
+      </div>
 
       <!-- Desktop CTA's -->
       <div class="hidden flex-col gap-1 lg:flex">
@@ -104,7 +105,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
           >¿Eres agente?</NuxtLink
         >
       </div>
-    </div>
+    </section>
 
     <!-- Form -->
     <UForm :state="state" @submit="onSubmit">

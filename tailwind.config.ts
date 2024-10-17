@@ -6,8 +6,6 @@ export default <Partial<Config>>{
       fontFamily: {
         quicksand: ['Quicksand', 'sans-serif'], // 300, 400, 500, 600, 700
         ubuntu: ['Ubuntu Sans', 'sans-serif'],
-        archivo: ['Archivo', 'sans-serif'],
-        poppins: ['Poppins', 'sans-serif'], // All weights (italic)
       },
       colors: {
         lbackground: '#ecf7f7',
@@ -25,6 +23,11 @@ export default <Partial<Config>>{
           900: '#1d3e6f',
           950: '#162743',
         },
+      },
+      aspectRatio: {
+        auto: 'auto',
+        square: '1 / 1',
+        video: '16 / 9',
       },
     },
   },

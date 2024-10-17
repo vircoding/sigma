@@ -18,6 +18,25 @@ export default defineAppConfig({
       color: { white: { outline: 'text-azure-950 dark:text-gray-200' } },
       variant: { outline: 'text-azure-950 dark:text-gray-200' },
     },
+    textarea: {
+      rounded: 'rounded-xl',
+      size: { md: 'text-base md:text-lg' },
+      padding: { md: 'py-1.5' },
+      color: { white: { outline: 'text-azure-950 dark:text-gray-200' } },
+      variant: { outline: 'text-azure-950 dark:text-gray-200' },
+    },
+    select: {
+      rounded: 'rounded-xl',
+      size: { md: 'text-base md:text-lg' },
+      padding: { md: 'py-1.5' },
+      color: { white: { outline: 'text-azure-950 dark:text-gray-200' } },
+      variant: { outline: 'text-azure-950 dark:text-gray-200' },
+    },
+    selectMenu: {
+      input: 'text-base md:text-lg',
+      option: { size: 'text-base md:text-lg' },
+      rounded: 'rounded-xl',
+    },
     button: {
       rounded: 'rounded-xl',
       size: { md: 'text-base md:text-lg' },

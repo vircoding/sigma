@@ -1,24 +1,20 @@
 <script setup lang="ts">
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { registerSchema, type RegisterSchema } from '~/schemas/register';
+import { registerClientSchema, type RegisterClientSchema } from '~/schemas/register';
+
+type ErrorItem = {
+  error: boolean;
+  message?: string;
+};
 
 const errors = computed<{
-  email: {
-    error: boolean;
-    message?: string;
-  };
-  password: {
-    error: boolean;
-    message?: string;
-  };
-  repassword: {
-    error: boolean;
-    message?: string;
-  };
+  email: ErrorItem;
+  password: ErrorItem;
+  repassword: ErrorItem;
 }>(() => {
   try {
-    registerSchema.parse(state);
+    registerClientSchema.parse(state);
     return {
       email: { error: false },
       password: { error: false },
@@ -64,10 +60,14 @@ const state = reactive({
 
 const passwordVisibility = ref(false);
 
-async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
+function turnAllErrorsVisible() {
   errorVisibility.value.email = true;
   errorVisibility.value.password = true;
   errorVisibility.value.repassword = true;
+}
+
+async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
+  turnAllErrorsVisible();
 
   if (!Object.values(errors.value).some((field) => field.error)) {
     // Do something with data
@@ -95,12 +95,14 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
 
       <!-- Desktop CTA's -->
       <section class="hidden flex-col gap-1 lg:flex">
-        <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+        <span
+          class="w-min text-nowrap font-medium"
+          :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Ya tienes cuenta?</span
         >
         <NuxtLink
           :to="{ name: 'auth-register-agent' }"
-          class="font-medium"
+          class="w-min text-nowrap font-medium"
           :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Eres agente?</NuxtLink
         >
@@ -231,13 +233,15 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
       </div>
 
       <!-- Mobile CTA's -->
-      <section class="flex flex-col text-center lg:hidden">
-        <span class="font-medium" :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+      <section class="flex flex-col items-center lg:hidden">
+        <span
+          class="w-min text-nowrap font-medium"
+          :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Ya tienes cuenta?</span
         >
         <NuxtLink
           :to="{ name: 'auth-register-agent' }"
-          class="font-medium"
+          class="w-min text-nowrap font-medium"
           :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
           >¿Eres agente?</NuxtLink
         >

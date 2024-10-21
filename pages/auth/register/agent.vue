@@ -498,10 +498,36 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         type="submit"
         size="md"
         block
-        :ui="useStyles().formSubmitButtonConfig"
+        :ui="useUIConfigs().formSubmitButtonConfig"
         class="mb-6 font-semibold"
         >Registrarse</UButton
       >
+
+      <!-- Cookies and privacy -->
+      <div class="mb-6 px-4 text-center lg:mb-0" :class="[useStyles().textSizeXS]">
+        <p :class="[useStyles().textColorSecondary]">
+          Al registrarte en nuestro sitio, aceptas nuestras
+          <span class="font-bold" :class="[useStyles().textColorPrimary]"
+            >políticas de cookies</span
+          >
+          y <span class="font-bold" :class="[useStyles().textColorPrimary]">privacidad</span>.
+        </p>
+      </div>
+
+      <!-- Mobile CTA's -->
+      <section class="flex flex-col items-center lg:hidden">
+        <span
+          class="w-min text-nowrap font-medium"
+          :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+          >¿Ya tienes cuenta?</span
+        >
+        <NuxtLink
+          :to="{ name: 'auth-register-client' }"
+          class="w-min text-nowrap font-medium"
+          :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+          >¿No eres agente?</NuxtLink
+        >
+      </section>
     </UForm>
   </UContainer>
 </template>

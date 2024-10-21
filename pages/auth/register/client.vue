@@ -229,7 +229,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
         type="submit"
         size="md"
         block
-        :ui="useStyles().formSubmitButtonConfig"
+        :ui="useUIConfigs().formSubmitButtonConfig"
         class="mb-6 font-semibold"
         >Registrarse</UButton
       >

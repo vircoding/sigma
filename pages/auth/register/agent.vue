@@ -187,6 +187,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         :error="errors.email.error && errorVisibility.email && errors.email.message"
         class="mb-4"
       >
+        <template #label="{ label, error }">
+          <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
+        </template>
+
         <template #default="{ error }">
           <UInput
             v-model="state.email"
@@ -198,7 +202,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         </template>
 
         <template #error="{ error }">
-          <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
+          <span :class="[useStyles().textSizeSM, useStyles().textColorError]">
             {{ error }}
           </span>
         </template>
@@ -212,6 +216,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         :error="errors.password.error && errorVisibility.password && errors.password.message"
         class="mb-4"
       >
+        <template #label="{ label, error }">
+          <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
+        </template>
+
         <template #default="{ error }">
           <UInput
             v-model="state.password"
@@ -223,13 +231,14 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
               <UIcon
                 v-if="error"
                 name="i-heroicons-exclamation-circle"
-                class="mr-2 h-5 w-5 text-red-500 md:h-6 md:w-6 dark:text-red-400"
+                class="mr-2 h-5 w-5 md:h-6 md:w-6"
+                :class="[useStyles().textColorError]"
               />
               <UIcon
                 name="i-solar-eye-broken"
                 class="z-50 h-5 w-5 cursor-pointer md:h-6 md:w-6"
                 :class="[
-                  error ? 'text-red-500 dark:text-red-400' : useStyles().textColorPrimary,
+                  error ? useStyles().textColorError : useStyles().textColorPrimary,
                   passwordVisibility ? 'hidden' : undefined,
                 ]"
                 @click="passwordVisibility = true"
@@ -238,7 +247,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
                 name="i-solar-eye-closed-broken"
                 class="relative top-0.5 z-50 h-5 w-5 cursor-pointer md:h-6 md:w-6"
                 :class="[
-                  error ? 'text-red-500 dark:text-red-400' : useStyles().textColorPrimary,
+                  error ? useStyles().textColorError : useStyles().textColorPrimary,
                   !passwordVisibility ? 'hidden' : undefined,
                 ]"
                 @click="passwordVisibility = false"
@@ -248,7 +257,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         </template>
 
         <template #error="{ error }">
-          <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
+          <span :class="[useStyles().textSizeSM, useStyles().textColorError]">
             {{ error }}
           </span>
         </template>
@@ -262,6 +271,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         :error="errors.repassword.error && errorVisibility.repassword && errors.repassword.message"
         class="mb-4"
       >
+        <template #label="{ label, error }">
+          <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
+        </template>
+
         <template #default="{ error }">
           <UInput
             v-model="state.repassword"
@@ -273,13 +286,13 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         </template>
 
         <template #error="{ error }">
-          <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
+          <span :class="[useStyles().textSizeSM, useStyles().textColorError]">
             {{ error }}
           </span>
         </template>
       </UFormGroup>
 
-      <div class="mb-4 flex gap-2 min-[375px]:gap-4">
+      <div class="mb-4 flex gap-2">
         <!-- Avatar -->
         <div
           class="relative top-3 aspect-square w-24 min-w-24 min-[375px]:w-28 min-[375px]:min-w-28"
@@ -298,6 +311,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
             :error="errors.firstname.error && errorVisibility.firstname && errors.firstname.message"
             class="mb-4"
           >
+            <template #label="{ label, error }">
+              <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
+            </template>
+
             <template #default="{ error }">
               <UInput
                 v-model="state.firstname"
@@ -309,7 +326,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
             </template>
 
             <template #error="{ error }">
-              <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
+              <span :class="[useStyles().textSizeSM, useStyles().textColorError]">
                 {{ error }}
               </span>
             </template>
@@ -322,6 +339,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
             name="lastname"
             :error="errors.lastname.error && errorVisibility.lastname && errors.lastname.message"
           >
+            <template #label="{ label, error }">
+              <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
+            </template>
+
             <template #default="{ error }">
               <UInput
                 v-model="state.lastname"
@@ -333,7 +354,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
             </template>
 
             <template #error="{ error }">
-              <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
+              <span :class="[useStyles().textSizeSM, useStyles().textColorError]">
                 {{ error }}
               </span>
             </template>
@@ -342,7 +363,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
       </div>
 
       <!-- Whatsapp -->
-      <div class="mb-4 flex justify-between gap-4">
+      <div class="mb-4 flex justify-between gap-2">
         <!-- Code -->
         <UFormGroup
           size="md"
@@ -350,6 +371,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
           name="phone"
           :error="errors.phone.error && errorVisibility.phone && errors.phone.message"
         >
+          <template #label="{ label, error }">
+            <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
+          </template>
+
           <template #default>
             <USelectMenu
               v-model="code"
@@ -397,8 +422,8 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
           <template #error="{ error }">
             <div class="relative h-4 md:h-[22px]">
               <span
-                class="absolute text-nowrap text-red-500 dark:text-red-400"
-                :class="[useStyles().textSizeSM]"
+                class="absolute text-nowrap"
+                :class="[useStyles().textSizeSM, useStyles().textColorError]"
               >
                 {{ error }}
               </span>
@@ -430,11 +455,26 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
       <!-- Bio -->
       <UFormGroup
         size="md"
-        label="Biografía"
+        label="Biografía (Opcional)"
         name="bio"
         :error="errors.bio.error && errorVisibility.bio && errors.bio.message"
         class="mb-6"
       >
+        <template #label="{ label, error }">
+          <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
+        </template>
+
+        <template #hint="{ error }">
+          <span
+            class="mr-2"
+            :class="[
+              useStyles().textSizeXS,
+              error ? useStyles().textColorError : useStyles().textColorPrimary,
+            ]"
+            >{{ state.bio.length }}/250 caracteres</span
+          >
+        </template>
+
         <template #default="{ error }">
           <UTextarea
             v-model="state.bio"
@@ -447,7 +487,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         </template>
 
         <template #error="{ error }">
-          <span class="text-red-500 dark:text-red-400" :class="[useStyles().textSizeSM]">
+          <span :class="[useStyles().textSizeSM, useStyles().textColorError]">
             {{ error }}
           </span>
         </template>

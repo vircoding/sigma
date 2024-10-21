@@ -294,13 +294,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
       <div class="mb-4 flex gap-2">
         <!-- Avatar -->
-        <div
-          class="relative top-3 aspect-square w-24 min-w-24 min-[375px]:w-28 min-[375px]:min-w-28"
-        >
-          <div class="overflow-hidden rounded-full border border-gray-300">
-            <PlaceholderAvatar class="h-full w-full text-gray-300" />
-          </div>
-        </div>
+        <InputAvatar />
 
         <div class="flex grow flex-col">
           <!-- Firstname -->
@@ -382,8 +376,9 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
               placeholder="Código del país"
               :options="countries"
               clear-search-on-close
-              :ui="{ wrapper: 'w-28' }"
-              :ui-menu="{ width: 'w-[calc(100vw-64px)]', base: 'relative' }"
+              selected-icon="i-solar-check-circle-bold"
+              :ui="useUIConfigs().countrySelectConfig"
+              :ui-menu="useUIConfigs().countrySelectMenuConfig"
               searchable-placeholder="Código del país"
             >
               <template #label>
@@ -400,6 +395,14 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
                     <span>+{{ code.callingCode }}</span>
                   </div>
                 </div>
+              </template>
+
+              <template #trailing>
+                <UIcon
+                  name="i-heroicons-chevron-down-20-solid"
+                  class="h-5 w-5"
+                  :class="[useStyles().textColorPrimary]"
+                />
               </template>
 
               <template #option="{ option }">

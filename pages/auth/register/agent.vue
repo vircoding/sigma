@@ -334,7 +334,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
       <div class="col-start-2 row-span-2 row-start-1">
         <div class="mb-4 flex gap-2">
           <!-- Avatar -->
-          <InputAvatar @upload="handleUpload" :avatar="avatarURL" />
+          <InputAvatar :avatar="avatarURL" @upload="handleUpload" />
 
           <div class="flex grow flex-col">
             <!-- Firstname -->

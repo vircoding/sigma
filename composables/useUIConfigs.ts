@@ -15,5 +15,6 @@ export default function useUIConfigs() {
         },
       },
     },
+    cropperModalConfig: { container: 'items-center' },
   };
 }

@@ -1,21 +1,27 @@
 <script setup lang="ts">
+import { Cropper } from 'vue-advanced-cropper';
+import 'vue-advanced-cropper/dist/style.css';
+
 const props = defineProps<{
   avatar?: string;
 }>();
 
-const emit = defineEmits<{
-  (e: 'upload', imageURL: string): void;
-}>();
+// const emit = defineEmits<{
+//   (e: 'upload', imageURL: string): void;
+// }>();
 
 const input = ref<HTMLInputElement>();
+const isCropperOpen = ref<boolean>(false);
+const avatarURL = ref<string | undefined>();
 
 function loadAvatar(event: Event) {
   if (event.target instanceof HTMLInputElement) {
     const files = event.target.files;
 
     if (files) {
-      const imageURL = URL.createObjectURL(files[0]);
-      emit('upload', imageURL);
+      avatarURL.value = URL.createObjectURL(files[0]);
+      isCropperOpen.value = true;
+      // emit('upload', imageURL);
     }
 
     event.target.value = '';
@@ -54,5 +60,17 @@ function loadAvatar(event: Event) {
         />
       </ButtonIcon>
     </div>
+
+    <UModal v-model="isCropperOpen" :ui="useUIConfigs().cropperModalConfig">
+      <div class="p-4">
+        <Cropper :src="avatarURL" :auto-zoom="true" class="mb-4" />
+
+        <!-- Buttons -->
+        <div class="grid grid-cols-2 gap-x-4 px-4">
+          <UButton variant="outline" block class="place-self-start">Cancelar</UButton>
+          <UButton block class="place-self-end">Recortar</UButton>
+        </div>
+      </div>
+    </UModal>
   </div>
 </template>

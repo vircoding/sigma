@@ -1,20 +1,58 @@
+<script setup lang="ts">
+const props = defineProps<{
+  avatar?: string;
+}>();
+
+const emit = defineEmits<{
+  (e: 'upload', imageURL: string): void;
+}>();
+
+const input = ref<HTMLInputElement>();
+
+function loadAvatar(event: Event) {
+  if (event.target instanceof HTMLInputElement) {
+    const files = event.target.files;
+
+    if (files) {
+      const imageURL = URL.createObjectURL(files[0]);
+      emit('upload', imageURL);
+    }
+
+    event.target.value = '';
+  }
+}
+</script>
+
 <template>
   <div
     class="relative top-4 aspect-square w-24 min-w-24 min-[375px]:w-28 min-[375px]:min-w-28 md:top-6"
   >
-    <div class="overflow-hidden rounded-full border border-gray-300 dark:border-gray-700">
+    <!-- File Input (Hidden) -->
+    <input ref="input" type="file" accept="image/*" hidden @change="loadAvatar" />
+
+    <!-- Avatar -->
+    <div class="relative overflow-hidden rounded-full border border-gray-300 dark:border-gray-700">
       <PlaceholderAvatar class="h-full w-full text-gray-300 dark:text-gray-700" />
-      <div
-        class="absolute right-0 top-[82px] flex rounded-full border border-gray-300 bg-white p-1 dark:border-gray-700 dark:bg-neutral-900"
-      >
-        <ButtonIcon>
-          <UIcon
-            name="i-solar-add-circle-broken"
-            class="h-5 w-5"
-            :class="useStyles().textColorPrimary"
-          />
-        </ButtonIcon>
-      </div>
+      <img v-if="props.avatar" :src="props.avatar" class="absolute top-0 h-full w-full" />
+    </div>
+
+    <!-- Button -->
+    <div
+      class="absolute right-0 top-[82px] flex rounded-full border border-gray-300 bg-white p-1 dark:border-gray-700 dark:bg-neutral-900"
+    >
+      <ButtonIcon @click="input?.click()">
+        <UIcon
+          name="i-solar-pen-new-round-linear"
+          class="h-5 w-5"
+          :class="[useStyles().textColorPrimary, !props.avatar ? 'hidden' : undefined]"
+        />
+
+        <UIcon
+          name="i-solar-add-circle-broken"
+          class="h-5 w-5"
+          :class="[useStyles().textColorPrimary, props.avatar ? 'hidden' : undefined]"
+        />
+      </ButtonIcon>
     </div>
   </div>
 </template>

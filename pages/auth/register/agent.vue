@@ -98,6 +98,8 @@ const state = reactive({
   bio: '',
 });
 
+const avatarURL = ref<string | undefined>();
+
 const code = ref({
   code: 'cu',
   esName: 'Cuba',
@@ -132,6 +134,10 @@ function search(q: string) {
       removeAccents(value.enName).toLowerCase().includes(removeAccents(q.toLowerCase())) ||
       `+${value.callingCode}`.includes(q),
   );
+}
+
+function handleUpload(imageURL: string) {
+  avatarURL.value = imageURL;
 }
 
 async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
@@ -328,7 +334,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
       <div class="col-start-2 row-span-2 row-start-1">
         <div class="mb-4 flex gap-2">
           <!-- Avatar -->
-          <InputAvatar />
+          <InputAvatar @upload="handleUpload" :avatar="avatarURL" />
 
           <div class="flex grow flex-col">
             <!-- Firstname -->

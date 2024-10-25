@@ -12,7 +12,9 @@ const linkTitleStyles = `font-semibold ${useStyles().textSizeLG}`;
     class="flex flex-col items-center justify-between gap-4 py-4 sm:py-5 md:py-6 lg:flex-row lg:gap-0"
   >
     <!-- Logo -->
-    <LogoHorizontal class="h-10 sm:h-11 md:h-12" :class="[useStyles().textColorPrimary]" />
+    <NuxtLink :to="{ name: 'index' }">
+      <LogoHorizontal class="h-10 sm:h-11 md:h-12" :class="[useStyles().textColorPrimary]" />
+    </NuxtLink>
 
     <nav>
       <ul class="flex space-x-4 sm:space-x-5 lg:space-x-6" :class="[useStyles().textColorPrimary]">

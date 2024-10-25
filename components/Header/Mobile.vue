@@ -18,7 +18,9 @@ const handleNavigate = async (to: RouteLocationRaw) => {
 <template>
   <div class="flex items-center justify-between py-4 sm:py-5 md:py-6">
     <!-- Logo -->
-    <LogoHorizontal class="h-10 sm:h-11 md:h-12" :class="[useStyles().textColorPrimary]" />
+    <NuxtLink :to="{ name: 'index' }">
+      <LogoHorizontal class="h-10 sm:h-11 md:h-12" :class="[useStyles().textColorPrimary]" />
+    </NuxtLink>
 
     <!-- Slideover Navbar -->
     <div class="flex items-center">

@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  client
+  agent
+}
+
+enum PostType {
+  sale
+  rent
+  exchange
+}
+
+enum Currency {
+  USD
+  CUP
+}
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  type   UserType
+  client Client?
+  agent  Agent?
+
+  email    String @unique
+  password String
+  posts    Post[]
+
+  verified         Boolean           @default(false)
+  passwordPending  Boolean?
+  session          Session[]
+  passwordCode     PasswordCode?
+  verificationCode VerificationCode?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Agent {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  avatar    String @default("")
+  firstname String
+  lastname  String
+  bio       String?
+  phone     String @default("+5354017747")
+
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  code    String  @unique
+  browser String?
+  os      String?
+  cpu     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationCode {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  code String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordCode {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  code String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  type     PostType
+  sale     Sale?
+  rent     Rent?
+  exchange Exchange?
+
+  description String
+  whatsapp    Boolean
+  phone       String
+  visits      Int
+  images      String[]
+  properties  Property[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Sale {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  amount   Int
+  currency Currency
+
+  postId String @unique @db.ObjectId
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Rent {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  amount    Int
+  frequency String
+  currency  Currency
+
+  postId String @unique @db.ObjectId
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Exchange {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  offers Int
+  needs  Int
+
+  postId String @unique @db.ObjectId
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+type Address {
+  province     String
+  municipality String
+}
+
+type Features {
+  bedRoom   Int
+  bathRoom  Int
+  garage    Boolean
+  garden    Boolean
+  pool      Boolean
+  furnished Boolean
+}
+
+model Property {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  address  Address
+  features Features
+
+  postId String @db.ObjectId
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}

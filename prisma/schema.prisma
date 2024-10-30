@@ -54,14 +54,26 @@ model Client {
 model Agent {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  avatar    String @default("")
   firstname String
   lastname  String
   bio       String?
-  phone     String @default("+5354017747")
+  phone     String
+
+  avatar Avatar?
+  
 
   userId String @unique @db.ObjectId
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Avatar {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  path String
+  url String
+
+  agent   Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agentId String @unique @db.ObjectId
 }
 
 model Session {

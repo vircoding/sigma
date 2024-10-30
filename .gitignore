@@ -1,3 +1,6 @@
+# Uploads
+public/uploads/avatars/*
+
 # Nuxt dev/build outputs
 .output
 .data

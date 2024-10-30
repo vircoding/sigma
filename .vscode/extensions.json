@@ -1,3 +1,9 @@
 {
-  "recommendations": ["usernamehw.errorlens", "dbaeumer.vscode-eslint"]
+  "recommendations": [
+    "usernamehw.errorlens",
+    "dbaeumer.vscode-eslint",
+    "vue.volar",
+    "nuxtr.nuxtr-vscode",
+    "prisma.prisma"
+  ]
 }

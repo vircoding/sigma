@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
 
   const form = formidable({
     keepExtensions: true,
+    maxFields: 1,
     maxFiles: 1,
     maxTotalFileSize: 5 * 1024 * 1024,
     maxFileSize: 5 * 1024 * 1024,

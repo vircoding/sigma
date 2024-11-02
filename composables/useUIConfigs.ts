@@ -10,6 +10,11 @@ export default function useUIConfigs() {
         solid: `${useDevice().isMobile ? 'active:bg-azure-600 dark:active:bg-azure-500' : ''} ${useDevice().isDesktop ? 'hover:bg-azure-600 dark:hover:bg-azure-500' : 'hover:bg-azure-500 dark:hover:bg-azure-400'} bg-azure-500 dark:bg-azure-400 text-white dark:text-gray-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azure-500 dark:focus-visible:outline-azure-400`,
       },
     },
+    errorButtonConfig: {
+      variant: {
+        solid: `${useDevice().isMobile ? 'active:bg-red-600 dark:active:bg-red-500' : ''} ${useDevice().isDesktop ? 'hover:bg-red-600 dark:hover:bg-red-500' : 'hover:bg-red-500 dark:hover:bg-red-400'} bg-red-500 dark:bg-red-400 text-white dark:text-gray-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 dark:focus-visible:outline-red-400`,
+      },
+    },
     cancelButtonConfig: {
       variant: {
         solid: `${useDevice().isMobile ? 'active:bg-azure-200 dark:active:bg-gray-700/50' : ''} ${useDevice().isDesktop ? 'hover:bg-azure-200 dark:hover:bg-gray-700/50' : 'hover:bg-azure-100 dark:hover:bg-gray-800'} bg-azure-100 dark:bg-gray-800 text-azure-400 dark:text-gray-300 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azure-500 dark:focus-visible:outline-azure-400`,

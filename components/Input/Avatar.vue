@@ -203,7 +203,7 @@ function loadAvatar(event: Event) {
 
         <!-- Actions -->
         <div class="grid grid-cols-2 gap-x-4">
-          <!-- Flip Horizontal -->
+          <!-- Reset -->
           <UButton
             label="Restablecer"
             variant="solid"
@@ -213,6 +213,8 @@ function loadAvatar(event: Event) {
             class="font-bold"
             @click="cropper?.reset()"
           />
+
+          <!-- Crop -->
           <UButton
             label="Aceptar"
             variant="solid"

@@ -2,11 +2,29 @@
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { registerClientSchema, type RegisterClientSchema } from '~/schemas/register';
+import { BadRequestError, ConflictError, FormFieldError } from '~/models/Error';
+import { ModalLoadingAnimation, ModalMinimalError } from '#components';
+
+const { registerClient } = useAuth();
+const modals = useModal();
+
+const conflictErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
+const badRequestErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
 
 type ErrorItem = {
   error: boolean;
   message?: string;
 };
+
+const backendErrors = ref<{
+  email: boolean;
+  password: boolean;
+  repassword: boolean;
+}>({
+  email: false,
+  password: false,
+  repassword: false,
+});
 
 const errors = computed<{
   email: ErrorItem;
@@ -58,6 +76,20 @@ const state = reactive({
   repassword: '',
 });
 
+function $reset() {
+  state.email = '';
+  state.password = '';
+  state.repassword = '';
+
+  resetBackendError('email');
+  resetBackendError('password');
+  resetBackendError('repassword');
+
+  errorVisibility.value.email = false;
+  errorVisibility.value.password = false;
+  errorVisibility.value.repassword = false;
+}
+
 const passwordVisibility = ref(false);
 
 function turnAllErrorsVisible() {
@@ -66,12 +98,42 @@ function turnAllErrorsVisible() {
   errorVisibility.value.repassword = true;
 }
 
+function resetBackendError(field: 'email' | 'password' | 'repassword') {
+  backendErrors.value[field] = false;
+}
+
+function setBackendError(field: 'email' | 'password' | 'repassword') {
+  backendErrors.value[field] = true;
+}
+
 async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
   turnAllErrorsVisible();
 
   if (!Object.values(errors.value).some((field) => field.error)) {
-    // Do something with data
-    console.log(event.data);
+    modals.open(ModalLoadingAnimation);
+
+    try {
+      await registerClient(event.data);
+      $reset();
+    } catch (error) {
+      if (error instanceof ConflictError) {
+        conflictErrorModal.value?.openModal();
+      } else if (error instanceof BadRequestError) {
+        badRequestErrorModal.value?.openModal();
+      } else if (error instanceof FormFieldError) {
+        const fields = error.fields.map((value) => value.field);
+        let anyField = false;
+        fields.forEach((field) => {
+          if (['email', 'password', 'repassword'].includes(field)) {
+            anyField = true;
+            setBackendError(field as 'email' | 'password' | 'repassword');
+          }
+        });
+        if (!anyField) badRequestErrorModal.value?.openModal();
+      } else showError(new Error('Fatal Error'));
+    } finally {
+      await modals.close();
+    }
   }
 }
 </script>
@@ -116,7 +178,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
         size="md"
         label="Correo Electrónico"
         name="email"
-        :error="errors.email.error && errorVisibility.email && errors.email.message"
+        :error="
+          (backendErrors.email && 'Debe ser un correo electrónico válido') ||
+          (errors.email.error && errorVisibility.email && errors.email.message)
+        "
         class="mb-4"
       >
         <template #label="{ label, error }">
@@ -125,11 +190,12 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
 
         <template #default="{ error }">
           <UInput
-            v-model="state.email"
+            v-model.trim="state.email"
             size="md"
             type="email"
             :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
             @blur="errorVisibility.email = true"
+            @input="resetBackendError('email')"
           />
         </template>
 
@@ -145,7 +211,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
         size="md"
         label="Contraseña"
         name="password"
-        :error="errors.password.error && errorVisibility.password && errors.password.message"
+        :error="
+          (backendErrors.password && 'Debe ser una contraseña válida') ||
+          (errors.password.error && errorVisibility.password && errors.password.message)
+        "
         class="mb-4"
       >
         <template #label="{ label, error }">
@@ -154,7 +223,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
 
         <template #default="{ error }">
           <UInput
-            v-model="state.password"
+            v-model.trim="state.password"
             size="md"
             :type="passwordVisibility ? 'text' : 'password'"
             @blur="errorVisibility.password = true"
@@ -200,7 +269,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
         size="md"
         label="Confirmar Contraseña"
         name="repassword"
-        :error="errors.repassword.error && errorVisibility.repassword && errors.repassword.message"
+        :error="
+          (backendErrors.repassword && 'Debe ser una contraseña válida') ||
+          (errors.repassword.error && errorVisibility.repassword && errors.repassword.message)
+        "
         class="mb-6"
       >
         <template #label="{ label, error }">
@@ -209,7 +281,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
 
         <template #default="{ error }">
           <UInput
-            v-model="state.repassword"
+            v-model.trim="state.repassword"
             size="md"
             :type="passwordVisibility ? 'text' : 'password'"
             :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
@@ -260,5 +332,19 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
         >
       </section>
     </UForm>
+
+    <!-- Conflict Error -->
+    <ModalMinimalError
+      ref="conflictErrorModal"
+      title="Usuario existente"
+      body="Ya existe un usuario registrado y verificado con este correo electrónico. Pruebe con uno diferente."
+    />
+
+    <!-- Bad Request Error -->
+    <ModalMinimalError
+      ref="badRequestErrorModal"
+      title="Error de solicitud"
+      body="Estamos afrontando dificultades para procesar tu solicitud. Por favor, refresca esta página e inténtalo más tarde."
+    />
   </UContainer>
 </template>

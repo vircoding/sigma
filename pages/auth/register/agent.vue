@@ -242,7 +242,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
           <template #default="{ error }">
             <UInput
-              v-model="state.email"
+              v-model.trim="state.email"
               size="md"
               type="email"
               :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
@@ -271,7 +271,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
           <template #default="{ error }">
             <UInput
-              v-model="state.password"
+              v-model.trim="state.password"
               size="md"
               :type="passwordVisibility ? 'text' : 'password'"
               @blur="errorVisibility.password = true"
@@ -328,7 +328,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
           <template #default="{ error }">
             <UInput
-              v-model="state.repassword"
+              v-model.trim="state.repassword"
               size="md"
               :type="passwordVisibility ? 'text' : 'password'"
               :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
@@ -389,7 +389,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
               <template #default="{ error }">
                 <UInput
-                  v-model="state.firstname"
+                  v-model.trim="state.firstname"
                   size="md"
                   type="text"
                   :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
@@ -417,7 +417,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
               <template #default="{ error }">
                 <UInput
-                  v-model="state.lastname"
+                  v-model.trim="state.lastname"
                   size="md"
                   type="text"
                   :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
@@ -449,7 +449,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
             <template #default="{ error }">
               <USelectMenu
-                v-model="code"
+                v-model.trim="code"
                 :searchable="search"
                 placeholder="Código del país"
                 :options="countries"
@@ -521,7 +521,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
           >
             <template #default="{ error }">
               <UInput
-                v-model="phone"
+                v-model.trim="phone"
                 size="md"
                 type="tel"
                 :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
@@ -558,7 +558,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
           <template #default="{ error }">
             <UTextarea
-              v-model="state.bio"
+              v-model.trim="state.bio"
               size="md"
               :rows="9"
               type="text"

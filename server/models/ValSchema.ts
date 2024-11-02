@@ -12,9 +12,9 @@ export const userTypeSchema = z.object({
 export const registerClientSchema = z
   .object({
     type: z.literal('client'),
-    email: z.string().trim().email(),
+    email: z.string().trim().min(1),
     password: z.string().trim().min(6).max(20),
-    repassword: z.string().trim(),
+    repassword: z.string().trim().min(1),
   })
   .refine((data) => data.password === data.repassword, {
     message: 'Passwords do not match',
@@ -24,9 +24,9 @@ export const registerClientSchema = z
 export const registerAgentSchema = z
   .object({
     type: z.literal('agent'),
-    email: z.string().trim().email(),
+    email: z.string().trim().min(1).email(),
     password: z.string().trim().min(6).max(20),
-    repassword: z.string().trim(),
+    repassword: z.string().trim().min(1),
     firstname: z
       .string()
       .trim()

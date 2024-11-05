@@ -114,8 +114,8 @@ export function registerAgent(agentData: AgentRegisterData, avatarData: AvatarDa
                 bio: agentData.bio,
                 avatar: {
                   create: {
-                    path: avatarData.path,
-                    url: avatarData.url,
+                    path: `${avatarData.path}`,
+                    url: `${avatarData.url}`,
                   },
                 },
               },
@@ -154,8 +154,8 @@ export function registerAgent(agentData: AgentRegisterData, avatarData: AvatarDa
             bio: agentData.bio,
             avatar: {
               create: {
-                path: avatarData.path,
-                url: avatarData.url,
+                path: `${avatarData.path}`,
+                url: `${avatarData.url}`,
               },
             },
           },

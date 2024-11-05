@@ -13,8 +13,7 @@ export default defineEventHandler(async (event) => {
   let cancelUploads = false;
 
   const form = formidable({
-    keepExtensions: true,
-    maxFields: 1,
+    maxFields: 2,
     maxFiles: 1,
     maxTotalFileSize: 5 * 1024 * 1024,
     maxFileSize: 5 * 1024 * 1024,
@@ -37,9 +36,8 @@ export default defineEventHandler(async (event) => {
   try {
     // Parse the multipart form
     const { fields, files } = await parseMultipart(event, form).catch((error) => {
-      if (error && typeof error === 'object' && 'code' in error)
-        if (error.code === 1016)
-          throw new BadRequestError('File exceeds the maximum allowed size of 5MB');
+      if (error.code === 1016 || error.code === 1009)
+        throw new BadRequestError('File exceeds the maximum allowed size of 5MB');
 
       throw new BadRequestError('Invalid multipart form');
     });
@@ -91,6 +89,8 @@ export default defineEventHandler(async (event) => {
 
     return { success: true };
   } catch (error) {
+    // console.log(error);
+
     // Remove Avatar
     if (avatar) {
       try {

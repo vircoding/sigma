@@ -33,3 +33,10 @@ export class ConflictError extends Error {
     this.name = 'Conflict Error';
   }
 }
+
+export class MaxSizeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Max Size Error';
+  }
+}

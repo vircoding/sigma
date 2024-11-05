@@ -24,8 +24,8 @@ export function parseMultipart(
 }
 
 export function parseAvatar(avatar: File) {
-  const path = join(process.cwd(), 'public/uploads/avatars', avatar.newFilename);
-  const url = `${useRuntimeConfig().origin}/uploads/avatars/${avatar.newFilename}`;
+  const path = join(process.cwd(), 'public/uploads/avatars', `${avatar.newFilename}.jpeg`);
+  const url = `${useRuntimeConfig().origin}/uploads/avatars/${avatar.newFilename}.jpeg`;
 
   fs.rename(avatar.filepath, path, (error) => {
     if (error) throw new UnexpectedError();

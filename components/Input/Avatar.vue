@@ -9,17 +9,17 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'blur'): void;
-  (e: 'crop', imageURL: string): void;
+  (e: 'change'): void;
+  (e: 'crop', imageURL: string, file: Blob): void;
 }>();
 
+const isHelpOpen = ref(false);
 const input = ref<HTMLInputElement>();
 const cropper = ref<InstanceType<typeof Cropper>>();
 const isCropperOpen = ref<boolean>(false);
 const avatarURL = ref<string | undefined>();
 
 function closeCropper() {
-  emit('blur');
   isCropperOpen.value = false;
 }
 
@@ -52,14 +52,19 @@ function defaultBoundaries({ cropper }: { cropper: HTMLElement }) {
 
 function crop() {
   const result = cropper.value?.getResult();
-  result?.canvas?.toBlob((blob) => {
-    if (blob) {
-      const croppedAvatarURL = URL.createObjectURL(blob);
-      emit('crop', croppedAvatarURL);
-    }
-  });
-
-  closeCropper();
+  if (result?.canvas) {
+    result.canvas?.toBlob(
+      (blob) => {
+        if (blob) {
+          const croppedAvatarURL = URL.createObjectURL(blob);
+          emit('crop', croppedAvatarURL, blob);
+          closeCropper();
+        }
+      },
+      'image/jpeg',
+      0.7,
+    );
+  }
 }
 
 function loadAvatar(event: Event) {
@@ -69,7 +74,6 @@ function loadAvatar(event: Event) {
     if (files) {
       avatarURL.value = URL.createObjectURL(files[0]);
       isCropperOpen.value = true;
-      // emit('upload', imageURL);
     }
 
     event.target.value = '';
@@ -83,7 +87,13 @@ function loadAvatar(event: Event) {
     @click="input?.click()"
   >
     <!-- File Input (Hidden) -->
-    <input ref="input" type="file" accept="image/*" hidden @change="loadAvatar" />
+    <input
+      ref="input"
+      type="file"
+      accept="image/jpeg, image/png, image/gif, image/webp"
+      hidden
+      @change="loadAvatar"
+    />
 
     <!-- Avatar -->
     <div
@@ -99,9 +109,9 @@ function loadAvatar(event: Event) {
       <img v-if="props.avatar" :src="props.avatar" class="absolute top-0 h-full w-full" />
     </div>
 
-    <!-- Button -->
+    <!-- Add/Edit Button -->
     <div
-      class="absolute right-0 top-[82px] flex rounded-full border bg-white p-1 dark:bg-neutral-900"
+      class="absolute right-5 top-[86px] flex rounded-full border bg-white p-1 dark:bg-neutral-900"
       :class="[
         props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
       ]"
@@ -123,6 +133,33 @@ function loadAvatar(event: Event) {
           props.avatar ? 'hidden' : undefined,
         ]"
       />
+    </div>
+
+    <!-- Help Button -->
+    <div
+      class="absolute -right-1 top-[62px] flex rounded-full border bg-white p-1 dark:bg-neutral-900"
+      :class="[
+        props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
+      ]"
+      @click.stop="isHelpOpen = true"
+    >
+      <UPopover v-model="isHelpOpen" overlay :popper="{ offsetDistance: 15 }" class="flex">
+        <UIcon
+          name="i-solar-question-circle-broken"
+          class="h-5 w-5"
+          :class="[props.error ? useStyles().textColorError : useStyles().textColorPrimary]"
+        />
+
+        <template #panel>
+          <div class="w-[80vw] max-w-[350px] p-1">
+            <p class="p-1.5" :class="[useStyles().textSizeXS, useStyles().textColorSecondary]">
+              Sigma hará una compresión de esta imagen para mejorar el tráfico de los usuarios por
+              la plataforma. Si depués de este proceso, el tamaño de la imagen es mayor que 5MB, se
+              mostrará una alerta.
+            </p>
+          </div>
+        </template>
+      </UPopover>
     </div>
 
     <UModal
@@ -187,19 +224,26 @@ function loadAvatar(event: Event) {
         </div>
 
         <!-- Cropper -->
-        <Cropper
-          ref="cropper"
-          :src="avatarURL"
-          :stencil-component="CircleStencil"
-          :stencil-props="{
-            aspectRatio: 1,
-          }"
-          :default-position="defaultPosition"
-          :default-size="defaultSize"
-          :default-boundaries="defaultBoundaries"
-          :auto-zoom="true"
-          class="my-4 h-96 w-full"
-        />
+        <div class="relative">
+          <!-- Skeleton -->
+          <div class="absolute bottom-0 left-0 right-0 top-0">
+            <USkeleton class="h-full w-full" :ui="{ rounded: 'rounded-none' }" />
+          </div>
+
+          <Cropper
+            ref="cropper"
+            :src="avatarURL"
+            :stencil-component="CircleStencil"
+            :stencil-props="{
+              aspectRatio: 1,
+            }"
+            :default-position="defaultPosition"
+            :default-size="defaultSize"
+            :default-boundaries="defaultBoundaries"
+            :auto-zoom="true"
+            class="my-4 h-96 w-full"
+          />
+        </div>
 
         <!-- Actions -->
         <div class="grid grid-cols-2 gap-x-4">

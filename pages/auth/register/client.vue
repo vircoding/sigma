@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { registerClientSchema, type RegisterClientSchema } from '~/schemas/register';
+import { registerClientSchema, type RegisterClientSchema } from '~/models/ValSchema';
 import { BadRequestError, ConflictError, FormFieldError } from '~/models/Error';
 import { ModalLoadingAnimation, ModalMinimalError } from '#components';
+
+type ErrorItem = {
+  error: boolean;
+  message?: string;
+};
+
+type BackendErrorField = 'email' | 'password' | 'repassword';
 
 const { registerClient } = useAuth();
 const modals = useModal();
@@ -11,10 +18,11 @@ const modals = useModal();
 const conflictErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
 const badRequestErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
 
-type ErrorItem = {
-  error: boolean;
-  message?: string;
-};
+const state = reactive({
+  email: '',
+  password: '',
+  repassword: '',
+});
 
 const backendErrors = ref<{
   email: boolean;
@@ -70,12 +78,6 @@ const errorVisibility = ref({
   repassword: false,
 });
 
-const state = reactive({
-  email: '',
-  password: '',
-  repassword: '',
-});
-
 function $reset() {
   state.email = '';
   state.password = '';
@@ -88,6 +90,8 @@ function $reset() {
   errorVisibility.value.email = false;
   errorVisibility.value.password = false;
   errorVisibility.value.repassword = false;
+
+  passwordVisibility.value = false;
 }
 
 const passwordVisibility = ref(false);
@@ -98,11 +102,11 @@ function turnAllErrorsVisible() {
   errorVisibility.value.repassword = true;
 }
 
-function resetBackendError(field: 'email' | 'password' | 'repassword') {
+function resetBackendError(field: BackendErrorField) {
   backendErrors.value[field] = false;
 }
 
-function setBackendError(field: 'email' | 'password' | 'repassword') {
+function setBackendError(field: BackendErrorField) {
   backendErrors.value[field] = true;
 }
 

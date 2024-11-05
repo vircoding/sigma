@@ -1,14 +1,70 @@
 <script setup lang="ts">
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { registerAgentSchema, type RegisterAgentSchema } from '~/schemas/register';
-
-const countries = useCountries().countries;
+import { registerAgentSchema } from '~/models/ValSchema';
+import { ModalLoadingAnimation, ModalMinimalError } from '#components';
+import { BadRequestError, ConflictError, FormFieldError, MaxSizeError } from '~/models/Error';
 
 type ErrorItem = {
   error: boolean;
   message?: string;
 };
+
+type BackendErrorField =
+  | 'email'
+  | 'password'
+  | 'repassword'
+  | 'avatar'
+  | 'firstname'
+  | 'lastname'
+  | 'phone'
+  | 'bio';
+
+const { registerAgent } = useAuth();
+const modals = useModal();
+const countries = useCountries().countries;
+
+const conflictErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
+const badRequestErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
+
+const state = reactive({
+  email: '',
+  password: '',
+  repassword: '',
+  firstname: '',
+  lastname: '',
+  bio: '',
+});
+
+const avatarURL = ref<string | undefined>();
+const blob = ref<Blob | undefined>();
+const phone = ref('');
+const code = ref<{
+  code: string;
+  esName: string;
+  enName: string;
+  callingCode: string;
+}>(countries[0]);
+
+const backendErrors = ref<{
+  email: boolean;
+  password: boolean;
+  repassword: boolean;
+  avatar: boolean;
+  firstname: boolean;
+  lastname: boolean;
+  phone: boolean;
+  bio: boolean;
+}>({
+  email: false,
+  password: false,
+  repassword: false,
+  avatar: false,
+  firstname: false,
+  lastname: false,
+  phone: false,
+  bio: false,
+});
 
 const errors = computed<{
   email: ErrorItem;
@@ -92,6 +148,11 @@ const errors = computed<{
   }
 });
 
+const blobError = computed(() => {
+  if (blob.value?.type !== 'image/jpeg' || blob.value?.size > 4.5 * 1024 * 1024) return true;
+  return false;
+});
+
 const errorVisibility = ref({
   email: false,
   password: false,
@@ -103,25 +164,41 @@ const errorVisibility = ref({
   bio: false,
 });
 
-const state = reactive({
-  email: '',
-  password: '',
-  repassword: '',
-  firstname: '',
-  lastname: '',
-  bio: '',
+watch(code, () => {
+  resetBackendError('phone');
 });
 
-const avatarURL = ref<string | undefined>();
+function $reset() {
+  state.email = '';
+  state.password = '';
+  state.repassword = '';
+  state.firstname = '';
+  state.lastname = '';
+  state.bio = '';
+  avatarURL.value = undefined;
+  phone.value = '';
+  code.value = countries[0];
 
-const code = ref<{
-  code: string;
-  esName: string;
-  enName: string;
-  callingCode: string;
-}>(countries[0]);
+  resetBackendError('email');
+  resetBackendError('password');
+  resetBackendError('repassword');
+  resetBackendError('avatar');
+  resetBackendError('firstname');
+  resetBackendError('lastname');
+  resetBackendError('phone');
+  resetBackendError('bio');
 
-const phone = ref('');
+  errorVisibility.value.email = false;
+  errorVisibility.value.password = false;
+  errorVisibility.value.repassword = false;
+  errorVisibility.value.avatar = false;
+  errorVisibility.value.firstname = false;
+  errorVisibility.value.lastname = false;
+  errorVisibility.value.phone = false;
+  errorVisibility.value.bio = false;
+
+  passwordVisibility.value = false;
+}
 
 const passwordVisibility = ref(false);
 
@@ -134,6 +211,14 @@ function turnAllErrorsVisible() {
   errorVisibility.value.lastname = true;
   errorVisibility.value.phone = true;
   errorVisibility.value.bio = true;
+}
+
+function resetBackendError(field: BackendErrorField) {
+  backendErrors.value[field] = false;
+}
+
+function setBackendError(field: BackendErrorField) {
+  backendErrors.value[field] = true;
 }
 
 function removeAccents(str: string) {
@@ -149,16 +234,58 @@ function search(q: string) {
   );
 }
 
-function handleCrop(imageURL: string) {
+function handleCrop(imageURL: string, file: Blob) {
   avatarURL.value = imageURL;
+  blob.value = file;
+  resetBackendError('avatar');
+  errorVisibility.value.avatar = true;
 }
 
-async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
+async function onSubmit(event: FormSubmitEvent<typeof state>) {
   turnAllErrorsVisible();
 
   if (!Object.values(errors.value).some((field) => field.error)) {
-    // Do something with data
-    console.log(event.data);
+    modals.open(ModalLoadingAnimation);
+
+    try {
+      await registerAgent({
+        avatar: blob.value,
+        phone: `+${code.value.callingCode}${phone.value}`,
+        ...event.data,
+      });
+      $reset();
+    } catch (error) {
+      if (error instanceof MaxSizeError) {
+        setBackendError('avatar');
+      } else if (error instanceof ConflictError) {
+        conflictErrorModal.value?.openModal();
+      } else if (error instanceof BadRequestError) {
+        badRequestErrorModal.value?.openModal();
+      } else if (error instanceof FormFieldError) {
+        const fields = error.fields.map((value) => value.field);
+        let anyField = false;
+        fields.forEach((field) => {
+          if (
+            [
+              'email',
+              'password',
+              'repassword',
+              'firstname',
+              'lastname',
+              'avatar',
+              'phone',
+              'bio',
+            ].includes(field)
+          ) {
+            anyField = true;
+            setBackendError(field as BackendErrorField);
+          }
+        });
+        if (!anyField) badRequestErrorModal.value?.openModal();
+      } else showError(new Error('Fatal Error'));
+    } finally {
+      await modals.close();
+    }
   }
 }
 </script>
@@ -233,7 +360,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
           size="md"
           label="Correo Electrónico"
           name="email"
-          :error="errors.email.error && errorVisibility.email && errors.email.message"
+          :error="
+            (backendErrors.email && 'Debe ser un correo electrónico válido') ||
+            (errors.email.error && errorVisibility.email && errors.email.message)
+          "
           class="mb-4"
         >
           <template #label="{ label, error }">
@@ -246,6 +376,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
               size="md"
               type="email"
               :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
+              @input="resetBackendError('email')"
               @blur="errorVisibility.email = true"
             />
           </template>
@@ -262,7 +393,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
           size="md"
           label="Contraseña"
           name="password"
-          :error="errors.password.error && errorVisibility.password && errors.password.message"
+          :error="
+            (backendErrors.password && 'Debe ser una contraseña válida') ||
+            (errors.password.error && errorVisibility.password && errors.password.message)
+          "
           class="mb-4"
         >
           <template #label="{ label, error }">
@@ -274,6 +408,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
               v-model.trim="state.password"
               size="md"
               :type="passwordVisibility ? 'text' : 'password'"
+              @input="resetBackendError('password')"
               @blur="errorVisibility.password = true"
             >
               <template #trailing>
@@ -318,7 +453,8 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
           label="Confirmar Contraseña"
           name="repassword"
           :error="
-            errors.repassword.error && errorVisibility.repassword && errors.repassword.message
+            (backendErrors.repassword && 'Debe ser una contraseña válida') ||
+            (errors.repassword.error && errorVisibility.repassword && errors.repassword.message)
           "
           class="mb-4 lg:mb-0"
         >
@@ -332,6 +468,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
               size="md"
               :type="passwordVisibility ? 'text' : 'password'"
               :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
+              @input="resetBackendError('repassword')"
               @blur="errorVisibility.repassword = true"
             />
           </template>
@@ -351,7 +488,11 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
             size="md"
             label="Avatar"
             name="avatar"
-            :error="errors.avatar.error && errorVisibility.avatar && errors.avatar.message"
+            :error="
+              (backendErrors.avatar && 'No válido') ||
+              (blobError && errorVisibility.avatar && 'No válido') ||
+              (errors.avatar.error && errorVisibility.avatar && errors.avatar.message)
+            "
             class="mb-4 w-min lg:mb-0"
           >
             <template #label="{ label }">
@@ -360,9 +501,13 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
 
             <InputAvatar
               :avatar="avatarURL"
-              :error="errors.avatar.error && errorVisibility.avatar"
+              :error="
+                backendErrors.avatar ||
+                (blobError && errorVisibility.avatar) ||
+                (errors.avatar.error && errorVisibility.avatar)
+              "
               @crop="handleCrop"
-              @blur="errorVisibility.avatar = true"
+              @change="resetBackendError('avatar')"
             />
 
             <template #error="{ error }">
@@ -379,7 +524,8 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
               label="Nombre"
               name="firstname"
               :error="
-                errors.firstname.error && errorVisibility.firstname && errors.firstname.message
+                (backendErrors.firstname && 'Este nombre no es válido') ||
+                (errors.firstname.error && errorVisibility.firstname && errors.firstname.message)
               "
               class="mb-4"
             >
@@ -393,6 +539,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
                   size="md"
                   type="text"
                   :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
+                  @input="resetBackendError('firstname')"
                   @blur="errorVisibility.firstname = true"
                 />
               </template>
@@ -409,7 +556,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
               size="md"
               label="Apellidos"
               name="lastname"
-              :error="errors.lastname.error && errorVisibility.lastname && errors.lastname.message"
+              :error="
+                (backendErrors.lastname && 'Los apellidos no son válidos') ||
+                (errors.lastname.error && errorVisibility.lastname && errors.lastname.message)
+              "
             >
               <template #label="{ label, error }">
                 <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
@@ -421,6 +571,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
                   size="md"
                   type="text"
                   :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
+                  @input="resetBackendError('lastname')"
                   @blur="errorVisibility.lastname = true"
                 />
               </template>
@@ -441,7 +592,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
             size="md"
             label="Whatsapp"
             name="phone"
-            :error="errors.phone.error && errorVisibility.phone && errors.phone.message"
+            :error="
+              (backendErrors.phone && 'Debe ser un teléfono válido') ||
+              (errors.phone.error && errorVisibility.phone && errors.phone.message)
+            "
           >
             <template #label="{ label, error }">
               <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
@@ -516,7 +670,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
           <UFormGroup
             size="md"
             name="phone"
-            :error="errors.phone.error && errorVisibility.phone && errors.phone.message"
+            :error="
+              (backendErrors.phone && 'Debe ser un teléfono válido') ||
+              (errors.phone.error && errorVisibility.phone && errors.phone.message)
+            "
             class="relative top-5 w-full md:top-[22px]"
           >
             <template #default="{ error }">
@@ -525,6 +682,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
                 size="md"
                 type="tel"
                 :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
+                @input="resetBackendError('phone')"
                 @blur="errorVisibility.phone = true"
               />
             </template>
@@ -538,7 +696,10 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
           size="md"
           label="Biografía (Opcional)"
           name="bio"
-          :error="errors.bio.error && errorVisibility.bio && errors.bio.message"
+          :error="
+            (backendErrors.bio && 'La biografía no es válida') ||
+            (errors.bio.error && errorVisibility.bio && errors.bio.message)
+          "
           class="mb-6 lg:mb-0"
         >
           <template #label="{ label, error }">
@@ -563,6 +724,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
               :rows="9"
               type="text"
               :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
+              @input="resetBackendError('bio')"
               @blur="errorVisibility.bio = true"
             />
           </template>
@@ -613,5 +775,19 @@ async function onSubmit(event: FormSubmitEvent<RegisterAgentSchema>) {
         >
       </section>
     </UForm>
+
+    <!-- Conflict Error -->
+    <ModalMinimalError
+      ref="conflictErrorModal"
+      title="Usuario existente"
+      body="Ya existe un usuario registrado y verificado con este correo electrónico. Pruebe con uno diferente."
+    />
+
+    <!-- Bad Request Error -->
+    <ModalMinimalError
+      ref="badRequestErrorModal"
+      title="Error de solicitud"
+      body="Estamos afrontando dificultades para procesar tu solicitud. Por favor, refresca esta página e inténtalo más tarde."
+    />
   </UContainer>
 </template>

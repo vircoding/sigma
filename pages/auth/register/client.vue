@@ -134,7 +134,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
           }
         });
         if (!anyField) badRequestErrorModal.value?.openModal();
-      } else showError(new Error('Fatal Error'));
+      } else showError(createError({ status: 500 }));
     } finally {
       await modals.close();
     }

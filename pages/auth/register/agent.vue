@@ -282,7 +282,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
           }
         });
         if (!anyField) badRequestErrorModal.value?.openModal();
-      } else showError(new Error('Fatal Error'));
+      } else showError(createError({ status: 500 }));
     } finally {
       await modals.close();
     }

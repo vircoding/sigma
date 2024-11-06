@@ -10,6 +10,8 @@ export default function useStyles() {
     textSize2XL: 'text-2xl md:text-3xl',
     textSize3XL: 'text-3xl md:text-4xl',
     textSize4XL: 'text-4xl md:text-5xl',
+    textSize5XL: 'text-5xl md:text-6xl',
+    textSize7XL: 'text-7xl md:text-8xl',
     pageContainer: 'max-w-lg lg:max-w-full lg:px-12 xl:px-20',
   };
 }

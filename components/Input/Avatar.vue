@@ -265,7 +265,7 @@ function loadAvatar(event: Event) {
             size="md"
             block
             :ui="useUIConfigs().acceptButtonConfig"
-            class="dropsha font-bold"
+            class="font-bold"
             @click="crop"
           />
         </div>

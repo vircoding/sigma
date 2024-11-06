@@ -9,3 +9,21 @@ export async function getVerificationEmail(verificationToken: string) {
   const template = handlebars.compile(file.toString());
   return template({ verificationToken });
 }
+
+export async function getVerificationSuccess() {
+  const file = fs.readFileSync(join(DIR, 'verificationSuccess.hbs'));
+  const template = handlebars.compile(file.toString());
+  return template({});
+}
+
+export async function getVerificationIsVerified() {
+  const file = fs.readFileSync(join(DIR, 'verificationIsVerified.hbs'));
+  const template = handlebars.compile(file.toString());
+  return template({});
+}
+
+export async function getVerificationFailed() {
+  const file = fs.readFileSync(join(DIR, 'verificationFailed.hbs'));
+  const template = handlebars.compile(file.toString());
+  return template({});
+}

@@ -61,3 +61,11 @@ export const registerAgentSchema = z
     message: 'Passwords do not match',
     path: ['repassword'],
   });
+
+export const verificationTokenSchema = z.string();
+
+export const decodedVerificationTokenSchema = z.object({
+  code: z.string(),
+  id: z.string(),
+  userId: z.string(),
+});

@@ -6,3 +6,7 @@ const verificationSign = useRuntimeConfig().jwtVerificationSecret;
 export function generateVerificationToken(payload: { code: string; id: string; userId: string }) {
   return jwt.sign(payload, verificationSign, { expiresIn: '5m' });
 }
+
+export function decodeVerificationToken(token: string) {
+  return jwt.verify(token, verificationSign) || null;
+}

@@ -2,7 +2,7 @@ import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import type { ClientRegisterData, AgentRegisterData } from '~/server/models/ValSchema';
-import { ConflictError } from '../models/Error';
+import { ConflictError, VerificationTokenError, VerifiedError } from '../models/Error';
 
 type AvatarData = {
   path: string;
@@ -170,5 +170,35 @@ export function registerAgent(agentData: AgentRegisterData, avatarData: AvatarDa
       },
     });
     return created;
+  });
+}
+
+export function verifyUser(id: string, code: string) {
+  return prisma.$transaction(async (tx) => {
+    // Find the user and the verification code
+    const founded = await tx.user.findUniqueOrThrow({
+      where: { id },
+      include: {
+        verificationCode: true,
+      },
+    });
+
+    // Validate if user its not yet verified
+    if (founded.verified) throw new VerifiedError('This account is verified already');
+
+    // Validate the verification code
+    if (founded.verificationCode?.code !== code)
+      throw new VerificationTokenError('Invalid verification token');
+
+    // Update the user
+    await tx.user.update({
+      where: { id },
+      data: {
+        verified: true,
+        verificationCode: {
+          delete: true,
+        },
+      },
+    });
   });
 }

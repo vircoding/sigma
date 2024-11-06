@@ -25,3 +25,17 @@ export class BadRequestError extends Error {
     this.name = 'Bad Request Error';
   }
 }
+
+export class VerifiedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Verified Error';
+  }
+}
+
+export class VerificationTokenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'VerificationTokenError';
+  }
+}

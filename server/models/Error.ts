@@ -46,3 +46,10 @@ export class NotFoundError extends Error {
     this.name = 'Not Found Error';
   }
 }
+
+export class CredentialsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Credentials Error';
+  }
+}

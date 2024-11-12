@@ -1,13 +1,20 @@
 import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import type { ClientRegisterData, AgentRegisterData } from '~/server/models/ValSchema';
+import type {
+  ClientRegisterData,
+  AgentRegisterData,
+  UserLoginData,
+} from '~/server/models/ValSchema';
+
 import {
   ConflictError,
   VerificationTokenError,
   VerifiedError,
   NotFoundError,
+  CredentialsError,
 } from '../models/Error';
+import { UAParser } from 'ua-parser-js';
 
 type AvatarData = {
   path: string;
@@ -225,5 +232,44 @@ export function resetVerificationCode(email: string) {
     });
 
     return { user, verificationCode };
+  });
+}
+
+export function loginUser(userData: UserLoginData, ua: string | undefined) {
+  return prisma.$transaction(async (tx) => {
+    // Find the verified user by email
+    const user = await tx.user.findUnique({
+      where: { email: userData.email, verified: true },
+      include: {
+        client: true,
+        agent: {
+          include: {
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    if (!user) throw new CredentialsError('User not founded');
+
+    // Compare passwords
+    const passwordMatch = await bcrypt.compare(userData.password, user.password);
+    if (!passwordMatch) throw new CredentialsError('Wrong password');
+
+    // Get and parse the user-agent
+    const parsedUA = UAParser(ua);
+
+    // Create the session
+    const session = await tx.session.create({
+      data: {
+        code: crypto.randomUUID(),
+        browser: parsedUA.browser.name,
+        os: parsedUA.os.name,
+        cpu: parsedUA.cpu.architecture,
+        userId: user.id,
+      },
+    });
+
+    return { user, session };
   });
 }

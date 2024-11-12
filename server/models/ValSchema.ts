@@ -4,6 +4,7 @@ import parsePhoneNumber from 'libphonenumber-js';
 
 export type ClientRegisterData = z.infer<typeof registerClientSchema>;
 export type AgentRegisterData = z.infer<typeof registerAgentSchema>;
+export type UserLoginData = z.infer<typeof loginSchema>;
 
 export const userTypeSchema = z.object({
   type: z.enum(['client', 'agent']),
@@ -72,4 +73,9 @@ export const decodedVerificationTokenSchema = z.object({
 
 export const resendSchema = z.object({
   email: z.string().email(),
+});
+
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6).max(20),
 });

@@ -37,6 +37,7 @@
     "vue": "^3.5.12",
     "vue-advanced-cropper": "^2.8.9",
     "vue-router": "latest",
+    "vue-timer-hook": "^1.0.84",
     "zod": "^3.23.8"
   },
   "devDependencies": {

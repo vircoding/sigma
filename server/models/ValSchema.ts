@@ -69,3 +69,7 @@ export const decodedVerificationTokenSchema = z.object({
   id: z.string(),
   userId: z.string(),
 });
+
+export const resendSchema = z.object({
+  email: z.string().email(),
+});

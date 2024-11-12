@@ -2,7 +2,12 @@ import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import type { ClientRegisterData, AgentRegisterData } from '~/server/models/ValSchema';
-import { ConflictError, VerificationTokenError, VerifiedError } from '../models/Error';
+import {
+  ConflictError,
+  VerificationTokenError,
+  VerifiedError,
+  NotFoundError,
+} from '../models/Error';
 
 type AvatarData = {
   path: string;
@@ -200,5 +205,25 @@ export function verifyUser(id: string, code: string) {
         },
       },
     });
+  });
+}
+
+export function resetVerificationCode(email: string) {
+  return prisma.$transaction(async (tx) => {
+    // Find the user by email
+    const user = await tx.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) throw new NotFoundError('User not found');
+
+    if (user.verified) throw new VerifiedError('This account is verified already');
+
+    const verificationCode = await tx.verificationCode.update({
+      where: { userId: user.id },
+      data: { code: crypto.randomUUID() },
+    });
+
+    return { user, verificationCode };
   });
 }

@@ -39,3 +39,10 @@ export class VerificationTokenError extends Error {
     this.name = 'VerificationTokenError';
   }
 }
+
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Not Found Error';
+  }
+}

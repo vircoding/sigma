@@ -203,7 +203,7 @@ onUnmounted(() => {
     <!-- View -->
     <UContainer
       v-else
-      class="grid-cols-2 lg:grid lg:gap-x-12 xl:gap-x-20"
+      class="w-full grid-cols-2 lg:grid lg:gap-x-12 xl:gap-x-20"
       :class="[useStyles().pageContainer]"
     >
       <div class="flex-col gap-5 lg:flex lg:self-center">

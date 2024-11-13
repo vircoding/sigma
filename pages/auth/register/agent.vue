@@ -350,7 +350,7 @@ onUnmounted(() => {
     />
 
     <!-- View -->
-    <UContainer v-else :class="[useStyles().pageContainer]">
+    <UContainer v-else class="w-full" :class="[useStyles().pageContainer]">
       <div class="lg:hidden">
         <!-- Hero -->
         <section class="mb-7 flex flex-col gap-2">

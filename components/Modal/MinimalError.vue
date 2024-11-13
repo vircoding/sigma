@@ -6,6 +6,8 @@ const props = defineProps<{
 
 const isModalOpen = ref(false);
 
+const modalConfig = { container: 'items-center' };
+
 defineExpose<{
   openModal: () => void;
 }>({
@@ -16,9 +18,9 @@ defineExpose<{
 </script>
 
 <template>
-  <UModal v-model="isModalOpen">
-    <UCard>
-      <div class="flex flex-col gap-y-2">
+  <UModal v-model="isModalOpen" :ui="modalConfig">
+    <UCard class="pt-0.5">
+      <div class="flex flex-col gap-y-3">
         <div class="flex items-center justify-between">
           <h6
             class="font-ubuntu font-bold"
@@ -26,7 +28,7 @@ defineExpose<{
           >
             {{ props.title }}
           </h6>
-          <ButtonIcon @click="isModalOpen = false">
+          <ButtonIcon class="hidden md:block" @click="isModalOpen = false">
             <UIcon
               name="i-charm-cross"
               class="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10"
@@ -34,7 +36,9 @@ defineExpose<{
             />
           </ButtonIcon>
         </div>
-        <p :class="[useStyles().textSizeSM, useStyles().textColorSecondary]">{{ props.body }}</p>
+        <p class="mb-2" :class="[useStyles().textSizeSM, useStyles().textColorSecondary]">
+          {{ props.body }}
+        </p>
         <aside class="flex justify-end">
           <UButton
             label="Aceptar"

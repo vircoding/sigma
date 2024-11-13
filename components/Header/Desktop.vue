@@ -1,7 +1,18 @@
 <script setup lang="ts">
-const findLinks = [[{ label: 'Ventas' }, { label: 'Rentas' }, { label: 'Permutas' }]];
+const findLinks = [
+  [
+    { label: 'Ventas', to: { name: 'posts' } },
+    { label: 'Rentas', to: { name: 'posts' } },
+    { label: 'Permutas', to: { name: 'posts' } },
+  ],
+];
 
-const helpLinks = [[{ label: '¿Cómo funciona el sitio?' }, { label: 'Preguntas frecuentes' }]];
+const helpLinks = [
+  [
+    { label: '¿Cómo funciona el sitio?', to: { name: 'support' } },
+    { label: 'Preguntas frecuentes', to: { name: 'support' } },
+  ],
+];
 
 const linkIconStyles = `ml-1 md:ml-2 h-[22px] w-[22px] md:h-[26px] md:w-[26px] ${useStyles().textColorPrimary}`;
 const linkTitleStyles = `font-semibold ${useStyles().textSizeLG}`;
@@ -76,10 +87,10 @@ const linkTitleStyles = `font-semibold ${useStyles().textSizeLG}`;
 
         <!-- Login -->
         <li>
-          <div class="flex items-center justify-end">
+          <NuxtLink :to="{ name: 'auth-login' }" class="flex items-center justify-end">
             <h4 :class="[linkTitleStyles]">Iniciar Sesión</h4>
             <UIcon name="i-solar-key-square-2-linear" :class="linkIconStyles" />
-          </div>
+          </NuxtLink>
         </li>
       </ul>
     </nav>

@@ -16,18 +16,26 @@ const year = new Date().getFullYear();
       >
         <!-- Company -->
         <li class="col-start-1 row-start-1 justify-self-start min-[520px]:justify-self-center">
-          <span class="flex items-center">
+          <NuxtLink :to="{ name: 'about' }" class="flex items-center">
             <h4 :class="[linkTitleStyles]">Empresa</h4>
             <UIcon
               name="i-charm-chevron-down"
               class="relative top-px ml-0.5 md:top-0.5 md:ml-1"
               :class="useStyles().textColorPrimary"
             />
-          </span>
+          </NuxtLink>
           <ul>
-            <li :class="[useStyles().textSizeSM]">¿Quiénes somos?</li>
+            <li :class="[useStyles().textSizeSM]">
+              <NuxtLink :to="{ name: 'about' }">
+                <span>¿Quiénes somos?</span>
+              </NuxtLink>
+            </li>
 
-            <li :class="[useStyles().textSizeSM]">Nuestro equipo</li>
+            <li :class="[useStyles().textSizeSM]">
+              <NuxtLink :to="{ name: 'about' }">
+                <span>Nuestro equipo</span>
+              </NuxtLink>
+            </li>
           </ul>
         </li>
 
@@ -35,18 +43,26 @@ const year = new Date().getFullYear();
         <li
           class="col-start-1 row-start-2 justify-self-start min-[520px]:col-start-2 min-[520px]:row-start-1 min-[520px]:justify-self-center"
         >
-          <span class="flex items-center justify-center">
+          <NuxtLink :to="{ name: 'support-contact' }" class="flex items-center justify-center">
             <h4 :class="[linkTitleStyles]">Contáctanos</h4>
             <UIcon
               name="i-charm-chevron-down"
               class="relative top-px ml-0.5 md:top-0.5 md:ml-1"
               :class="useStyles().textColorPrimary"
             />
-          </span>
+          </NuxtLink>
           <ul>
-            <li :class="[useStyles().textSizeSM]">Whatsapp</li>
+            <li :class="[useStyles().textSizeSM]">
+              <a href="https://wa.me/+5350009047">
+                <span>Whatsapp</span>
+              </a>
+            </li>
 
-            <li :class="[useStyles().textSizeSM]">Email</li>
+            <li :class="[useStyles().textSizeSM]">
+              <a href="mailto:sigmacuba2023@gmail.com">
+                <span>Correo</span>
+              </a>
+            </li>
           </ul>
         </li>
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { RouteLocationRaw } from 'vue-router';
 const isSlideoverOpen = ref(false);
 
 const slideoverConfig = {
@@ -8,11 +7,6 @@ const slideoverConfig = {
 
 const linkIconStyles = `relative top-px h-[22px] w-[22px] md:h-[26px] md:w-[26px] ${useStyles().textColorPrimary}`;
 const linkTitleStyles = `font-semibold ${useStyles().textSizeLG} ${useStyles().textColorPrimary}`;
-
-const handleNavigate = async (to: RouteLocationRaw) => {
-  await useRouter().push(to);
-  isSlideoverOpen.value = false;
-};
 </script>
 
 <template>
@@ -59,56 +53,79 @@ const handleNavigate = async (to: RouteLocationRaw) => {
             <ul class="space-y-2">
               <!-- Find -->
               <li class="py-1">
-                <div class="flex items-center justify-end gap-1.5 py-1">
+                <NuxtLink
+                  :to="{ name: 'support' }"
+                  class="flex w-full items-center justify-end gap-1.5 py-1"
+                  @click="isSlideoverOpen = false"
+                >
                   <h4 :class="linkTitleStyles">Ayuda</h4>
                   <UIcon name="i-solar-question-square-broken" :class="linkIconStyles" />
-                </div>
+                </NuxtLink>
                 <ul class="leading-snug">
                   <li>
-                    <span :class="[useStyles().textSizeBase]">¿Cómo funciona el sitio?</span>
+                    <NuxtLink :to="{ name: 'support' }" @click="isSlideoverOpen = false">
+                      <span :class="[useStyles().textSizeBase]">¿Cómo funciona el sitio?</span>
+                    </NuxtLink>
                   </li>
                   <li>
-                    <span :class="[useStyles().textSizeBase]">Preguntas frecuentes</span>
+                    <NuxtLink :to="{ name: 'support' }" @click="isSlideoverOpen = false">
+                      <span :class="[useStyles().textSizeBase]">Preguntas frecuentes</span>
+                    </NuxtLink>
                   </li>
                 </ul>
               </li>
 
               <!-- Help -->
               <li class="py-1">
-                <div class="flex items-center justify-end gap-1.5 py-1">
+                <NuxtLink
+                  :to="{ name: 'posts' }"
+                  class="flex w-full items-center justify-end gap-1.5 py-1"
+                  @click="isSlideoverOpen = false"
+                >
                   <h4 :class="linkTitleStyles">Descubre</h4>
                   <UIcon name="i-solar-filter-broken" :class="linkIconStyles" />
-                </div>
+                </NuxtLink>
                 <ul class="leading-snug">
                   <li>
-                    <span :class="[useStyles().textSizeBase]">Ventas</span>
+                    <NuxtLink :to="{ name: 'posts' }" @click="isSlideoverOpen = false">
+                      <span :class="[useStyles().textSizeBase]">Ventas</span>
+                    </NuxtLink>
                   </li>
                   <li>
-                    <span :class="[useStyles().textSizeBase]">Rentas</span>
+                    <NuxtLink :to="{ name: 'posts' }" @click="isSlideoverOpen = false">
+                      <span :class="[useStyles().textSizeBase]">Rentas</span>
+                    </NuxtLink>
                   </li>
                   <li>
-                    <span :class="[useStyles().textSizeBase]">Permutas</span>
+                    <NuxtLink :to="{ name: 'posts' }" @click="isSlideoverOpen = false">
+                      <span :class="[useStyles().textSizeBase]">Permutas</span>
+                    </NuxtLink>
                   </li>
                 </ul>
               </li>
 
               <!-- Signup -->
               <li class="py-1">
-                <button
+                <NuxtLink
+                  :to="{ name: 'auth-register' }"
                   class="flex w-full items-center justify-end gap-1.5 py-1"
-                  @click="handleNavigate({ name: 'auth-register' })"
+                  @click="isSlideoverOpen = false"
                 >
                   <h4 :class="linkTitleStyles">Registrarse</h4>
                   <UIcon name="i-solar-cursor-square-broken" :class="linkIconStyles" />
-                </button>
+                </NuxtLink>
               </li>
 
               <!-- Login -->
               <li class="py-1">
-                <div class="flex items-center justify-end gap-1.5 py-1">
+                <NuxtLink
+                  :to="{ name: 'auth-login' }"
+                  class="flex w-full items-center justify-end gap-1.5 py-1"
+                  @click="isSlideoverOpen = false"
+                >
                   <h4 :class="linkTitleStyles">Iniciar Sesión</h4>
                   <UIcon name="i-solar-key-square-2-linear" :class="linkIconStyles" />
-                </div>
+                </NuxtLink>
               </li>
             </ul>
           </nav>

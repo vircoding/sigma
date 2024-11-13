@@ -3,9 +3,11 @@ const companyLinks = [
   [
     {
       label: '¿Quiénes somos?',
+      to: { name: 'about' },
     },
     {
       label: 'Nuestro equipo',
+      to: { name: 'about' },
     },
   ],
 ];
@@ -14,9 +16,11 @@ const contactLinks = [
   [
     {
       label: 'Whatsapp',
+      to: 'https://wa.me/+5350009047',
     },
     {
       label: 'Email',
+      to: 'mailto:sigmacuba2023@gmail.com',
     },
   ],
 ];

@@ -1,19 +1,19 @@
 import { useTimer as timerHook } from 'vue-timer-hook';
 
-function getTimeout(timeout: number) {
+export default function useTimeout(timeout: number) {
   const time = new Date();
   time.setSeconds(time.getSeconds() + timeout);
 
-  return time.getTime();
-}
-
-export default function useTimeout(timeout: number) {
-  const timer = timerHook(getTimeout(timeout), false);
+  const timer = timerHook(time.getTime(), false);
 
   return {
     ...timer,
+    stopTime: time.getTime(),
     restart() {
-      timer.restart(getTimeout(timeout), true);
+      const time = new Date();
+      time.setSeconds(time.getSeconds() + timeout);
+      this.stopTime = time.getTime();
+      timer.restart(time.getTime(), true);
     },
   };
 }

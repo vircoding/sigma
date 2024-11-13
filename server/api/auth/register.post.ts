@@ -89,8 +89,6 @@ export default defineEventHandler(async (event) => {
 
     return { success: true };
   } catch (error) {
-    // console.log(error);
-
     // Remove Avatar
     if (avatar) {
       try {

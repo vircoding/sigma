@@ -2,8 +2,13 @@
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { registerClientSchema, type RegisterClientSchema } from '~/models/ValSchema';
-import { BadRequestError, ConflictError, FormFieldError } from '~/models/Error';
 import { ModalLoadingAnimation, ModalMinimalError, UIVerify } from '#components';
+import {
+  BadRequestError,
+  ConflictError,
+  FormFieldError,
+  BadCredentialsError,
+} from '~/models/Error';
 
 type ErrorItem = {
   error: boolean;
@@ -12,10 +17,11 @@ type ErrorItem = {
 
 type BackendErrorField = 'email' | 'password' | 'repassword';
 
-const { registerClient } = useAuth();
-const modals = useModal();
+const { registerClient, resendVerificationEmail, login } = useAuth();
 
+const modals = useModal();
 const isVerify = ref(false);
+const canLogin = ref(false);
 
 const conflictErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
 const badRequestErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
@@ -121,7 +127,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
 
     try {
       await registerClient(event.data);
-      $reset();
+
       isVerify.value = true;
     } catch (error) {
       if (error instanceof ConflictError) {
@@ -146,15 +152,53 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
 }
 
 async function handleResendVerificationEmail() {
-  console.log('Resend Event');
-  verifyComponent.value?.disableAndRestart();
+  modals.open(ModalLoadingAnimation);
+  try {
+    await resendVerificationEmail(state.email);
+  } catch (error) {
+    if (!(error instanceof ConflictError)) showError(createError({ status: 500 }));
+  } finally {
+    verifyComponent.value?.disableAndRestart();
+    await modals.close();
+  }
 }
+
+async function handleReturn() {
+  if (!canLogin.value) {
+    canLogin.value = true;
+
+    const loginInterval = setInterval(async () => {
+      if (canLogin.value) {
+        try {
+          await login({ email: state.email, password: state.password });
+          canLogin.value = false;
+          clearInterval(loginInterval);
+          await navigateTo({ name: 'index' });
+        } catch (error) {
+          if (!(error instanceof BadCredentialsError)) showError(createError({ status: 500 }));
+        }
+      } else {
+        clearInterval(loginInterval);
+      }
+    }, 10000);
+  }
+}
+
+onUnmounted(() => {
+  canLogin.value = false;
+  $reset();
+});
 </script>
 
 <template>
   <div>
     <!-- Verify -->
-    <UIVerify v-if="isVerify" ref="verifyComponent" @resend="handleResendVerificationEmail" />
+    <UIVerify
+      v-if="isVerify"
+      ref="verifyComponent"
+      @resend="handleResendVerificationEmail"
+      @return="handleReturn"
+    />
 
     <!-- View -->
     <UContainer
@@ -162,7 +206,7 @@ async function handleResendVerificationEmail() {
       class="grid-cols-2 lg:grid lg:gap-x-12 xl:gap-x-20"
       :class="[useStyles().pageContainer]"
     >
-      <div class="flex-col gap-10 lg:flex lg:self-center">
+      <div class="flex-col gap-5 lg:flex lg:self-center">
         <!-- Hero -->
         <section class="mb-7 flex flex-col gap-2 lg:mb-0">
           <h2
@@ -175,16 +219,17 @@ async function handleResendVerificationEmail() {
         </section>
 
         <!-- Desktop CTA's -->
-        <section class="hidden flex-col gap-1 lg:flex">
-          <span
+        <section class="hidden flex-col lg:flex">
+          <NuxtLink
+            :to="{ name: 'auth-login' }"
             class="w-min text-nowrap font-medium"
-            :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
-            >¿Ya tienes cuenta?</span
+            :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
+            >¿Ya tienes cuenta?</NuxtLink
           >
           <NuxtLink
             :to="{ name: 'auth-register-agent' }"
             class="w-min text-nowrap font-medium"
-            :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+            :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
             >¿Eres agente?</NuxtLink
           >
         </section>
@@ -329,24 +374,32 @@ async function handleResendVerificationEmail() {
         <div class="mb-6 px-4 text-center lg:mb-0" :class="[useStyles().textSizeXS]">
           <p :class="[useStyles().textColorSecondary]">
             Al registrarte en nuestro sitio, aceptas nuestras
-            <span class="font-bold" :class="[useStyles().textColorPrimary]"
-              >políticas de cookies</span
-            >
-            y <span class="font-bold" :class="[useStyles().textColorPrimary]">privacidad</span>.
+            <NuxtLink :to="{ name: 'support-cookies' }">
+              <span class="font-bold underline" :class="[useStyles().textColorPrimary]"
+                >políticas de cookies</span
+              >
+            </NuxtLink>
+            y
+            <NuxtLink :to="{ name: 'support-privacy' }">
+              <span class="font-bold underline" :class="[useStyles().textColorPrimary]"
+                >privacidad</span
+              > </NuxtLink
+            >.
           </p>
         </div>
 
         <!-- Mobile CTA's -->
         <section class="flex flex-col items-center lg:hidden">
-          <span
+          <NuxtLink
+            :to="{ name: 'auth-login' }"
             class="w-min text-nowrap font-medium"
-            :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
-            >¿Ya tienes cuenta?</span
+            :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
+            >¿Ya tienes cuenta?</NuxtLink
           >
           <NuxtLink
             :to="{ name: 'auth-register-agent' }"
             class="w-min text-nowrap font-medium"
-            :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+            :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
             >¿Eres agente?</NuxtLink
           >
         </section>

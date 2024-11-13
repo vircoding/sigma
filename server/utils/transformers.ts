@@ -6,20 +6,35 @@ import type {
 } from '@prisma/client';
 import { UnexpectedError } from '../models/Error';
 
-type UserData = { agent: (AgentDB & { avatar: AvatarDB | null }) | null } & {
+type UserInput = { agent: (AgentDB & { avatar: AvatarDB | null }) | null } & {
   client: ClientDB | null;
 } & UserDB;
 
-export function userTransformer(u: UserData) {
-  const r = {
-    id: u.id,
-    type: u.type,
-    verified: u.verified,
-  };
+type UserData =
+  | {
+      type: 'client';
+      id: string;
+    }
+  | {
+      type: 'agent';
+      avatar: string;
+      firstname: string;
+      lastname: string;
+      phone: string;
+      bio: string;
+      id: string;
+    };
 
-  if (u.agent && u.agent.avatar) {
+export function userTransformer(u: UserInput): UserData {
+  if (u.type === 'client') {
     return {
-      ...r,
+      id: u.id,
+      type: 'client',
+    };
+  } else if (u.type === 'agent' && u.agent && u.agent.avatar) {
+    return {
+      id: u.id,
+      type: 'agent',
       firstname: u.agent.firstname,
       lastname: u.agent.lastname,
       avatar: u.agent.avatar.url,
@@ -27,6 +42,4 @@ export function userTransformer(u: UserData) {
       bio: u.agent.bio || 'Sin descripción',
     };
   } else throw new UnexpectedError();
-
-  return r;
 }

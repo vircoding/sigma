@@ -40,3 +40,17 @@ export class MaxSizeError extends Error {
     this.name = 'Max Size Error';
   }
 }
+
+export class BadCredentialsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Bad Credentials Error';
+  }
+}
+
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Not Found Error';
+  }
+}

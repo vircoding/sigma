@@ -143,7 +143,7 @@ function loadAvatar(event: Event) {
       ]"
       @click.stop="isHelpOpen = true"
     >
-      <UPopover v-model="isHelpOpen" overlay :popper="{ offsetDistance: 15 }" class="flex">
+      <UPopover v-model="isHelpOpen" overlay :popper="{ offsetDistance: 18 }" class="flex">
         <UIcon
           name="i-solar-question-circle-broken"
           class="h-5 w-5"

@@ -48,5 +48,12 @@ export default defineAppConfig({
     modal: {
       rounded: 'rounded-xl',
     },
+    dropdown: {
+      background: 'bg-white dark:bg-gray-900',
+      item: {
+        active: 'bg-white dark:bg-gray-900',
+        base: 'hover:bg-gray-100 hover:dark:bg-gray-800',
+      },
+    },
   },
 });

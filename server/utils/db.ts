@@ -13,6 +13,7 @@ import {
   VerifiedError,
   NotFoundError,
   CredentialsError,
+  RefreshTokenError,
 } from '../models/Error';
 import { UAParser } from 'ua-parser-js';
 
@@ -267,6 +268,39 @@ export function loginUser(userData: UserLoginData, ua: string | undefined) {
         os: parsedUA.os.name,
         cpu: parsedUA.cpu.architecture,
         userId: user.id,
+      },
+    });
+
+    return { user, session };
+  });
+}
+
+export function refreshSession(id: string, code: string) {
+  return prisma.$transaction(async (tx) => {
+    // Find the session by id
+    const prevSession = await tx.session.findUnique({ where: { id } });
+
+    if (!prevSession) throw new RefreshTokenError('Session not founded');
+
+    // Validate the session
+    if (prevSession.code !== code) throw new RefreshTokenError('Wrong code');
+
+    // Update the session code
+    const session = await tx.session.update({
+      where: { id: prevSession.id },
+      data: { code: crypto.randomUUID() },
+    });
+
+    // Find the user by id
+    const user = await tx.user.findUniqueOrThrow({
+      where: { id: session.userId },
+      include: {
+        client: true,
+        agent: {
+          include: {
+            avatar: true,
+          },
+        },
       },
     });
 

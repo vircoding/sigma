@@ -79,3 +79,11 @@ export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6).max(20),
 });
+
+export const refreshTokenSchema = z.string();
+
+export const decodedRefreshTokenSchema = z.object({
+  code: z.string(),
+  id: z.string(),
+  userId: z.string(),
+});

@@ -307,3 +307,21 @@ export function refreshSession(id: string, code: string) {
     return { user, session };
   });
 }
+
+export async function findUserById(id: string) {
+  const user = await prisma.user.findUnique({
+    where: { id, verified: true },
+    include: {
+      client: true,
+      agent: {
+        include: {
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  if (!user) throw new NotFoundError('User not found');
+
+  return user;
+}

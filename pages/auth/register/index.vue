@@ -1,3 +1,9 @@
+<script setup lang="ts">
+definePageMeta({
+  middleware: 'no-auth',
+});
+</script>
+
 <template>
   <UContainer
     class="items-center gap-x-12 gap-y-10 lg:flex lg:flex-row"

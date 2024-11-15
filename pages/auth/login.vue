@@ -5,6 +5,10 @@ import { loginSchema, type LoginSchema } from '~/models/ValSchema';
 import { ModalLoadingAnimation, ModalMinimalError } from '#components';
 import { BadCredentialsError, FormFieldError, BadRequestError } from '~/models/Error';
 
+definePageMeta({
+  middleware: 'no-auth',
+});
+
 type ErrorItem = {
   error: boolean;
   message?: string;

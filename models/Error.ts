@@ -1,6 +1,6 @@
 export class FatalError extends Error {
-  constructor(message: string) {
-    super(message);
+  constructor() {
+    super('Fatal Error');
     this.name = 'Fatal Error';
   }
 }
@@ -52,5 +52,33 @@ export class NotFoundError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'Not Found Error';
+  }
+}
+
+export class RefreshTokenExpiredError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Refresh Token Expired Error';
+  }
+}
+
+export class InvalidRefreshTokenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Invalid Refresh Token Error';
+  }
+}
+
+export class AccessTokenExpiredError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Access Token Expired Error';
+  }
+}
+
+export class InvalidAccessTokenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Invalid Access Token Error';
   }
 }

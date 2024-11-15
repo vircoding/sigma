@@ -32,7 +32,7 @@
     "jsonwebtoken": "^9.0.2",
     "libphonenumber-js": "^1.11.12",
     "nodemailer": "^6.9.16",
-    "nuxt": "^3.13.0",
+    "nuxt": "^3.14.159",
     "ua-parser-js": "^1.0.39",
     "url-pattern": "^1.0.3",
     "validator": "^13.12.0",

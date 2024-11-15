@@ -39,7 +39,6 @@ export default defineEventHandler(async (event) => {
     // Send the success response
     return {
       access_token: accessToken,
-      user: userTransformer(user),
     };
   } catch (error) {
     // Refresh Token Format Error handler

@@ -35,3 +35,12 @@ export function useSessionData() {
 export function clearSessionData() {
   useSessionData().value = undefined;
 }
+
+// Init Loading
+export function useInitLoading() {
+  return useState<boolean>('initLoading', () => true);
+}
+
+export function clearInitLoading() {
+  useInitLoading().value = false;
+}

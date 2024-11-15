@@ -1,9 +1,35 @@
+<script setup lang="ts">
+import { FatalError } from '~/models/Error';
+
+const initLoading = ref(true);
+const { refresh, getUser } = useAuth();
+const { initAuth } = useClient();
+
+onMounted(async () => {
+  try {
+    await refresh();
+  } catch (error) {
+    if (error instanceof FatalError) showError(createError({ status: 500 }));
+  }
+
+  await getUser().catch(() => showError(createError({ status: 500 })));
+
+  await initAuth();
+  initLoading.value = false;
+});
+</script>
+
 <template>
   <div class="font-quicksand" :class="[useStyles().textColorSecondary, useStyles().textSizeBase]">
-    <NuxtLayout>
+    <!-- Init Loading -->
+    <UIInit v-if="initLoading" />
+
+    <!-- Content -->
+    <NuxtLayout :class="{ hidden: initLoading }">
       <NuxtPage />
     </NuxtLayout>
 
+    <!-- Modals Agent -->
     <UModals />
   </div>
 </template>

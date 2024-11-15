@@ -87,3 +87,10 @@ export const decodedRefreshTokenSchema = z.object({
   id: z.string(),
   userId: z.string(),
 });
+
+// Access Token
+export const accessTokenSchema = z.string();
+
+export const decodedAccessTokenSchema = z.object({
+  id: z.string(),
+});

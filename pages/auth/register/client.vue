@@ -10,6 +10,10 @@ import {
   BadCredentialsError,
 } from '~/models/Error';
 
+definePageMeta({
+  middleware: 'no-auth',
+});
+
 type ErrorItem = {
   error: boolean;
   message?: string;

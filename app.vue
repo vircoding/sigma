@@ -8,11 +8,10 @@ const { initAuth } = useClient();
 onMounted(async () => {
   try {
     await refresh();
+    await getUser();
   } catch (error) {
     if (error instanceof FatalError) showError(createError({ status: 500 }));
   }
-
-  await getUser().catch(() => showError(createError({ status: 500 })));
 
   await initAuth();
   initLoading.value = false;

@@ -325,3 +325,18 @@ export async function findUserById(id: string) {
 
   return user;
 }
+
+export function logoutUser(id: string, code: string) {
+  return prisma.$transaction(async (tx) => {
+    // Find the session by id
+    const session = await tx.session.findUnique({ where: { id } });
+
+    if (!session) throw new RefreshTokenError('Session not founded');
+
+    // Validate the session
+    if (session.code !== code) throw new RefreshTokenError('Wrong code');
+
+    // Delete the session
+    await tx.session.delete({ where: { id } });
+  });
+}

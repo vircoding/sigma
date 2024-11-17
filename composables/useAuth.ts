@@ -138,13 +138,35 @@ async function getUser() {
     useUserData().value = data.user;
   } catch (error) {
     if (error instanceof FetchError) {
-      if (error.status === 400 && error.data.message === 'Invalid or missing refresh token') {
+      if (error.status === 400 && error.data.message === 'Invalid or missing access token') {
         throw new InvalidAccessTokenError(error.message);
       }
       if (error.statusCode === 401 && error.data.message === 'The access token has expired')
         throw new AccessTokenExpiredError(error.message);
       if (error.status === 404 && error.data.message === 'User not found')
         throw new AccessTokenExpiredError(error.message);
+    }
+    throw new FatalError();
+  }
+}
+
+async function logout() {
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' });
+    clearSessionData();
+    clearUserData();
+  } catch (error) {
+    if (error instanceof FetchError) {
+      if (error.statusCode === 401 && error.data.message === 'The refresh token has expired') {
+        clearSessionData();
+        clearUserData();
+        throw new RefreshTokenExpiredError(error.message);
+      }
+      if (error.status === 400 && error.data.message === 'Invalid or missing refresh token') {
+        clearSessionData();
+        clearUserData();
+        throw new InvalidRefreshTokenError(error.message);
+      }
     }
     throw new FatalError();
   }
@@ -158,5 +180,6 @@ export default function () {
     login,
     refresh,
     getUser,
+    logout,
   };
 }

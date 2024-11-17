@@ -1,10 +1,10 @@
 <template>
   <header>
     <!-- Mobile -->
-    <HeaderMobile v-if="$device.isMobileOrTablet" />
+    <HeaderMobile v-if="$device.isMobileOrTablet" :is-logged-in="!!useSessionData().value" />
 
     <!-- Desktop -->
-    <HeaderDesktop v-else />
+    <HeaderDesktop v-else :is-logged-in="!!useSessionData().value" />
 
     <!-- Divider -->
     <UDivider type="dashed" />

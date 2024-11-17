@@ -66,7 +66,7 @@ const year = new Date().getFullYear();
 
             <template #item="{ item }">
               <span
-                class="w-full truncate pl-1 pr-2 text-left"
+                class="w-full truncate px-2 text-center"
                 :class="[useStyles().textColorSecondary, useStyles().textSizeSM]"
                 >{{ item.label }}</span
               >
@@ -93,7 +93,7 @@ const year = new Date().getFullYear();
 
             <template #item="{ item }">
               <span
-                class="w-full truncate pl-2 pr-1 text-right"
+                class="w-full truncate px-2 text-center"
                 :class="[useStyles().textColorSecondary, useStyles().textSizeSM]"
                 >{{ item.label }}</span
               >

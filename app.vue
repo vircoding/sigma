@@ -15,6 +15,23 @@ onMounted(async () => {
 
   await initAuth();
   initLoading.value = false;
+
+  addRouteMiddleware('no-auth', async () => {
+    const sessionData = useSessionData();
+    if (sessionData.value) return navigateTo({ name: 'index' });
+  });
+
+  addRouteMiddleware('auth', async () => {
+    const sessionData = useSessionData();
+    if (!sessionData.value) return navigateTo({ name: 'auth-login' });
+  });
+
+  addRouteMiddleware('agent-auth', async () => {
+    const sessionData = useSessionData();
+    const userData = useUserData();
+    if (!sessionData.value || userData.value?.type !== 'agent')
+      return await navigateTo({ name: 'index' });
+  });
 });
 </script>
 

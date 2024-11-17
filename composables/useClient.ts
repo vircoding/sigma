@@ -1,5 +1,6 @@
 async function initAuth() {
-  const authRoutes: string[] = [];
+  const agentAuthRoutes: string[] = ['update-agent'];
+  const authRoutes: string[] = ['insert'];
   const noAuthRoutes: string[] = [
     'auth-register',
     'auth-register-client',
@@ -10,12 +11,16 @@ async function initAuth() {
   const currentPath = useRoute().name?.toString();
   if (!currentPath) return showError(createError({ status: 500 }));
 
+  const sessionData = useSessionData();
+
   if (noAuthRoutes.includes(currentPath)) {
-    const sessionData = useSessionData();
-    if (sessionData.value) return await navigateTo('/');
+    if (sessionData.value) return await navigateTo({ name: 'index' });
   } else if (authRoutes.includes(currentPath)) {
-    const sessionData = useSessionData();
-    if (!sessionData.value) return await navigateTo('/');
+    if (!sessionData.value) return await navigateTo({ name: 'auth-login' });
+  } else if (agentAuthRoutes.includes(currentPath)) {
+    const userData = useUserData();
+    if (!sessionData.value || userData.value?.type !== 'agent')
+      return await navigateTo({ name: 'index' });
   }
 }
 

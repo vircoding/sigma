@@ -1,10 +1,11 @@
 import fs from 'fs';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import type {
   ClientRegisterData,
   AgentRegisterData,
   UserLoginData,
+  AgentUpdateData,
 } from '~/server/models/ValSchema';
 
 import {
@@ -339,4 +340,80 @@ export function logoutUser(id: string, code: string) {
     // Delete the session
     await tx.session.delete({ where: { id } });
   });
+}
+
+export async function updateAgent(
+  id: string,
+  agentData: AgentUpdateData,
+  avatarData: AvatarData | undefined = undefined,
+) {
+  const user = await prisma.user
+    .update({
+      where: { id, verified: true, type: 'agent' },
+      data: {
+        agent: {
+          update: {
+            firstname: agentData.firstname,
+            lastname: agentData.lastname,
+            bio:
+              agentData.bio !== undefined
+                ? agentData.bio.length > 0
+                  ? agentData.bio
+                  : { unset: true }
+                : undefined,
+            phone: agentData.phone,
+            avatar: {
+              update: {
+                path: avatarData?.path,
+                url: avatarData?.url,
+              },
+            },
+          },
+        },
+      },
+      include: {
+        client: true,
+        agent: {
+          include: {
+            avatar: true,
+          },
+        },
+      },
+    })
+    .catch((error) => {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')
+        throw new NotFoundError('User not found');
+
+      throw error;
+    });
+
+  return { user, avatarWasUpdated: !!avatarData };
+
+  // Update Agent
+  // const user = await prisma.user
+  //   .update({
+  //     where: { id, verified: true, type: 'agent' },
+  //     data: {
+  //       agent: {
+  //         update: {
+  //           firstname: agentData.firstname,
+  //           lastname: agentData.lastname,
+  //           bio: agentData.bio ? agentData.bio : { unset: true },
+  //         },
+  //       },
+  //     },
+  //     include: {
+  //       agent: true,
+  //       client: true,
+  //     },
+  //   })
+  //   .catch((error) => {
+  //     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+  //       if (error.code === 'P2025') throw new NotFoundError('User not found');
+  //     }
+
+  //     throw error;
+  //   });
+
+  // return user;
 }

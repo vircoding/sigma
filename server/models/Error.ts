@@ -60,3 +60,10 @@ export class RefreshTokenError extends Error {
     this.name = 'Refresh Token Error';
   }
 }
+
+export class NotAgentError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Not Agent Error';
+  }
+}

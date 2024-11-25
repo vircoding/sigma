@@ -5,6 +5,9 @@ const props = defineProps<{
   isLoggedIn: boolean;
 }>();
 
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+
 const modals = useModal();
 const { logout } = useAuth();
 
@@ -88,17 +91,15 @@ const clientAccountItems = [
 ];
 
 const getAccountLink = computed(() => {
-  const user = useUserData().value;
-
-  if (props.isLoggedIn && user) {
-    if (user.type === 'client') return clientAccountItems;
-    else if (user.type === 'agent')
+  if (props.isLoggedIn && user.value) {
+    if (user.value.type === 'client') return clientAccountItems;
+    else if (user.value.type === 'agent')
       return [
         [
           {
-            label: user.firstname,
+            label: user.value.firstname,
             avatar: {
-              src: user.avatar,
+              src: user.value.avatar,
             },
             to: { name: 'update-agent' },
           },
@@ -285,9 +286,7 @@ async function handleLogout() {
             <template #item="{ item }">
               <div
                 class="group/item flex w-full flex-row-reverse items-center justify-between gap-x-3 px-1"
-                :class="[
-                  useUserData().value?.type === 'agent' && !item.avatar ? 'pr-[11px]' : undefined,
-                ]"
+                :class="[user?.type === 'agent' && !item.avatar ? 'pr-[11px]' : undefined]"
               >
                 <UAvatar v-if="item.avatar" :src="item.avatar.src" :alt="item.label" size="md" />
 

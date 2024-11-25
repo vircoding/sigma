@@ -542,7 +542,7 @@ onUnmounted(() => {
                 (blobError && errorVisibility.avatar && 'No válido') ||
                 (errors.avatar.error && errorVisibility.avatar && errors.avatar.message)
               "
-              class="mb-4 w-min lg:mb-0"
+              class="w-min lg:mb-0"
             >
               <template #label="{ label }">
                 <span class="invisible">{{ label }}</span>
@@ -635,7 +635,7 @@ onUnmounted(() => {
           </div>
 
           <!-- Whatsapp -->
-          <div class="mb-4 flex justify-between gap-2">
+          <div class="mb-4 flex justify-between gap-x-3">
             <!-- Code -->
             <UFormGroup
               size="md"
@@ -700,6 +700,18 @@ onUnmounted(() => {
                     </div>
                     <span class="truncate">{{ option.esName }}</span>
                   </template>
+
+                  <template #option-empty="{ query }">
+                    <span :class="[useStyles().textColorSecondary, useStyles().textSizeXS]"
+                      >Sin resultados: <q>{{ query }}</q></span
+                    >
+                  </template>
+
+                  <template #empty
+                    ><span :class="[useStyles().textColorSecondary, useStyles().textSizeXS]"
+                      >Cargando...</span
+                    ></template
+                  >
                 </USelectMenu>
               </template>
 
@@ -769,6 +781,7 @@ onUnmounted(() => {
             <template #default="{ error }">
               <UTextarea
                 v-model.trim="state.bio"
+                placeholder="Sin Descripción"
                 size="md"
                 :rows="9"
                 type="text"

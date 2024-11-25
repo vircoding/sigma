@@ -15,9 +15,8 @@ const slideoverConfig = {
   width: 'w-max min-w-[55%] max-w-max sm:min-w-[45%] md:min-w-[40%]',
 };
 
-const userData = computed(() => {
-  return useUserData().value;
-});
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const linkIconStyles = `relative top-px h-[22px] w-[22px] md:h-[26px] md:w-[26px] ${useStyles().textColorPrimary}`;
 const linkTitleStyles = `font-semibold ${useStyles().textSizeLG} ${useStyles().textColorPrimary}`;
@@ -214,14 +213,14 @@ async function handleLogout() {
       <div class="flex flex-col items-center justify-center gap-y-2 p-2">
         <!-- Top -->
         <NuxtLink
-          v-if="userData?.type === 'agent'"
+          v-if="user?.type === 'agent'"
           :to="{ name: 'update-agent' }"
           class="flex w-full items-center justify-between gap-x-5 rounded-lg bg-gray-100 px-[8%] py-1 text-base min-[354px]:text-lg dark:bg-gray-800"
           @click="isAccountModalOpen = false"
         >
           <div class="flex grow flex-col overflow-hidden">
             <span class="truncate font-semibold" :class="[useStyles().textColorPrimary]">{{
-              userData.firstname
+              user.firstname
             }}</span>
             <div class="flex w-min items-center gap-x-1">
               <UIcon
@@ -237,7 +236,7 @@ async function handleLogout() {
             </div>
           </div>
 
-          <UAvatar :src="userData.avatar" :alt="userData.firstname" size="md" />
+          <UAvatar :src="user.avatar" :alt="user.firstname" size="md" />
         </NuxtLink>
 
         <!-- Bottom -->
@@ -248,7 +247,7 @@ async function handleLogout() {
           <div class="flex items-center gap-x-2">
             <!-- Client Post -->
             <li
-              v-if="userData?.type === 'client'"
+              v-if="user?.type === 'client'"
               class="flex w-[40%] items-center gap-x-1.5 rounded-lg bg-gray-100 px-2 py-1 dark:bg-gray-800"
             >
               <UIcon
@@ -261,7 +260,7 @@ async function handleLogout() {
 
             <!-- Agent Posts -->
             <li
-              v-else-if="userData?.type === 'agent'"
+              v-else-if="user?.type === 'agent'"
               class="flex w-[40%] items-center gap-x-1.5 rounded-lg bg-gray-100 px-2 py-1 dark:bg-gray-800"
             >
               <UIcon
@@ -274,7 +273,7 @@ async function handleLogout() {
 
             <!-- Become an Agent -->
             <li
-              v-if="userData?.type === 'client'"
+              v-if="user?.type === 'client'"
               class="flex w-[60%] items-center gap-x-1 rounded-lg bg-gray-100 px-2 py-1 dark:bg-gray-800"
             >
               <UIcon
@@ -287,7 +286,7 @@ async function handleLogout() {
 
             <!-- Become a Client -->
             <li
-              v-else-if="userData?.type === 'agent'"
+              v-else-if="user?.type === 'agent'"
               class="flex w-[60%] items-center gap-x-1 rounded-lg bg-gray-100 px-2 py-1 dark:bg-gray-800"
             >
               <UIcon

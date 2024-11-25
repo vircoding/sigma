@@ -12,7 +12,7 @@ export default function useUIConfigs() {
     },
     cancelButtonConfig: {
       variant: {
-        solid: `${useDevice().isMobile ? 'active:bg-azure-200 dark:active:bg-gray-700/50' : ''} ${useDevice().isDesktop ? 'hover:bg-azure-200 dark:hover:bg-gray-700/50' : 'hover:bg-azure-100 dark:hover:bg-gray-800'} bg-azure-100 dark:bg-gray-800 text-azure-400 dark:text-gray-300 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azure-500 dark:focus-visible:outline-azure-400`,
+        solid: `${useDevice().isMobile ? 'active:bg-azure-200 dark:active:bg-gray-700/60' : ''} ${useDevice().isDesktop ? 'hover:bg-azure-200 dark:hover:bg-gray-700/60' : 'hover:bg-azure-100 dark:hover:bg-gray-800'} bg-azure-100 dark:bg-gray-800 text-azure-400 dark:text-gray-300 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azure-500 dark:focus-visible:outline-azure-400`,
       },
     },
     countrySelectConfig: { wrapper: 'w-28' },

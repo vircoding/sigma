@@ -2,7 +2,7 @@ import fs from 'fs';
 import formidable from 'formidable';
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { BadRequestError, BodyError, NotAgentError, NotFoundError } from '~/server/models/Error';
+import { BadRequestError, NotAgentError, NotFoundError } from '~/server/models/Error';
 import { updateSchema } from '~/server/models/ValSchema';
 
 export default defineEventHandler(async (event) => {
@@ -82,12 +82,12 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Body Error
-    if (error instanceof BodyError) {
+    // Bad Request Error handler
+    if (error instanceof BadRequestError) {
       throw createError({
         status: 400,
         statusMessage: 'Bad Request',
-        message: 'Invalid JSON body',
+        message: error.message,
       });
     }
 

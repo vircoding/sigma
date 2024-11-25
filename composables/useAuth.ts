@@ -11,7 +11,6 @@ import {
   RefreshTokenExpiredError,
   InvalidRefreshTokenError,
   AccessTokenExpiredError,
-  InvalidAccessTokenError,
 } from '~/models/Error';
 
 async function registerClient(body: RegisterClientSchema) {
@@ -90,10 +89,13 @@ async function resendVerificationEmail(email: string) {
 }
 
 async function login(body: { email: string; password: string }) {
+  const userStore = useUserStore();
+
   try {
     const data = await $fetch('/api/auth/login', { method: 'POST', body });
-    useSessionData().value = { accessToken: data.access_token };
-    useUserData().value = data.user;
+    const accessToken = useCookie('access_token');
+    accessToken.value = data.access_token;
+    userStore.setUser(data.user);
   } catch (error) {
     if (error instanceof FetchError) {
       if (error.statusCode === 401 && error.data.message === 'Bad credentials')
@@ -111,7 +113,7 @@ async function login(body: { email: string; password: string }) {
 async function refresh() {
   try {
     const data = await $fetch('/api/auth/refresh', { method: 'POST' });
-    useSessionData().value = { accessToken: data.access_token };
+    useCookie('access_token').value = data.access_token;
   } catch (error) {
     if (error instanceof FetchError) {
       if (error.statusCode === 401 && error.data.message === 'The refresh token has expired')
@@ -124,48 +126,67 @@ async function refresh() {
   }
 }
 
-async function getUser() {
+async function logout() {
+  const userStore = useUserStore();
+
   try {
-    const accessToken = useSessionData().value?.accessToken;
-    if (!accessToken) throw new FatalError();
-
-    const data = await $fetch('/api/auth', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    useUserData().value = data.user;
+    await $fetch('/api/auth/logout', { method: 'POST' });
+    useCookie('access_token').value = null;
+    userStore.$reset();
   } catch (error) {
     if (error instanceof FetchError) {
-      if (error.status === 400 && error.data.message === 'Invalid or missing access token') {
-        throw new InvalidAccessTokenError(error.message);
+      if (error.statusCode === 401 && error.data.message === 'The refresh token has expired') {
+        useCookie('access_token').value = null;
+        userStore.$reset();
+
+        throw new RefreshTokenExpiredError(error.message);
       }
-      if (error.statusCode === 401 && error.data.message === 'The access token has expired')
-        throw new AccessTokenExpiredError(error.message);
-      if (error.status === 404 && error.data.message === 'User not found')
-        throw new AccessTokenExpiredError(error.message);
+      if (error.status === 400 && error.data.message === 'Invalid or missing refresh token') {
+        useCookie('access_token').value = null;
+        userStore.$reset();
+
+        throw new InvalidRefreshTokenError(error.message);
+      }
     }
     throw new FatalError();
   }
 }
 
-async function logout() {
+async function updateAgent(body: {
+  firstname?: string;
+  lastname?: string;
+  phone?: string;
+  bio?: string;
+  avatar?: Blob;
+}) {
+  const userStore = useUserStore();
+
   try {
-    await $fetch('/api/auth/logout', { method: 'POST' });
-    clearSessionData();
-    clearUserData();
+    const formData = new FormData();
+    formData.append('input', JSON.stringify({ type: 'agent', ...body }));
+    if (body.avatar) formData.append('avatar', body.avatar);
+
+    const data = await $fetch('/api/auth', {
+      method: 'PATCH',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${useCookie('access_token').value}`,
+      },
+    });
+
+    userStore.setUser(data.user);
   } catch (error) {
     if (error instanceof FetchError) {
-      if (error.statusCode === 401 && error.data.message === 'The refresh token has expired') {
-        clearSessionData();
-        clearUserData();
-        throw new RefreshTokenExpiredError(error.message);
+      if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
+        throw new AccessTokenExpiredError(error.message);
       }
-      if (error.status === 400 && error.data.message === 'Invalid or missing refresh token') {
-        clearSessionData();
-        clearUserData();
-        throw new InvalidRefreshTokenError(error.message);
+      if (error.status === 400) {
+        if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
+          throw new FormFieldError(error.message, error.data.data);
+        if (error.data.message === 'File exceeds the maximum allowed size of 5MB')
+          throw new MaxSizeError(error.message);
+        if (error.data.message === 'Invalid or missing access token') throw new FatalError();
+        throw new BadRequestError(error.message);
       }
     }
     throw new FatalError();
@@ -179,7 +200,7 @@ export default function () {
     resendVerificationEmail,
     login,
     refresh,
-    getUser,
     logout,
+    updateAgent,
   };
 }

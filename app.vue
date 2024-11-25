@@ -1,37 +1,30 @@
 <script setup lang="ts">
-import { FatalError } from '~/models/Error';
+// const userStore = useUserStore();
 
 const initLoading = ref(true);
-const { refresh, getUser } = useAuth();
-const { initAuth } = useClient();
+
+// async function initUser() {
+//   const accessToken = useCookie('access_token');
+
+//   if (accessToken.value) {
+//     await $fetch('/api/auth', {
+//       headers: {
+//         Authorization: `Bearer ${useCookie('access_token').value}`,
+//       },
+//     })
+//       .then((data) => {
+//         userStore.setUser(data.user);
+//       })
+//       .catch(() => {
+//         showError(createError({ status: 500 }));
+//       });
+//   }
+// }
+
+// initUser();
 
 onMounted(async () => {
-  try {
-    await refresh();
-    await getUser();
-  } catch (error) {
-    if (error instanceof FatalError) showError(createError({ status: 500 }));
-  }
-
-  await initAuth();
   initLoading.value = false;
-
-  addRouteMiddleware('no-auth', async () => {
-    const sessionData = useSessionData();
-    if (sessionData.value) return navigateTo({ name: 'index' });
-  });
-
-  addRouteMiddleware('auth', async () => {
-    const sessionData = useSessionData();
-    if (!sessionData.value) return navigateTo({ name: 'auth-login' });
-  });
-
-  addRouteMiddleware('agent-auth', async () => {
-    const sessionData = useSessionData();
-    const userData = useUserData();
-    if (!sessionData.value || userData.value?.type !== 'agent')
-      return await navigateTo({ name: 'index' });
-  });
 });
 </script>
 
@@ -51,6 +44,7 @@ onMounted(async () => {
 </template>
 
 <style>
+/* Scrollbar Styles */
 html ::-webkit-scrollbar {
   position: absolute;
   width: 8px;
@@ -69,6 +63,7 @@ html ::-webkit-scrollbar-thumb:hover {
   background: #a3a3a3;
 }
 
+/* Scrollbar Dark Styles */
 html.dark ::-webkit-scrollbar-track {
   background: #262626;
 }

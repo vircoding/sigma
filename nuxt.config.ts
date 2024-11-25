@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/fonts', '@nuxtjs/device'],
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/fonts', '@nuxtjs/device', '@pinia/nuxt'],
   runtimeConfig: {
     jwtVerificationSecret: process.env.JWT_VERIFICATION_SECRET,
     jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,

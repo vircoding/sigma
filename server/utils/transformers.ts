@@ -39,7 +39,7 @@ export function userTransformer(u: UserInput): UserData {
       lastname: u.agent.lastname,
       avatar: u.agent.avatar.url,
       phone: u.agent.phone,
-      bio: u.agent.bio || 'Sin descripción',
+      bio: u.agent.bio || '',
     };
   } else throw new UnexpectedError();
 }

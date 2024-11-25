@@ -18,3 +18,12 @@ export function sendVerificationEmail(email: string, content: string) {
     html: content,
   });
 }
+
+export function sendPasswordEmail(email: string, content: string) {
+  return transporter.sendMail({
+    from: `Sigma <${useRuntimeConfig().nodemailerUser}>`,
+    to: email,
+    subject: 'Password reset',
+    html: content,
+  });
+}

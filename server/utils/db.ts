@@ -15,6 +15,7 @@ import {
   NotFoundError,
   CredentialsError,
   RefreshTokenError,
+  PasswordCodeError,
 } from '../models/Error';
 import { UAParser } from 'ua-parser-js';
 
@@ -388,32 +389,107 @@ export async function updateAgent(
     });
 
   return { user, avatarWasUpdated: !!avatarData };
+}
 
-  // Update Agent
-  // const user = await prisma.user
-  //   .update({
-  //     where: { id, verified: true, type: 'agent' },
-  //     data: {
-  //       agent: {
-  //         update: {
-  //           firstname: agentData.firstname,
-  //           lastname: agentData.lastname,
-  //           bio: agentData.bio ? agentData.bio : { unset: true },
-  //         },
-  //       },
-  //     },
-  //     include: {
-  //       agent: true,
-  //       client: true,
-  //     },
-  //   })
-  //   .catch((error) => {
-  //     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-  //       if (error.code === 'P2025') throw new NotFoundError('User not found');
-  //     }
+export function upsertPasswordCode(email: string) {
+  return prisma.$transaction(async (tx) => {
+    // Find the verified user by email
+    const user = await tx.user.findUnique({
+      where: { email, verified: true },
+    });
 
-  //     throw error;
-  //   });
+    if (!user) throw new NotFoundError('User not found');
 
-  // return user;
+    // Create or update the password code by user id
+    const code = (Math.floor(Math.random() * 900000) + 100000).toString();
+
+    const passwordCode = await tx.passwordCode.upsert({
+      where: { userId: user.id },
+      update: { code },
+      create: { code, userId: user.id },
+    });
+
+    return { user, passwordCode };
+  });
+}
+
+export function deletePasswordCode(id: string, timeout: number) {
+  return new Promise<true>((resolve) => {
+    setTimeout(async () => {
+      await prisma.passwordCode
+        .delete({
+          where: { id },
+        })
+        .then(() => resolve(true))
+        .catch((error) => console.error(error));
+    }, timeout);
+  });
+}
+
+export function validatePasswordCode(passwordCodeData: { email: string; code: string }) {
+  return prisma.$transaction(async (tx) => {
+    // Find the verified user by email
+    const user = await tx.user.findUnique({
+      where: { email: passwordCodeData.email, verified: true },
+    });
+
+    if (!user) throw new PasswordCodeError('User not founded');
+
+    // Find the password code by user id
+    const passwordCode = await tx.passwordCode.findUnique({
+      where: { userId: user.id },
+    });
+
+    if (!passwordCode) throw new PasswordCodeError('Password code not founded');
+
+    // Validate the password codes
+    if (passwordCode.code !== passwordCodeData.code) throw new PasswordCodeError('Wrong code');
+
+    // Set password pending and delete password code
+    const newUser = tx.user.update({
+      where: { id: user.id },
+      data: {
+        passwordPending: true,
+        passwordCode: { delete: true },
+      },
+    });
+
+    return newUser;
+  });
+}
+
+export function unsetPendingPassword(id: string, timeout: number) {
+  return new Promise<true>((resolve) => {
+    setTimeout(async () => {
+      await prisma.user
+        .update({
+          where: { id },
+          data: {
+            passwordPending: { unset: true },
+          },
+        })
+        .then(() => resolve(true))
+        .catch((error) => console.error(error));
+    }, timeout);
+  });
+}
+
+export async function updatePassword(email: string, password: string) {
+  const hash = bcrypt.hashSync(password, 10);
+
+  await prisma.user
+    .update({
+      where: { email, verified: true, passwordPending: true },
+      data: {
+        password: hash,
+        passwordPending: { unset: true },
+      },
+    })
+    .catch((error) => {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') throw new NotFoundError('User not found');
+      }
+
+      throw error;
+    });
 }

@@ -67,3 +67,10 @@ export class NotAgentError extends Error {
     this.name = 'Not Agent Error';
   }
 }
+
+export class PasswordCodeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Password Code Error';
+  }
+}

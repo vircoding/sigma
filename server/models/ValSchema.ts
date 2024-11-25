@@ -131,3 +131,23 @@ export const updateSchema = z.object({
     )
     .optional(),
 });
+
+export const requestPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+export const passwordCodeSchema = z.object({
+  email: z.string().email(),
+  code: z.string().length(6),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(6).max(20),
+    repassword: z.string(),
+  })
+  .refine((data) => data.password === data.repassword, {
+    message: 'Passwords do not match',
+    path: ['repassword'],
+  });

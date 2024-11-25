@@ -27,3 +27,9 @@ export async function getVerificationFailed() {
   const template = handlebars.compile(file.toString());
   return template({});
 }
+
+export async function getPasswordEmail(passwordCode: string) {
+  const file = fs.readFileSync(join(DIR, 'passwordEmail.hbs'));
+  const template = handlebars.compile(file.toString());
+  return template({ passwordCode });
+}

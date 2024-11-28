@@ -148,7 +148,8 @@ onUnmounted(() => {
                     >aquí</span
                   ></NuxtLink
                 >. En cambio, si no recibes el correo de verificación y estás seguro de haber
-                proporcionado la dirección correcta, ponte en contacto con
+                proporcionado la dirección correcta; revisa tu bandeja de spam, o ponte en contacto
+                con
                 <a href="mailto:sigmacuba2023@gmail.com"
                   ><span class="font-bold underline" :class="[useStyles().textColorPrimary]"
                     >nuestro soporte</span

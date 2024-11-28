@@ -599,13 +599,12 @@ onMounted(() => {
               :ui="useUIConfigs().cancelButtonConfig"
               class="font-bold"
               @click="setData"
-              >Restablecer</UButton
-            >
+            />
 
             <!-- Submit -->
             <UButton
               type="submit"
-              label="Actualizar"
+              label="Guardar"
               variant="solid"
               size="md"
               block

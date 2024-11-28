@@ -141,7 +141,7 @@ function loadAvatar(event: Event) {
       :class="[
         props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
       ]"
-      @click.stop="isHelpOpen = true"
+      @click.stop="(isHelpOpen = true)"
     >
       <UPopover v-model="isHelpOpen" overlay :popper="{ offsetDistance: 18 }" class="flex">
         <UIcon

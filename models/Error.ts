@@ -82,3 +82,10 @@ export class InvalidAccessTokenError extends Error {
     this.name = 'Invalid Access Token Error';
   }
 }
+
+export class ResetPasswordError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Reset Password Error';
+  }
+}

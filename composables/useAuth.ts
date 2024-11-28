@@ -11,6 +11,7 @@ import {
   RefreshTokenExpiredError,
   InvalidRefreshTokenError,
   AccessTokenExpiredError,
+  ResetPasswordError,
 } from '~/models/Error';
 
 async function registerClient(body: RegisterClientSchema) {
@@ -193,6 +194,70 @@ async function updateAgent(body: {
   }
 }
 
+async function postResetPassword(body: { email: string }) {
+  try {
+    await $fetch('/api/auth/password', {
+      method: 'POST',
+      body,
+    });
+  } catch (error) {
+    if (error instanceof FetchError) {
+      if (error.status === 400) {
+        if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
+          throw new FormFieldError(error.message, error.data.data);
+        throw new BadRequestError(error.message);
+      }
+    }
+    throw new FatalError();
+  }
+}
+
+async function putResetPassword(body: { email: string; code: string }) {
+  try {
+    await $fetch('/api/auth/password', {
+      method: 'PUT',
+      body,
+    });
+  } catch (error) {
+    if (error instanceof FetchError) {
+      if (error.statusCode === 401 && error.data.message === 'Code validation fails')
+        throw new ResetPasswordError(error.message);
+      if (error.status === 400) {
+        if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
+          throw new FormFieldError(error.message, error.data.data);
+        throw new BadRequestError(error.message);
+      }
+    }
+    throw new FatalError();
+  }
+}
+
+async function patchResetPassword(body: { email: string; password: string; repassword: string }) {
+  const userStore = useUserStore();
+
+  try {
+    const data = await $fetch('/api/auth/password', {
+      method: 'PATCH',
+      body,
+    });
+
+    const accessToken = useCookie('access_token');
+    accessToken.value = data.access_token;
+    userStore.setUser(data.user);
+  } catch (error) {
+    if (error instanceof FetchError) {
+      if (error.statusCode === 401 && error.data.message === 'Unable to reset the password')
+        throw new ResetPasswordError(error.message);
+      if (error.status === 400) {
+        if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
+          throw new FormFieldError(error.message, error.data.data);
+        throw new BadRequestError(error.message);
+      }
+    }
+    throw new FatalError();
+  }
+}
+
 export default function () {
   return {
     registerClient,
@@ -202,5 +267,8 @@ export default function () {
     refresh,
     logout,
     updateAgent,
+    postResetPassword,
+    putResetPassword,
+    patchResetPassword,
   };
 }

@@ -23,6 +23,11 @@ enum Currency {
   CUP
 }
 
+enum Frequency {
+  daily
+  monthly
+}
+
 model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -120,11 +125,11 @@ model Post {
   rent     Rent?
   exchange Exchange?
 
-  description String
+  description String?
   whatsapp    Boolean
   phone       String
-  visits      Int
-  images      String[]
+  visits      Int @default(0)
+  images      Image[]
   properties  Property[]
 
   createdAt DateTime @default(now())
@@ -132,6 +137,16 @@ model Post {
 
   userId String @db.ObjectId
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Image {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  path String
+  url String
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String @db.ObjectId
 }
 
 model Sale {
@@ -148,7 +163,7 @@ model Rent {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   amount    Int
-  frequency String
+  frequency Frequency
   currency  Currency
 
   postId String @unique @db.ObjectId
@@ -171,8 +186,8 @@ type Address {
 }
 
 type Features {
-  bedRoom   Int
-  bathRoom  Int
+  bed   Int
+  bath  Int
   garage    Boolean
   garden    Boolean
   pool      Boolean

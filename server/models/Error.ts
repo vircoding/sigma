@@ -74,3 +74,10 @@ export class PasswordCodeError extends Error {
     this.name = 'Password Code Error';
   }
 }
+
+export class MaxPostLengthError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Max Post Length Error';
+  }
+}

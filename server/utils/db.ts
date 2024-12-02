@@ -6,6 +6,9 @@ import type {
   AgentRegisterData,
   UserLoginData,
   AgentUpdateData,
+  SaleInsertData,
+  RentInsertData,
+  ExchangeInsertData,
 } from '~/server/models/ValSchema';
 
 import {
@@ -16,6 +19,7 @@ import {
   CredentialsError,
   RefreshTokenError,
   PasswordCodeError,
+  MaxPostLengthError,
 } from '../models/Error';
 import { UAParser } from 'ua-parser-js';
 
@@ -23,6 +27,11 @@ type AvatarData = {
   path: string;
   url: string;
 };
+
+type ImagesData = {
+  path: string;
+  url: string;
+}[];
 
 const prisma = new PrismaClient();
 
@@ -492,4 +501,214 @@ export async function updatePassword(email: string, password: string) {
 
       throw error;
     });
+}
+
+export function insertSale(saleData: SaleInsertData, userId: string, images: ImagesData) {
+  return prisma.$transaction(async (tx) => {
+    const founded = await tx.user.findUnique({
+      where: { id: userId, verified: true },
+      include: {
+        posts: true,
+      },
+    });
+
+    if (!founded) throw new NotFoundError('User not found');
+
+    if (founded.type === 'client') {
+      if (founded.posts.length > 1) throw new MaxPostLengthError('Clients are limited to one post');
+    } else {
+      if (founded.posts.length > 35)
+        throw new MaxPostLengthError('Agents are limited to a maximum if 35 posts');
+    }
+
+    const post = await tx.post.create({
+      data: {
+        type: 'sale',
+        description: saleData.description,
+        userId: founded.id,
+        whatsapp: saleData.whatsapp,
+        phone: saleData.phone,
+        sale: {
+          create: {
+            amount: saleData.amount,
+            currency: saleData.currency,
+          },
+        },
+        properties: {
+          create: [
+            {
+              address: {
+                province: saleData.properties[0].address.province,
+                municipality: saleData.properties[0].address.municipality,
+              },
+              features: {
+                bed: saleData.properties[0].features.bed,
+                bath: saleData.properties[0].features.bath,
+                garage: saleData.properties[0].features.garage,
+                garden: saleData.properties[0].features.garden,
+                pool: saleData.properties[0].features.pool,
+                furnished: saleData.properties[0].features.furnished,
+              },
+            },
+          ],
+        },
+        images: {
+          create: images.map((item) => ({
+            path: item.path,
+            url: item.url,
+          })),
+        },
+      },
+      include: {
+        sale: true,
+        rent: true,
+        exchange: true,
+        properties: true,
+        images: true,
+      },
+    });
+
+    return post;
+  });
+}
+
+export function insertRent(rentData: RentInsertData, userId: string, images: ImagesData) {
+  return prisma.$transaction(async (tx) => {
+    const founded = await tx.user.findUnique({
+      where: { id: userId, verified: true },
+      include: {
+        posts: true,
+      },
+    });
+
+    if (!founded) throw new NotFoundError('User not found');
+
+    if (founded.type === 'client') {
+      if (founded.posts.length > 1) throw new MaxPostLengthError('Clients are limited to one post');
+    } else {
+      if (founded.posts.length > 35)
+        throw new MaxPostLengthError('Agents are limited to a maximum if 35 posts');
+    }
+
+    const post = await tx.post.create({
+      data: {
+        type: 'rent',
+        description: rentData.description,
+        userId: founded.id,
+        whatsapp: rentData.whatsapp,
+        phone: rentData.phone,
+        rent: {
+          create: {
+            amount: rentData.amount,
+            currency: rentData.currency,
+            frequency: rentData.frequency,
+          },
+        },
+        properties: {
+          create: [
+            {
+              address: {
+                province: rentData.properties[0].address.province,
+                municipality: rentData.properties[0].address.municipality,
+              },
+              features: {
+                bed: rentData.properties[0].features.bed,
+                bath: rentData.properties[0].features.bath,
+                garage: rentData.properties[0].features.garage,
+                garden: rentData.properties[0].features.garden,
+                pool: rentData.properties[0].features.pool,
+                furnished: rentData.properties[0].features.furnished,
+              },
+            },
+          ],
+        },
+        images: {
+          create: images.map((item) => ({
+            path: item.path,
+            url: item.url,
+          })),
+        },
+      },
+      include: {
+        sale: true,
+        rent: true,
+        exchange: true,
+        properties: true,
+        images: true,
+      },
+    });
+
+    return post;
+  });
+}
+
+export function insertExchange(
+  exchangeData: ExchangeInsertData,
+  userId: string,
+  images: ImagesData,
+) {
+  return prisma.$transaction(async (tx) => {
+    const founded = await tx.user.findUnique({
+      where: { id: userId, verified: true },
+      include: {
+        posts: true,
+      },
+    });
+
+    if (!founded) throw new NotFoundError('User not found');
+
+    if (founded.type === 'client') {
+      if (founded.posts.length > 1) throw new MaxPostLengthError('Clients are limited to one post');
+    } else {
+      if (founded.posts.length > 35)
+        throw new MaxPostLengthError('Agents are limited to a maximum if 35 posts');
+    }
+
+    const post = await tx.post.create({
+      data: {
+        type: 'exchange',
+        description: exchangeData.description,
+        userId: founded.id,
+        whatsapp: exchangeData.whatsapp,
+        phone: exchangeData.phone,
+        exchange: {
+          create: {
+            needs: exchangeData.needs,
+            offers: exchangeData.offers,
+          },
+        },
+        properties: {
+          create: exchangeData.properties.map((item) => ({
+            address: {
+              province: item.address.province,
+              municipality: item.address.municipality,
+            },
+            features: {
+              bed: item.features.bed,
+              bath: item.features.bath,
+              garage: item.features.garage,
+              garden: item.features.garden,
+              pool: item.features.pool,
+              furnished: item.features.furnished,
+            },
+          })),
+        },
+        images: {
+          create: images.map((item) => ({
+            path: item.path,
+            url: item.url,
+          })),
+        },
+      },
+      include: {
+        sale: true,
+        rent: true,
+        exchange: true,
+        properties: true,
+        images: true,
+      },
+    });
+
+    return post;
+  });
 }

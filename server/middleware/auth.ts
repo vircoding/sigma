@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
   const endpoints = [
     { path: '/api/auth', method: 'GET' },
     { path: '/api/auth', method: 'PATCH' },
+    { path: '/api/posts', method: 'POST' },
   ];
 
   if (middlewareMatched(endpoints, event.path, event.method)) {

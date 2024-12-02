@@ -1,5 +1,6 @@
 # Uploads
 public/uploads/avatars/*
+public/uploads/images/*
 
 # Nuxt dev/build outputs
 .output

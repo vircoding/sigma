@@ -33,3 +33,14 @@ export function parseAvatar(avatar: File) {
 
   return { path, url };
 }
+
+export function parseImage(image: File) {
+  const path = join(process.cwd(), 'public/uploads/images', `${image.newFilename}.jpeg`);
+  const url = `${useRuntimeConfig().origin}/uploads/images/${image.newFilename}.jpeg`;
+
+  fs.rename(image.filepath, path, (error) => {
+    if (error) throw new UnexpectedError();
+  });
+
+  return { path, url };
+}

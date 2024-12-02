@@ -6,6 +6,9 @@ export type ClientRegisterData = z.infer<typeof registerClientSchema>;
 export type AgentRegisterData = z.infer<typeof registerAgentSchema>;
 export type UserLoginData = z.infer<typeof loginSchema>;
 export type AgentUpdateData = z.infer<typeof updateSchema>;
+export type SaleInsertData = z.infer<typeof insertSaleSchema>;
+export type RentInsertData = z.infer<typeof insertRentSchema>;
+export type ExchangeInsertData = z.infer<typeof insertExchangeSchema>;
 
 export const userTypeSchema = z.object({
   type: z.enum(['client', 'agent']),
@@ -150,4 +153,192 @@ export const resetPasswordSchema = z
   .refine((data) => data.password === data.repassword, {
     message: 'Passwords do not match',
     path: ['repassword'],
+  });
+
+export const postTypeSchema = z.object({
+  type: z.enum(['sale', 'rent', 'exchange']),
+});
+
+export const insertSaleSchema = z.object({
+  type: z.literal('sale'),
+  amount: z.number().int().gte(1).lte(999999999),
+  currency: z.enum(['USD', 'CUP']),
+  properties: z
+    .object({
+      address: z
+        .object({
+          province: z.enum([
+            'Pinar del Río',
+            'Artemisa',
+            'La Habana',
+            'Mayabeque',
+            'Matanzas',
+            'Villa Clara',
+            'Cienfuegos',
+            'Sancti Spíritus',
+            'Ciego de Ávila',
+            'Camagüey',
+            'Las Tunas',
+            'Holguín',
+            'Granma',
+            'Santiago de Cuba',
+            'Guantánamo',
+            'Isla de la Juventud',
+          ]),
+          municipality: z.string().trim(),
+        })
+        .refine((data) => getMunicipalities()[data.province].includes(data.municipality), {
+          message: 'Must be a valid municipality',
+          path: ['municipality'],
+        }),
+      features: z.object({
+        bed: z.number().int().gte(0).lte(9),
+        bath: z.number().int().gte(0).lte(9),
+        garage: z.boolean(),
+        garden: z.boolean(),
+        pool: z.boolean(),
+        furnished: z.boolean(),
+      }),
+    })
+    .array()
+    .length(1),
+  description: z.string().trim().max(1200).optional(),
+  whatsapp: z.boolean(),
+  phone: z
+    .string()
+    .trim()
+    .min(1)
+    .refine(
+      (data) => {
+        const parsedPhoneNumber = parsePhoneNumber(data);
+        if (!parsedPhoneNumber?.isValid()) return false;
+        else return true;
+      },
+      { message: 'Must be a valid phone number' },
+    ),
+});
+
+export const insertRentSchema = z.object({
+  type: z.literal('rent'),
+  amount: z.number().int().gte(1).lte(999999999),
+  currency: z.enum(['USD', 'CUP']),
+  frequency: z.enum(['daily', 'monthly']),
+  properties: z
+    .object({
+      address: z
+        .object({
+          province: z.enum([
+            'Pinar del Río',
+            'Artemisa',
+            'La Habana',
+            'Mayabeque',
+            'Matanzas',
+            'Villa Clara',
+            'Cienfuegos',
+            'Sancti Spíritus',
+            'Ciego de Ávila',
+            'Camagüey',
+            'Las Tunas',
+            'Holguín',
+            'Granma',
+            'Santiago de Cuba',
+            'Guantánamo',
+            'Isla de la Juventud',
+          ]),
+          municipality: z.string().trim(),
+        })
+        .refine((data) => getMunicipalities()[data.province].includes(data.municipality), {
+          message: 'Must be a valid municipality',
+          path: ['municipality'],
+        }),
+      features: z.object({
+        bed: z.number().int().gte(0).lte(9),
+        bath: z.number().int().gte(0).lte(9),
+        garage: z.boolean(),
+        garden: z.boolean(),
+        pool: z.boolean(),
+        furnished: z.boolean(),
+      }),
+    })
+    .array()
+    .length(1),
+  description: z.string().trim().max(1200).optional(),
+  whatsapp: z.boolean(),
+  phone: z
+    .string()
+    .trim()
+    .min(1)
+    .refine(
+      (data) => {
+        const parsedPhoneNumber = parsePhoneNumber(data);
+        if (!parsedPhoneNumber?.isValid()) return false;
+        else return true;
+      },
+      { message: 'Must be a valid phone number' },
+    ),
+});
+
+export const insertExchangeSchema = z
+  .object({
+    type: z.literal('exchange'),
+    needs: z.number().int().gte(0).lte(3),
+    offers: z.number().int().gte(1).lte(3),
+    properties: z
+      .object({
+        address: z
+          .object({
+            province: z.enum([
+              'Pinar del Río',
+              'Artemisa',
+              'La Habana',
+              'Mayabeque',
+              'Matanzas',
+              'Villa Clara',
+              'Cienfuegos',
+              'Sancti Spíritus',
+              'Ciego de Ávila',
+              'Camagüey',
+              'Las Tunas',
+              'Holguín',
+              'Granma',
+              'Santiago de Cuba',
+              'Guantánamo',
+              'Isla de la Juventud',
+            ]),
+            municipality: z.string().trim(),
+          })
+          .refine((data) => getMunicipalities()[data.province].includes(data.municipality), {
+            message: 'Must be a valid municipality',
+            path: ['municipality'],
+          }),
+        features: z.object({
+          bed: z.number().int().gte(0).lte(9),
+          bath: z.number().int().gte(0).lte(9),
+          garage: z.boolean(),
+          garden: z.boolean(),
+          pool: z.boolean(),
+          furnished: z.boolean(),
+        }),
+      })
+      .array()
+      .min(1)
+      .max(3),
+    description: z.string().trim().max(1200).optional(),
+    whatsapp: z.boolean(),
+    phone: z
+      .string()
+      .trim()
+      .min(1)
+      .refine(
+        (data) => {
+          const parsedPhoneNumber = parsePhoneNumber(data);
+          if (!parsedPhoneNumber?.isValid()) return false;
+          else return true;
+        },
+        { message: 'Must be a valid phone number' },
+      ),
+  })
+  .refine((data) => data.offers === data.properties.length, {
+    message: 'Property count and offers must match',
+    path: ['offers'],
   });

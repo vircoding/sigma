@@ -2,7 +2,7 @@ export default function useUIConfigs() {
   return {
     acceptButtonConfig: {
       variant: {
-        solid: `${useDevice().isMobile ? 'active:bg-azure-600 dark:active:bg-azure-500' : ''} ${useDevice().isDesktop ? 'hover:bg-azure-600 dark:hover:bg-azure-500' : 'hover:bg-azure-500 dark:hover:bg-azure-400'} bg-azure-500 dark:bg-azure-400 text-white dark:text-gray-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azure-500 dark:focus-visible:outline-azure-400`,
+        solid: `${useDevice().isMobile ? 'active:bg-primary-600 dark:active:bg-primary-500' : ''} ${useDevice().isDesktop ? 'hover:bg-primary-600 dark:hover:bg-primary-500' : 'hover:bg-primary-500 dark:hover:bg-primary-400'} bg-primary-500 dark:bg-primary-400 text-white dark:text-gray-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:focus-visible:outline-primary-400`,
       },
     },
     errorButtonConfig: {
@@ -12,7 +12,7 @@ export default function useUIConfigs() {
     },
     cancelButtonConfig: {
       variant: {
-        solid: `${useDevice().isMobile ? 'active:bg-azure-200 dark:active:bg-gray-700/60' : ''} ${useDevice().isDesktop ? 'hover:bg-azure-200 dark:hover:bg-gray-700/60' : 'hover:bg-azure-100 dark:hover:bg-gray-800'} bg-azure-100 dark:bg-gray-800 text-azure-400 dark:text-gray-300 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azure-500 dark:focus-visible:outline-azure-400`,
+        solid: `${useDevice().isMobile ? 'active:bg-primary-200 dark:active:bg-gray-700/60' : ''} ${useDevice().isDesktop ? 'hover:bg-primary-200 dark:hover:bg-gray-700/60' : 'hover:bg-primary-100 dark:hover:bg-gray-800'} bg-primary-100 dark:bg-gray-800 text-primary-400 dark:text-gray-300 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:focus-visible:outline-primary-400`,
       },
     },
     countrySelectConfig: { wrapper: 'w-28' },
@@ -30,6 +30,10 @@ export default function useUIConfigs() {
       popper: {
         placement: 'bottom-start',
       },
+    },
+    checkboxConfig: {
+      wrapper: 'relative flex items-center',
+      inner: 'ms-1.5',
     },
     cropperModalConfig: { container: 'items-center' },
   };

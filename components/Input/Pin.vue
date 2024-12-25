@@ -44,8 +44,6 @@ function handlePaste(event: ClipboardEvent) {
   const clipboardData = event.clipboardData;
   const pastedData = clipboardData?.getData('text').trim();
 
-  console.log(pastedData);
-
   if (pastedData) {
     const digits = pastedData.match(/\d/g) || [];
     const limitedDigits = digits.slice(0, 6);

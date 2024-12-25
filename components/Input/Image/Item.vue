@@ -1,23 +1,47 @@
 <script setup lang="ts">
-import { Cropper, CircleStencil } from 'vue-advanced-cropper';
+import { Cropper, RectangleStencil } from 'vue-advanced-cropper';
 import type { ImageSize, Coordinates } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 
 const props = defineProps<{
-  avatar?: string;
+  type: 'sale' | 'rent' | 'exchange';
+  image?: string;
   error: boolean;
+  index: number;
 }>();
 
 const emit = defineEmits<{
   (e: 'change'): void;
-  (e: 'crop', imageURL: string, file: Blob): void;
+  (e: 'crop', index: number, imageURL: string, file: Blob): void;
 }>();
 
-const isHelpOpen = ref(false);
 const input = ref<HTMLInputElement>();
 const cropper = ref<InstanceType<typeof Cropper>>();
 const isCropperOpen = ref<boolean>(false);
-const avatarURL = ref<string | undefined>();
+const imageURL = ref<string | undefined>();
+
+const colorStyles = computed(() => {
+  switch (props.type) {
+    case 'rent':
+      return {
+        background: 'bg-keppel-100 dark:bg-keppel-950/50',
+        text: 'text-keppel-500 dark:text-keppel-400',
+        focus: 'focus-visible:ring-keppel-500 dark:focus:ring-keppel-400',
+      };
+    case 'exchange':
+      return {
+        background: 'bg-affair-100 dark:bg-affair-950/30',
+        text: 'text-affair-500 dark:text-affair-400',
+        focus: 'focus-visible:ring-affair-500 dark:focus:ring-affair-400',
+      };
+    default:
+      return {
+        background: 'bg-azure-100 dark:bg-azure-950/50',
+        text: 'text-azure-500 dark:text-azure-400',
+        focus: 'focus-visible:ring-azure-500 dark:focus:ring-azure-400',
+      };
+  }
+});
 
 function closeCropper() {
   isCropperOpen.value = false;
@@ -57,7 +81,7 @@ function crop() {
       (blob) => {
         if (blob) {
           const croppedAvatarURL = URL.createObjectURL(blob);
-          emit('crop', croppedAvatarURL, blob);
+          emit('crop', props.index, croppedAvatarURL, blob);
           closeCropper();
         }
       },
@@ -67,12 +91,12 @@ function crop() {
   }
 }
 
-function loadAvatar(event: Event) {
+function loadImage(event: Event) {
   if (event.target instanceof HTMLInputElement) {
     const files = event.target.files;
 
     if (files) {
-      avatarURL.value = URL.createObjectURL(files[0]);
+      imageURL.value = URL.createObjectURL(files[0]);
       isCropperOpen.value = true;
     }
 
@@ -82,8 +106,9 @@ function loadAvatar(event: Event) {
 </script>
 
 <template>
-  <div
-    class="aspect-square w-24 min-w-24 cursor-pointer min-[375px]:w-28 min-[375px]:min-w-28 md:top-6"
+  <button
+    class="aspect-video w-full min-w-24 cursor-pointer rounded-xl p-px ring-inset focus:outline-none focus-visible:outline-0 focus-visible:ring-2 md:top-6 lg:w-[118px] min-[1124px]:w-[136px] min-[1180px]:w-[152px]"
+    :class="[colorStyles.focus]"
     @click="input?.click()"
   >
     <!-- File Input (Hidden) -->
@@ -92,76 +117,95 @@ function loadAvatar(event: Event) {
       type="file"
       accept="image/jpeg, image/png, image/gif, image/webp"
       hidden
-      @change="loadAvatar"
+      @change="loadImage"
     />
 
-    <!-- Avatar -->
+    <!-- Mobile Avatar -->
     <div
-      class="relative overflow-hidden rounded-full border"
-      :class="[
-        props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
-      ]"
+      v-if="$device.isMobileOrTablet"
+      class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl"
+      :class="[colorStyles.background]"
     >
-      <PlaceholderAvatar
-        class="h-full w-full"
-        :class="[props.error ? useStyles().textColorError : 'text-gray-300 dark:text-gray-700']"
-      />
-      <img v-if="props.avatar" :src="props.avatar" class="absolute top-0 h-full w-full" />
+      <!-- Placeholder -->
+      <PlaceholderImage v-if="!props.image" class="h-[40%] w-[40%]" :class="[colorStyles.text]" />
+
+      <!-- Image -->
+      <img v-if="props.image" :src="props.image" class="w-full rounded-xl" />
+
+      <!-- Background Overlay -->
+      <div
+        v-if="props.image"
+        class="absolute bottom-0 left-0 right-0 top-0"
+        style="background-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.8) 100%)"
+      ></div>
+
+      <!-- Overlay -->
+      <div
+        v-if="props.image"
+        class="absolute bottom-0 left-[80%] top-0 flex flex-col items-center justify-center gap-y-3 min-[400px]:gap-y-5 min-[450px]:gap-y-8 lg:left-[70%] lg:gap-y-px"
+      >
+        <!-- Edit -->
+        <ButtonIcon class="flex items-center justify-center rounded-xl">
+          <UIcon
+            name="i-solar-pen-broken"
+            class="h-8 w-8 text-white min-[450px]:h-11 min-[450px]:w-11 min-[545px]:h-[52px] min-[545px]:w-[52px] lg:h-5 lg:w-5 min-[1180px]:h-6 min-[1180px]:w-6 dark:text-gray-200"
+          />
+        </ButtonIcon>
+
+        <!-- Remove -->
+        <ButtonIcon class="flex items-center justify-center rounded-xl">
+          <UIcon
+            name="i-solar-trash-bin-trash-broken"
+            class="h-9 w-9 text-white min-[450px]:h-12 min-[450px]:w-12 min-[545px]:h-14 min-[545px]:w-14 lg:h-6 lg:w-6 min-[1180px]:h-7 min-[1180px]:w-7 dark:text-gray-200"
+          />
+        </ButtonIcon>
+      </div>
     </div>
 
-    <!-- Add/Edit Button -->
+    <!-- Desktop Avatar -->
     <div
-      class="absolute right-5 top-[86px] flex rounded-full border bg-white p-1 dark:bg-neutral-900"
-      :class="[
-        props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
-      ]"
+      v-else
+      class="group relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl"
+      :class="[colorStyles.background]"
     >
-      <UIcon
-        name="i-solar-pen-new-round-linear"
-        class="h-5 w-5"
-        :class="[
-          props.error ? useStyles().textColorError : useStyles().textColorPrimary,
-          !props.avatar ? 'hidden' : undefined,
-        ]"
+      <!-- Placeholder -->
+      <PlaceholderImage
+        v-if="!props.image"
+        class="h-[40%] w-[40%] duration-100 group-hover:scale-125 lg:h-11 lg:w-11"
+        :class="[colorStyles.text]"
       />
 
-      <UIcon
-        name="i-solar-add-circle-broken"
-        class="h-5 w-5"
-        :class="[
-          props.error ? useStyles().textColorError : useStyles().textColorPrimary,
-          props.avatar ? 'hidden' : undefined,
-        ]"
-      />
+      <!-- Image -->
+      <img v-if="props.image" :src="props.image" class="top-0 h-full w-full" />
+
+      <!-- Overlay -->
+      <div
+        v-if="props.image"
+        class="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center gap-x-3 bg-transparent duration-100 group-hover:bg-gray-950/50 dark:group-hover:bg-gray-950/70"
+      >
+        <!-- Edit -->
+        <ButtonIcon
+          class="flex items-center justify-center rounded-xl duration-100 hover:scale-125"
+        >
+          <UIcon
+            name="i-solar-pen-broken"
+            class="h-8 w-8 text-transparent group-hover:text-white min-[450px]:h-11 min-[450px]:w-11 min-[545px]:h-[52px] min-[545px]:w-[52px] lg:h-7 lg:w-7 min-[1180px]:h-8 min-[1180px]:w-8"
+          />
+        </ButtonIcon>
+
+        <!-- Remove -->
+        <ButtonIcon
+          class="flex items-center justify-center rounded-xl duration-100 hover:scale-125"
+        >
+          <UIcon
+            name="i-solar-trash-bin-trash-broken"
+            class="h-9 w-9 text-transparent group-hover:text-white min-[450px]:h-12 min-[450px]:w-12 min-[545px]:h-14 min-[545px]:w-14 lg:h-8 lg:w-8 min-[1180px]:h-9 min-[1180px]:w-9"
+          />
+        </ButtonIcon>
+      </div>
     </div>
 
-    <!-- Help Button -->
-    <div
-      class="absolute -right-1 top-[62px] flex rounded-full border bg-white p-1 dark:bg-neutral-900"
-      :class="[
-        props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
-      ]"
-      @click.stop="isHelpOpen = true"
-    >
-      <UPopover v-model="isHelpOpen" overlay :popper="{ offsetDistance: 18 }" class="flex">
-        <UIcon
-          name="i-solar-question-circle-broken"
-          class="h-5 w-5"
-          :class="[props.error ? useStyles().textColorError : useStyles().textColorPrimary]"
-        />
-
-        <template #panel>
-          <div class="w-[80vw] max-w-[350px] p-1">
-            <p class="p-1.5" :class="[useStyles().textSizeXS, useStyles().textColorSecondary]">
-              Sigma hará una compresión de esta imagen para mejorar el tráfico de los usuarios por
-              la plataforma. Si depués de este proceso, el tamaño de la imagen es mayor que 5MB, se
-              mostrará una alerta.
-            </p>
-          </div>
-        </template>
-      </UPopover>
-    </div>
-
+    <!-- Cropper Modal -->
     <UModal
       v-model="isCropperOpen"
       prevent-close
@@ -232,10 +276,10 @@ function loadAvatar(event: Event) {
 
           <Cropper
             ref="cropper"
-            :src="avatarURL"
-            :stencil-component="CircleStencil"
+            :src="imageURL"
+            :stencil-component="RectangleStencil"
             :stencil-props="{
-              aspectRatio: 1,
+              aspectRatio: 16 / 9,
             }"
             :default-position="defaultPosition"
             :default-size="defaultSize"
@@ -271,5 +315,5 @@ function loadAvatar(event: Event) {
         </div>
       </div>
     </UModal>
-  </div>
+  </button>
 </template>

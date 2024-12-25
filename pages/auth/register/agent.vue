@@ -109,6 +109,7 @@ const errors = computed<{
     };
 
     registerAgentSchema.parse(input);
+
     return {
       email: { error: false },
       password: { error: false },
@@ -692,7 +693,7 @@ onUnmounted(() => {
                         :src="`https://flagcdn.com/w20/${option.code}.png`"
                         :srcset="`https://flagcdn.com/w40/${option.code}.png 2x`"
                         width="20"
-                        alt="Cayman Islands"
+                        :alt="option.esName"
                       />
                     </div>
                     <div class="w-min min-w-9">

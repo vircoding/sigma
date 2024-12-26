@@ -89,37 +89,53 @@ async function onSubmit() {
       <div class="col-start-2 row-start-1 self-center">
         <!-- Type Selector -->
         <InputPostType v-model="state.type">
+          <!-- Sale Amount -->
           <template #sale-amount>
             <InputPostAmount v-model="state.sale.amount" />
           </template>
 
+          <!-- Sale Currency -->
           <template #sale-currency>
             <InputPostCurrency v-model="state.sale.currency" />
           </template>
 
+          <!-- Rent Tax -->
           <template #rent-tax>
             <InputPostTax v-model="state.rent.tax" />
           </template>
 
+          <!-- Rent Currency -->
           <template #rent-currency>
             <InputPostCurrency v-model="state.rent.currency" />
           </template>
 
+          <!-- Rent Frequency -->
           <template #rent-frequency>
             <InputPostFrequency v-model="state.rent.frequency" />
           </template>
 
+          <!-- Exchange Offers -->
           <template #exchange-offers>
-            <InputPostOffers :init="1" @change="(value) => (state.exchange.offers = value)" />
+            <InputPostOffers v-model="state.exchange.offers" />
           </template>
 
+          <!-- Exchange Needs -->
           <template #exchange-needs>
-            <InputPostNeeds :init="1" @change="(value) => (state.exchange.needs = value)" />
+            <InputPostNeeds v-model="state.exchange.needs" />
           </template>
         </InputPostType>
 
         <!-- Phone Number -->
-        <InputPostPhone />
+        <InputPostPhone v-model:phone="state.phone.phone" />
+
+        <!-- Whatsapp Checkbox -->
+        <div class="pl-2">
+          <InputCheckbox
+            v-model="state.phone.whatsapp"
+            name="whatsapp"
+            label="Contactar por Whatsapp"
+          />
+        </div>
       </div>
     </div>
   </UForm>

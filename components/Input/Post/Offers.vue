@@ -2,13 +2,7 @@
 type Value = 1 | 2 | 3;
 type Option = { value: Value; label: string };
 
-const props = defineProps<{
-  init: Value;
-}>();
-
-const emit = defineEmits<{
-  (e: 'change', value: Value): void;
-}>();
+const model = defineModel<Value>({ required: true });
 
 const options: Option[] = [
   { value: 1, label: '1 Propiedad' },
@@ -16,11 +10,7 @@ const options: Option[] = [
   { value: 3, label: '3 Propiedades' },
 ];
 
-const state = ref(options[props.init - 1]);
-
-function onChange() {
-  emit('change', state.value.value);
-}
+const state = ref(options[model.value - 1]);
 </script>
 
 <template>
@@ -46,7 +36,7 @@ function onChange() {
             placement: 'bottom-start',
           },
         }"
-        @change="onChange"
+        @change="model = state.value"
       >
         <template #label>
           <span :class="[useStyles().textSizeBase, useStyles().textColorPrimary]">{{

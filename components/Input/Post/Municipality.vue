@@ -1,31 +1,37 @@
 <script setup lang="ts">
-import type { Offers } from '~/models/PostTypes';
+import type { Province } from '~/models/PostTypes';
 
-type Value = Offers;
-type Option = { value: Value; label: string };
+const { getMunicipalitiesByProvince, defaultMunicipality } = useProvinces();
 
-const model = defineModel<Value>({ required: true });
+const props = defineProps<{
+  index: number;
+  province: Province;
+}>();
 
-const options: Option[] = [
-  { value: 1, label: '1 Propiedad' },
-  { value: 2, label: '2 Propiedades' },
-  { value: 3, label: '3 Propiedades' },
-];
+const model = defineModel<string>({ required: true });
 
-const state = ref(options[model.value - 1]);
+defineExpose<{
+  setDefaultMunicipality: () => void;
+}>({
+  setDefaultMunicipality: function () {
+    model.value = defaultMunicipality(props.province);
+
+    console.log(model.value);
+  },
+});
 </script>
 
 <template>
-  <UFormGroup size="md" label="Ofreces" name="offers">
+  <UFormGroup size="md" label="Municipio" :name="`municipality-${index + 1}`">
     <template #label="{ label }">
       <span>{{ label }}</span>
     </template>
 
     <template #default>
       <USelectMenu
-        v-model="state"
+        v-model="model"
         selected-icon="i-solar-check-circle-bold"
-        :options="options"
+        :options="getMunicipalitiesByProvince(props.province)"
         :ui-menu="{
           option: {
             base: 'cursor-pointer',
@@ -38,12 +44,9 @@ const state = ref(options[model.value - 1]);
             placement: 'bottom-start',
           },
         }"
-        @change="model = state.value"
       >
         <template #label>
-          <span :class="[useStyles().textSizeBase, useStyles().textColorPrimary]">{{
-            state.label
-          }}</span>
+          <span :class="[useStyles().textSizeBase, useStyles().textColorPrimary]">{{ model }}</span>
         </template>
 
         <template #trailing>
@@ -54,12 +57,6 @@ const state = ref(options[model.value - 1]);
           />
         </template>
       </USelectMenu>
-    </template>
-
-    <template #error="{ error }">
-      <span :class="[useStyles().textSizeSM, useStyles().textColorError]">
-        {{ error }}
-      </span>
     </template>
   </UFormGroup>
 </template>

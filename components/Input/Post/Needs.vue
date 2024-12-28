@@ -1,5 +1,7 @@
 <script setup lang="ts">
-type Value = 0 | 1 | 2 | 3;
+import type { Needs } from '~/models/PostTypes';
+
+type Value = Needs;
 type Option = { value: Value; label: string };
 
 const model = defineModel<Value>({ required: true });

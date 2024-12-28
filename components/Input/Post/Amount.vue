@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { z, ZodError } from 'zod';
 
-const model = defineModel<string>();
+const model = defineModel<string>({ required: true });
 
 const schema = z
   .number({ message: 'Debe ser un precio válido' })

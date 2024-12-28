@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const model = defineModel<'daily' | 'monthly'>();
+import type { Frequency } from '~/models/PostTypes';
+
+const model = defineModel<Frequency>({ required: true });
 
 const methods = [
   { value: 'daily', label: 'Diario' },

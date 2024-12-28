@@ -4,43 +4,27 @@ import type { ImageSize, Coordinates } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 
 const props = defineProps<{
-  type: 'sale' | 'rent' | 'exchange';
   image?: string;
-  error: boolean;
   index: number;
 }>();
 
 const emit = defineEmits<{
   (e: 'change'): void;
   (e: 'crop', index: number, imageURL: string, file: Blob): void;
+  (e: 'remove', index: number): void;
 }>();
 
-const input = ref<HTMLInputElement>();
+const input = useTemplateRef('input');
 const cropper = ref<InstanceType<typeof Cropper>>();
 const isCropperOpen = ref<boolean>(false);
 const imageURL = ref<string | undefined>();
 
 const colorStyles = computed(() => {
-  switch (props.type) {
-    case 'rent':
-      return {
-        background: 'bg-keppel-100 dark:bg-keppel-950/50',
-        text: 'text-keppel-500 dark:text-keppel-400',
-        focus: 'focus-visible:ring-keppel-500 dark:focus:ring-keppel-400',
-      };
-    case 'exchange':
-      return {
-        background: 'bg-affair-100 dark:bg-affair-950/30',
-        text: 'text-affair-500 dark:text-affair-400',
-        focus: 'focus-visible:ring-affair-500 dark:focus:ring-affair-400',
-      };
-    default:
-      return {
-        background: 'bg-azure-100 dark:bg-azure-950/50',
-        text: 'text-azure-500 dark:text-azure-400',
-        focus: 'focus-visible:ring-azure-500 dark:focus:ring-azure-400',
-      };
-  }
+  return {
+    background: 'bg-primary-100 dark:bg-primary-950/50',
+    text: 'text-primary-500 dark:text-primary-400',
+    focus: 'focus-visible:ring-primary-500 dark:focus:ring-primary-400',
+  };
 });
 
 function closeCropper() {
@@ -103,13 +87,17 @@ function loadImage(event: Event) {
     event.target.value = '';
   }
 }
+
+function onClick() {
+  if (!props.image) input.value?.click();
+}
 </script>
 
 <template>
   <button
     class="aspect-video w-full min-w-24 cursor-pointer rounded-xl p-px ring-inset focus:outline-none focus-visible:outline-0 focus-visible:ring-2 md:top-6 lg:w-[118px] min-[1124px]:w-[136px] min-[1180px]:w-[152px]"
     :class="[colorStyles.focus]"
-    @click="input?.click()"
+    @click="onClick"
   >
     <!-- File Input (Hidden) -->
     <input
@@ -120,7 +108,7 @@ function loadImage(event: Event) {
       @change="loadImage"
     />
 
-    <!-- Mobile Avatar -->
+    <!-- Mobile Image -->
     <div
       v-if="$device.isMobileOrTablet"
       class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl"
@@ -145,7 +133,11 @@ function loadImage(event: Event) {
         class="absolute bottom-0 left-[80%] top-0 flex flex-col items-center justify-center gap-y-3 min-[400px]:gap-y-5 min-[450px]:gap-y-8 lg:left-[70%] lg:gap-y-px"
       >
         <!-- Edit -->
-        <ButtonIcon class="flex items-center justify-center rounded-xl">
+
+        <ButtonIcon
+          class="flex items-center justify-center rounded-xl"
+          @click.stop="input?.click()"
+        >
           <UIcon
             name="i-solar-pen-broken"
             class="h-8 w-8 text-white min-[450px]:h-11 min-[450px]:w-11 min-[545px]:h-[52px] min-[545px]:w-[52px] lg:h-5 lg:w-5 min-[1180px]:h-6 min-[1180px]:w-6 dark:text-gray-200"
@@ -153,7 +145,10 @@ function loadImage(event: Event) {
         </ButtonIcon>
 
         <!-- Remove -->
-        <ButtonIcon class="flex items-center justify-center rounded-xl">
+        <ButtonIcon
+          class="flex items-center justify-center rounded-xl"
+          @click.stop="$emit('remove', props.index)"
+        >
           <UIcon
             name="i-solar-trash-bin-trash-broken"
             class="h-9 w-9 text-white min-[450px]:h-12 min-[450px]:w-12 min-[545px]:h-14 min-[545px]:w-14 lg:h-6 lg:w-6 min-[1180px]:h-7 min-[1180px]:w-7 dark:text-gray-200"
@@ -186,6 +181,7 @@ function loadImage(event: Event) {
         <!-- Edit -->
         <ButtonIcon
           class="flex items-center justify-center rounded-xl duration-100 hover:scale-125"
+          @click.stop="input?.click()"
         >
           <UIcon
             name="i-solar-pen-broken"
@@ -196,6 +192,7 @@ function loadImage(event: Event) {
         <!-- Remove -->
         <ButtonIcon
           class="flex items-center justify-center rounded-xl duration-100 hover:scale-125"
+          @click.stop="$emit('remove', props.index)"
         >
           <UIcon
             name="i-solar-trash-bin-trash-broken"
@@ -258,8 +255,8 @@ function loadImage(event: Event) {
             <!-- Close -->
             <ButtonIcon>
               <UIcon
-                name="i-uiw-close"
-                class="h-6 w-6"
+                name="i-heroicons-x-mark-20-solid"
+                class="h-8 w-8"
                 :class="[useStyles().textColorPrimary]"
                 @click="closeCropper"
               />

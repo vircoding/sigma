@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type PostType = 'sale' | 'rent' | 'exchange';
+import type { PostType } from '~/models/PostTypes';
 
 const appConfig = useAppConfig();
 
@@ -82,6 +82,7 @@ onUnmounted(() => {
           <slot name="sale-amount" />
         </div>
 
+        <!-- Currency -->
         <div
           class="relative top-7 flex h-min flex-grow items-center justify-center gap-x-2 min-[345px]:gap-x-3 min-[365px]:gap-x-4 min-[385px]:gap-x-5"
         >

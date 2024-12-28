@@ -214,7 +214,7 @@ function loadAvatar(event: Event) {
             <!-- Close -->
             <ButtonIcon>
               <UIcon
-                name="i-uiw-close"
+                name="i-heroicons-x-mark-20-solid"
                 class="h-6 w-6"
                 :class="[useStyles().textColorPrimary]"
                 @click="closeCropper"

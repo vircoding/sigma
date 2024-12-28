@@ -1,24 +1,51 @@
 <script setup lang="ts">
-const props = defineProps<{
-  type: 'sale' | 'rent' | 'exchange';
-}>();
+import { z, ZodError } from 'zod';
 
-const model = defineModel<string>();
+const model = defineModel<string>({ required: true });
 
-const textAreaConfig = computed(() => {
-  switch (props.type) {
-    case 'rent':
-      return useUIConfigs().inputRentConfig;
-    case 'exchange':
-      return useUIConfigs().inputExchangeConfig;
-    default:
-      return useUIConfigs().inputSaleConfig;
+const schema = z
+  .string({ message: 'La Descripción no es válida' })
+  .trim()
+  .max(1250, 'No puede exceder los 1250 caracteres')
+  .optional();
+
+const errors = computed<{
+  error: boolean;
+  message?: string;
+}>(() => {
+  try {
+    schema.parse(model.value);
+
+    return { error: false };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      const messages = error.errors.map((issue) => issue.message);
+
+      return { error: messages.length !== 0, message: messages[0] || '' };
+    }
+
+    return { error: true };
   }
+});
+
+const backendError = ref(false);
+
+defineExpose<{
+  setBackendError: () => void;
+}>({
+  setBackendError: function () {
+    backendError.value = true;
+  },
 });
 </script>
 
 <template>
-  <UFormGroup size="md" label="Descripción (Opcional)" name="description" :error="false">
+  <UFormGroup
+    size="md"
+    label="Descripción (Opcional)"
+    name="description"
+    :error="(backendError && 'La Descripción no es válida') || (errors.error && errors.message)"
+  >
     <template #label="{ label, error }">
       <span class="h-min" :class="[error ? useStyles().textColorError : undefined]">{{
         label
@@ -32,7 +59,7 @@ const textAreaConfig = computed(() => {
           useStyles().textSizeXS,
           error ? useStyles().textColorError : useStyles().textColorPrimary,
         ]"
-        >{{ model?.length }}/1250<span class="hidden min-[414px]:inline"> caracteres</span></span
+        >{{ model.length }}/1250<span class="hidden min-[414px]:inline"> caracteres</span></span
       >
     </template>
 
@@ -44,7 +71,7 @@ const textAreaConfig = computed(() => {
         :rows="12"
         type="text"
         :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
-        :ui="textAreaConfig"
+        @input="backendError = false"
       />
     </template>
 

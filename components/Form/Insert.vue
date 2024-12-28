@@ -1,31 +1,11 @@
 <script setup lang="ts">
-type PostType = 'sale' | 'rent' | 'exchange';
+import type { Insert } from '~/models/PostTypes';
 
 defineEmits<{
   (e: 'agent'): void;
 }>();
 
-const state = reactive<{
-  type: PostType;
-  sale: {
-    amount: string;
-    currency: 'USD' | 'CUP';
-  };
-  rent: {
-    tax: string;
-    currency: 'USD' | 'CUP';
-    frequency: 'daily' | 'monthly';
-  };
-  exchange: {
-    offers: 1 | 2 | 3;
-    needs: 0 | 1 | 2 | 3;
-  };
-  phone: {
-    phone: string;
-    code: string;
-    whatsapp: boolean;
-  };
-}>({
+const state = reactive<Insert>({
   type: 'sale',
   sale: {
     amount: '',
@@ -42,9 +22,55 @@ const state = reactive<{
   },
   phone: {
     phone: '',
-    code: '+53',
-    whatsapp: true,
+    code: 'cu',
   },
+  whatsapp: true,
+  properties: [
+    {
+      address: {
+        province: 'La Habana',
+        municipality: 'La Habana Vieja',
+      },
+      features: {
+        bed: '0',
+        bath: '0',
+        garage: false,
+        garden: false,
+        pool: false,
+        furnished: false,
+      },
+    },
+    {
+      address: {
+        province: 'La Habana',
+        municipality: 'La Habana Vieja',
+      },
+      features: {
+        bed: '0',
+        bath: '0',
+        garage: false,
+        garden: false,
+        pool: false,
+        furnished: false,
+      },
+    },
+    {
+      address: {
+        province: 'La Habana',
+        municipality: 'La Habana Vieja',
+      },
+      features: {
+        bed: '0',
+        bath: '0',
+        garage: false,
+        garden: false,
+        pool: false,
+        furnished: false,
+      },
+    },
+  ],
+  images: [],
+  description: '',
 });
 
 async function onSubmit() {
@@ -126,16 +152,120 @@ async function onSubmit() {
         </InputPostType>
 
         <!-- Phone Number -->
-        <InputPostPhone v-model:phone="state.phone.phone" />
+        <InputPostPhone v-model:code="state.phone.code" v-model:phone="state.phone.phone" />
 
         <!-- Whatsapp Checkbox -->
-        <div class="pl-2">
-          <InputCheckbox
-            v-model="state.phone.whatsapp"
-            name="whatsapp"
-            label="Contactar por Whatsapp"
-          />
+        <div class="mb-4 pl-2">
+          <InputCheckbox v-model="state.whatsapp" name="whatsapp" label="Contactar por Whatsapp" />
         </div>
+      </div>
+    </div>
+
+    <!-- Properties -->
+    <div v-for="(property, index) in state.properties" :key="`property-${index + 1}`">
+      <div
+        v-if="(state.type === 'exchange' && index <= state.exchange.offers - 1) || index === 0"
+        class="mb-4 flex flex-col gap-x-3 rounded-xl border border-gray-300 px-3 pb-3 pt-4 lg:flex-row lg:px-5 lg:pt-[18px] dark:border-gray-700"
+      >
+        <!-- Address -->
+        <InputPostAddress
+          v-model:province="state.properties[index].address.province"
+          v-model:municipality="state.properties[index].address.municipality"
+          :index="index"
+        />
+
+        <!-- Features -->
+        <div
+          class="flex grow place-content-center items-center justify-evenly lg:justify-center lg:gap-x-5 xl:gap-x-10"
+        >
+          <!-- Inputs -->
+          <div class="w-min place-content-center">
+            <!-- Bed -->
+            <div class="mb-4 w-full">
+              <InputPostFeature
+                v-model="state.properties[index].features.bed"
+                :name="`bed-${index + 1}`"
+                label="Cuartos"
+              />
+            </div>
+
+            <!-- Bath -->
+            <div class="mb-2.5 w-full">
+              <InputPostFeature
+                v-model="state.properties[index].features.bath"
+                :name="`bath-${index + 1}`"
+                label="Baños"
+              />
+            </div>
+          </div>
+
+          <!-- Checkboxes -->
+          <div
+            class="flex w-min max-w-xs flex-col flex-wrap place-content-center gap-x-0 lg:w-full lg:flex-row"
+          >
+            <!-- Garage -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[index].features.garage"
+                :name="`garage-${index + 1}`"
+                label="Garage"
+              />
+            </div>
+
+            <!-- Garden -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[index].features.garden"
+                :name="`garden-${index + 1}`"
+                label="Jardín"
+              />
+            </div>
+
+            <!-- Pool -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[index].features.pool"
+                :name="`pool-${index + 1}`"
+                label="Piscina"
+              />
+            </div>
+
+            <!-- Furnished -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[index].features.furnished"
+                :name="`furnished-${index + 1}`"
+                label="Amueblada"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="flex flex-col items-center justify-center gap-x-5 lg:flex-row lg:items-start">
+      <!-- Images -->
+      <div class="mb-4 w-full grow lg:mb-0">
+        <InputPostImage v-model="state.images" />
+      </div>
+
+      <!-- Right -->
+      <div class="flex w-full flex-col items-center lg:min-w-[408px] lg:max-w-[488px]">
+        <!-- Description -->
+        <div class="mb-6 w-full">
+          <InputPostDescription v-model="state.description" />
+        </div>
+
+        <!-- Submit -->
+        <UButton
+          type="submit"
+          size="md"
+          block
+          :ui="useUIConfigs().acceptButtonConfig"
+          class="font-bold"
+          >Publicar</UButton
+        >
       </div>
     </div>
   </UForm>

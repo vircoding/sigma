@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { z, ZodError } from 'zod';
-import parsePhoneNumber from 'libphonenumber-js';
-
-type Code = {
-  code: string;
-  esName: string;
-  enName: string;
-  callingCode: string;
-};
+import type { Code } from '~/models/PostTypes';
+import {
+  parsePhoneNumberFromString as parsePhoneNumber,
+  isSupportedCountry,
+} from 'libphonenumber-js';
 
 const countries = useCountries().countries;
 
-const code = ref<Code>(countries[0]);
+const codeModel = defineModel<string>('code', { required: true });
 const phoneModel = defineModel<string>('phone', { required: true });
+
+const code = ref<Code>(countries[0]);
 
 const schema = z
   .object({
@@ -84,6 +83,20 @@ function search(q: string) {
   );
 }
 
+function init() {
+  if (isSupportedCountry(codeModel.value.toUpperCase())) {
+    const country = countries.find((country) => country.code === codeModel.value);
+
+    if (country) {
+      code.value = country;
+      codeModel.value = country.code;
+      return;
+    }
+  }
+
+  throw showError(createError({ status: 500 }));
+}
+
 defineExpose<{
   setBackendError: () => void;
   setErrorVisibility: () => void;
@@ -95,6 +108,10 @@ defineExpose<{
   setErrorVisibility: function () {
     errorVisibility.value = true;
   },
+});
+
+onMounted(() => {
+  init();
 });
 </script>
 
@@ -125,6 +142,7 @@ defineExpose<{
           :ui="useUIConfigs().countrySelectConfig"
           :ui-menu="useUIConfigs().countrySelectMenuConfig"
           searchable-placeholder="Código del país"
+          @change="codeModel = code.code"
         >
           <template #label>
             <div class="flex items-center gap-2">

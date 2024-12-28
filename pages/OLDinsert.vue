@@ -1238,13 +1238,13 @@ onUnmounted(() => {
       </div>
 
       <!-- Bottom -->
-      <div class="flex flex-col items-center justify-center gap-x-5 lg:flex-row">
+      <div class="flex flex-col items-center justify-center gap-x-5 lg:flex-row lg:items-start">
         <!-- Images -->
         <UFormGroup
           size="md"
           label="Imágenes (Mínimo 1)"
           name="images"
-          :error="false"
+          error="Debe insertar al menos 1 imagen"
           class="mb-4 w-full grow lg:mb-0"
         >
           <template #label="{ label, error }">

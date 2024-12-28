@@ -1,22 +1,6 @@
-type Province =
-  | 'Pinar del Río'
-  | 'Artemisa'
-  | 'La Habana'
-  | 'Mayabeque'
-  | 'Matanzas'
-  | 'Villa Clara'
-  | 'Cienfuegos'
-  | 'Sancti Spíritus'
-  | 'Ciego de Ávila'
-  | 'Camagüey'
-  | 'Las Tunas'
-  | 'Holguín'
-  | 'Granma'
-  | 'Santiago de Cuba'
-  | 'Guantánamo'
-  | 'Isla de la Juventud';
+import type { Province } from '~/models/PostTypes';
 
-function getProvinces() {
+function getProvinces(): Province[] {
   return [
     'Pinar del Río',
     'Artemisa',

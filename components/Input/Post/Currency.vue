@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const model = defineModel<'USD' | 'CUP'>();
+import type { Currency } from '~/models/PostTypes';
+
+const model = defineModel<Currency>({ required: true });
 
 const methods = [
   { value: 'USD', label: 'USD' },

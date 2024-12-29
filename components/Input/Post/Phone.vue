@@ -100,6 +100,7 @@ function init() {
 defineExpose<{
   setBackendError: () => void;
   setErrorVisibility: () => void;
+  hasError: () => boolean;
 }>({
   setBackendError: function () {
     backendError.value = true;
@@ -107,6 +108,10 @@ defineExpose<{
 
   setErrorVisibility: function () {
     errorVisibility.value = true;
+  },
+
+  hasError: function () {
+    return errors.value.error;
   },
 });
 

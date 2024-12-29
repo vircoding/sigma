@@ -57,6 +57,7 @@ function handleRemove(index: number) {
 defineExpose<{
   setBackendError: (index: number) => void;
   setErrorVisibility: () => void;
+  hasError: () => boolean;
 }>({
   setBackendError: function (index: number) {
     backendError.value[index] = true;
@@ -64,6 +65,9 @@ defineExpose<{
 
   setErrorVisibility: function () {
     errorVisibility.value = true;
+  },
+  hasError: function () {
+    return errors.value.error;
   },
 });
 </script>
@@ -109,7 +113,12 @@ defineExpose<{
           />
 
           <!-- Add -->
-          <InputPostImageItem v-show="model.length < 10" :index="model.length" @crop="handleCrop" />
+          <InputPostImageItem
+            v-show="model.length < 10"
+            :index="model.length"
+            :error="errors.error && errorVisibility"
+            @crop="handleCrop"
+          />
         </div>
       </div>
     </template>

@@ -5,6 +5,14 @@ defineEmits<{
   (e: 'agent'): void;
 }>();
 
+const amountInput = useTemplateRef('amountInput');
+const taxInput = useTemplateRef('taxInput');
+const phoneInput = useTemplateRef('phoneInput');
+const bedInputList = useTemplateRef('bedInputList');
+const bathInputList = useTemplateRef('bathInputList');
+const imageInput = useTemplateRef('imageInput');
+const descriptionInput = useTemplateRef('descriptionInput');
+
 const state = reactive<Insert>({
   type: 'sale',
   sale: {
@@ -73,19 +81,108 @@ const state = reactive<Insert>({
   description: '',
 });
 
+function showAllErrors() {
+  if (
+    amountInput.value &&
+    taxInput.value &&
+    phoneInput.value &&
+    imageInput.value &&
+    descriptionInput.value &&
+    bedInputList.value &&
+    bedInputList.value[0] &&
+    bedInputList.value[1] &&
+    bedInputList.value[2] &&
+    bathInputList.value &&
+    bathInputList.value[0] &&
+    bathInputList.value[1] &&
+    bathInputList.value[2]
+  ) {
+    amountInput.value.setErrorVisibility();
+    taxInput.value.setErrorVisibility();
+    phoneInput.value.setErrorVisibility();
+    imageInput.value.setErrorVisibility();
+    bedInputList.value[0].setErrorVisibility();
+    bedInputList.value[1].setErrorVisibility();
+    bedInputList.value[2].setErrorVisibility();
+    bathInputList.value[0].setErrorVisibility();
+    bathInputList.value[1].setErrorVisibility();
+    bathInputList.value[2].setErrorVisibility();
+  } else throw showError(createError({ status: 500 }));
+}
+
+function hasAnyError() {
+  const errors: boolean[] = [];
+  if (
+    amountInput.value &&
+    taxInput.value &&
+    phoneInput.value &&
+    imageInput.value &&
+    descriptionInput.value &&
+    bedInputList.value &&
+    bedInputList.value[0] &&
+    bedInputList.value[1] &&
+    bedInputList.value[2] &&
+    bathInputList.value &&
+    bathInputList.value[0] &&
+    bathInputList.value[1] &&
+    bathInputList.value[2]
+  ) {
+    errors.push(phoneInput.value.hasError());
+    errors.push(imageInput.value.hasError());
+    errors.push(descriptionInput.value.hasError());
+    errors.push(bedInputList.value[0].hasError());
+    errors.push(bathInputList.value[0].hasError());
+
+    switch (state.type) {
+      case 'sale':
+        errors.push(amountInput.value.hasError());
+
+        break;
+
+      case 'rent':
+        errors.push(taxInput.value.hasError());
+        break;
+
+      case 'exchange':
+        break;
+
+      default:
+        throw showError(createError({ status: 500 }));
+    }
+
+    if (state.type === 'exchange') {
+      if (state.exchange.offers > 1) {
+        errors.push(bedInputList.value[1].hasError());
+        errors.push(bathInputList.value[1].hasError());
+      }
+
+      if (state.exchange.offers > 2) {
+        errors.push(bedInputList.value[2].hasError());
+        errors.push(bathInputList.value[2].hasError());
+      }
+    }
+  } else throw showError(createError({ status: 500 }));
+
+  return errors.includes(true);
+}
+
 async function onSubmit() {
-  console.log('Form Submitted');
+  showAllErrors();
+
+  if (!hasAnyError()) {
+    console.log('Form Submitted');
+  }
 }
 </script>
 
 <template>
-  <UForm :state="state" @submit="onSubmit">
+  <UForm :state="state">
     <div class="auto-cols-auto grid-cols-2 grid-rows-1 lg:grid lg:gap-x-12 xl:gap-x-20">
       <!-- Left Column -->
       <div class="col-start-1 row-start-1 self-center">
-        <div class="top-0 mb-4 hidden flex-col gap-5 lg:flex">
+        <div class="top-0 mb-4 flex-col gap-5 lg:flex">
           <!-- Hero -->
-          <section class="flex flex-col gap-2">
+          <section class="mb-5 flex flex-col gap-2 lg:mb-0">
             <h2
               class="font-ubuntu font-bold"
               :class="[useStyles().textColorPrimary, useStyles().textSize4XL]"
@@ -99,7 +196,7 @@ async function onSubmit() {
           </section>
 
           <!-- Desktop CTA's -->
-          <section class="hidden flex-col lg:flex">
+          <section class="mb-7 flex flex-col lg:mb-0">
             <button
               class="w-min text-nowrap font-medium"
               :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
@@ -117,7 +214,7 @@ async function onSubmit() {
         <InputPostType v-model="state.type">
           <!-- Sale Amount -->
           <template #sale-amount>
-            <InputPostAmount v-model="state.sale.amount" />
+            <InputPostAmount ref="amountInput" v-model="state.sale.amount" />
           </template>
 
           <!-- Sale Currency -->
@@ -127,7 +224,7 @@ async function onSubmit() {
 
           <!-- Rent Tax -->
           <template #rent-tax>
-            <InputPostTax v-model="state.rent.tax" />
+            <InputPostTax ref="taxInput" v-model="state.rent.tax" />
           </template>
 
           <!-- Rent Currency -->
@@ -152,7 +249,11 @@ async function onSubmit() {
         </InputPostType>
 
         <!-- Phone Number -->
-        <InputPostPhone v-model:code="state.phone.code" v-model:phone="state.phone.phone" />
+        <InputPostPhone
+          ref="phoneInput"
+          v-model:code="state.phone.code"
+          v-model:phone="state.phone.phone"
+        />
 
         <!-- Whatsapp Checkbox -->
         <div class="mb-4 pl-2">
@@ -164,7 +265,7 @@ async function onSubmit() {
     <!-- Properties -->
     <div v-for="(property, index) in state.properties" :key="`property-${index + 1}`">
       <div
-        v-if="(state.type === 'exchange' && index <= state.exchange.offers - 1) || index === 0"
+        v-show="(state.type === 'exchange' && index <= state.exchange.offers - 1) || index === 0"
         class="mb-4 flex flex-col gap-x-3 rounded-xl border border-gray-300 px-3 pb-3 pt-4 lg:flex-row lg:px-5 lg:pt-[18px] dark:border-gray-700"
       >
         <!-- Address -->
@@ -183,6 +284,7 @@ async function onSubmit() {
             <!-- Bed -->
             <div class="mb-4 w-full">
               <InputPostFeature
+                ref="bedInputList"
                 v-model="state.properties[index].features.bed"
                 :name="`bed-${index + 1}`"
                 label="Cuartos"
@@ -192,6 +294,7 @@ async function onSubmit() {
             <!-- Bath -->
             <div class="mb-2.5 w-full">
               <InputPostFeature
+                ref="bathInputList"
                 v-model="state.properties[index].features.bath"
                 :name="`bath-${index + 1}`"
                 label="Baños"
@@ -247,14 +350,14 @@ async function onSubmit() {
     <div class="flex flex-col items-center justify-center gap-x-5 lg:flex-row lg:items-start">
       <!-- Images -->
       <div class="mb-4 w-full grow lg:mb-0">
-        <InputPostImage v-model="state.images" />
+        <InputPostImage ref="imageInput" v-model="state.images" />
       </div>
 
       <!-- Right -->
       <div class="flex w-full flex-col items-center lg:min-w-[408px] lg:max-w-[488px]">
         <!-- Description -->
         <div class="mb-6 w-full">
-          <InputPostDescription v-model="state.description" />
+          <InputPostDescription ref="descriptionInput" v-model="state.description" />
         </div>
 
         <!-- Submit -->
@@ -264,6 +367,7 @@ async function onSubmit() {
           block
           :ui="useUIConfigs().acceptButtonConfig"
           class="font-bold"
+          @click="onSubmit"
           >Publicar</UButton
         >
       </div>

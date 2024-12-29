@@ -32,9 +32,14 @@ const backendError = ref(false);
 
 defineExpose<{
   setBackendError: () => void;
+  hasError: () => boolean;
 }>({
   setBackendError: function () {
     backendError.value = true;
+  },
+
+  hasError: function () {
+    return errors.value.error;
   },
 });
 </script>

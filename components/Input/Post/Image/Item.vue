@@ -6,6 +6,7 @@ import 'vue-advanced-cropper/dist/style.css';
 const props = defineProps<{
   image?: string;
   index: number;
+  error?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -20,11 +21,18 @@ const isCropperOpen = ref<boolean>(false);
 const imageURL = ref<string | undefined>();
 
 const colorStyles = computed(() => {
-  return {
-    background: 'bg-primary-100 dark:bg-primary-950/50',
-    text: 'text-primary-500 dark:text-primary-400',
-    focus: 'focus-visible:ring-primary-500 dark:focus:ring-primary-400',
-  };
+  if (props.error)
+    return {
+      background: 'bg-red-100 dark:bg-red-950/50',
+      text: 'text-red-500 dark:text-red-400',
+      focus: 'focus-visible:ring-red-500 dark:focus:ring-red-400',
+    };
+  else
+    return {
+      background: 'bg-primary-100 dark:bg-primary-950/50',
+      text: 'text-primary-500 dark:text-primary-400',
+      focus: 'focus-visible:ring-primary-500 dark:focus:ring-primary-400',
+    };
 });
 
 function closeCropper() {
@@ -97,7 +105,7 @@ function onClick() {
   <button
     class="aspect-video w-full min-w-24 cursor-pointer rounded-xl p-px ring-inset focus:outline-none focus-visible:outline-0 focus-visible:ring-2 md:top-6 lg:w-[118px] min-[1124px]:w-[136px] min-[1180px]:w-[152px]"
     :class="[colorStyles.focus]"
-    @click="onClick"
+    @click.stop="onClick"
   >
     <!-- File Input (Hidden) -->
     <input
@@ -133,7 +141,6 @@ function onClick() {
         class="absolute bottom-0 left-[80%] top-0 flex flex-col items-center justify-center gap-y-3 min-[400px]:gap-y-5 min-[450px]:gap-y-8 lg:left-[70%] lg:gap-y-px"
       >
         <!-- Edit -->
-
         <ButtonIcon
           class="flex items-center justify-center rounded-xl"
           @click.stop="input?.click()"

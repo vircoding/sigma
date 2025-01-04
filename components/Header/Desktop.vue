@@ -8,6 +8,8 @@ const props = defineProps<{
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
+const globalStore = useGlobalStore();
+
 const modals = useModal();
 const { logout } = useAuth();
 
@@ -17,16 +19,25 @@ const insertLinks = [
       label: 'Vende',
       to: { name: 'insert' },
       border: 'group-hover/item:border-azure-500 group-hover/item:dark:border-azure-400',
+      click: () => {
+        globalStore.setInsertType('sale');
+      },
     },
     {
       label: 'Renta',
       to: { name: 'insert' },
       border: 'group-hover/item:border-keppel-500 group-hover/item:dark:border-keppel-400',
+      click: () => {
+        globalStore.setInsertType('rent');
+      },
     },
     {
       label: 'Permuta',
       to: { name: 'insert' },
       border: 'group-hover/item:border-affair-500 group-hover/item:dark:border-affair-400',
+      click: () => {
+        globalStore.setInsertType('exchange');
+      },
     },
   ],
 ];

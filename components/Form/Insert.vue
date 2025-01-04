@@ -13,6 +13,9 @@ defineEmits<{
   (e: 'agent'): void;
 }>();
 
+const appConfig = useAppConfig();
+const uiStore = useGlobalStore();
+
 const state = reactive<Insert>({
   type: 'sale',
   sale: {
@@ -111,6 +114,22 @@ const onSubmit = handleSubmit(
     // setFieldError(`images.${1}.blob`, 'My custom error');
   },
 );
+
+onMounted(() => {
+  state.type = uiStore.insertType;
+
+  switch (state.type) {
+    case 'rent':
+      appConfig.ui.primary = 'keppel';
+      break;
+    case 'exchange':
+      appConfig.ui.primary = 'affair';
+      break;
+    default:
+      appConfig.ui.primary = 'azure';
+      break;
+  }
+});
 </script>
 
 <template>
@@ -138,7 +157,7 @@ const onSubmit = handleSubmit(
             <button
               class="w-min text-nowrap font-medium"
               :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
-              @click="$emit('agent')"
+              @click.prevent="$emit('agent')"
             >
               Contactar agente
             </button>

@@ -1,9 +1,4 @@
 <script setup lang="ts">
-const props = defineProps<{
-  title: string;
-  body: string;
-}>();
-
 const isModalOpen = ref(false);
 
 const modalConfig = { container: 'items-center' };
@@ -27,7 +22,7 @@ defineExpose<{
             class="font-ubuntu font-bold"
             :class="[useStyles().textSize2XL, useStyles().textColorPrimary]"
           >
-            {{ props.title }}
+            Contacta un agente
           </h6>
 
           <!-- Close -->
@@ -40,19 +35,20 @@ defineExpose<{
           </ButtonIcon>
         </div>
 
-        <!-- Paragraph -->
+        <!-- Body -->
         <p class="mb-2" :class="[useStyles().textSizeSM, useStyles().textColorSecondary]">
-          {{ props.body }}
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum commodi voluptate obcaecati
+          in eveniet.
         </p>
 
         <!-- CTA -->
         <aside class="flex justify-end">
           <UButton
-            label="Aceptar"
+            label="Contactar"
             variant="solid"
             size="md"
             block
-            :ui="useUIConfigs().errorButtonConfig"
+            :ui="useUIConfigs().acceptButtonConfig"
             class="w-min px-6 font-bold"
             @click="isModalOpen = false"
           />

@@ -6,8 +6,26 @@ const props = defineProps<{
   modelValue: PostType;
 }>();
 
+const { setInsertType } = useGlobalStore();
+
 const { value } = useField<PostType>(() => props.name, undefined, {
   syncVModel: true,
+});
+
+const state = ref(0);
+
+watch(value, () => {
+  switch (value.value) {
+    case 'rent':
+      state.value = 1;
+      break;
+    case 'exchange':
+      state.value = 2;
+      break;
+    default:
+      state.value = 0;
+      break;
+  }
 });
 
 const appConfig = useAppConfig();
@@ -35,25 +53,30 @@ function onChange(index: number) {
     case 1:
       value.value = 'rent';
       appConfig.ui.primary = 'keppel';
+      setInsertType('rent');
       break;
     case 2:
       value.value = 'exchange';
       appConfig.ui.primary = 'affair';
+      setInsertType('exchange');
       break;
     default:
       value.value = 'sale';
       appConfig.ui.primary = 'azure';
+      setInsertType('sale');
       break;
   }
 }
-
-onUnmounted(() => {
-  appConfig.ui.primary = 'azure';
-});
 </script>
 
 <template>
-  <UTabs :items="items" :default-index="0" :ui="{ wrapper: 'space-y-3.5' }" @change="onChange">
+  <UTabs
+    v-model="state"
+    :items="items"
+    :default-index="0"
+    :ui="{ wrapper: 'space-y-3.5' }"
+    @change="onChange"
+  >
     <template #icon="{ item, selected }">
       <UIcon
         :name="item.icon"

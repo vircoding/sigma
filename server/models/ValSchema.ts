@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import validator from 'validator';
 import parsePhoneNumber from 'libphonenumber-js';
+import { PROVINCES } from '~/server/models/Types';
 
 export type ClientRegisterData = z.infer<typeof registerClientSchema>;
 export type AgentRegisterData = z.infer<typeof registerAgentSchema>;
@@ -287,24 +288,7 @@ export const insertExchangeSchema = z
       .object({
         address: z
           .object({
-            province: z.enum([
-              'Pinar del Río',
-              'Artemisa',
-              'La Habana',
-              'Mayabeque',
-              'Matanzas',
-              'Villa Clara',
-              'Cienfuegos',
-              'Sancti Spíritus',
-              'Ciego de Ávila',
-              'Camagüey',
-              'Las Tunas',
-              'Holguín',
-              'Granma',
-              'Santiago de Cuba',
-              'Guantánamo',
-              'Isla de la Juventud',
-            ]),
+            province: z.nativeEnum(PROVINCES),
             municipality: z.string().trim(),
           })
           .refine((data) => getMunicipalities()[data.province].includes(data.municipality), {

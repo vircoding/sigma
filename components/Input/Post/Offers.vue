@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import type { Offers } from '~/models/PostTypes';
 
-type Value = Offers;
-type Option = { value: Value; label: string };
+type Option = { value: Offers; label: string };
 
-const model = defineModel<Value>({ required: true });
+const props = defineProps<{
+  name: string;
+  modelValue: Offers;
+}>();
+
+const { value } = useField<Offers>(() => props.name, undefined, {
+  syncVModel: true,
+});
 
 const options: Option[] = [
   { value: 1, label: '1 Propiedad' },
@@ -12,7 +18,7 @@ const options: Option[] = [
   { value: 3, label: '3 Propiedades' },
 ];
 
-const state = ref(options[model.value - 1]);
+const state = ref(options[value.value - 1]);
 </script>
 
 <template>
@@ -38,7 +44,7 @@ const state = ref(options[model.value - 1]);
             placement: 'bottom-start',
           },
         }"
-        @change="model = state.value"
+        @change="value = state.value"
       >
         <template #label>
           <span :class="[useStyles().textSizeBase, useStyles().textColorPrimary]">{{

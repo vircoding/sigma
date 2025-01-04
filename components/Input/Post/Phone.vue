@@ -1,74 +1,38 @@
 <script setup lang="ts">
-import { z, ZodError } from 'zod';
 import type { Code } from '~/models/PostTypes';
-import {
-  parsePhoneNumberFromString as parsePhoneNumber,
-  isSupportedCountry,
-} from 'libphonenumber-js';
+
+const props = defineProps<{
+  code: string;
+  codeName: string;
+  phone: string;
+  phoneName: string;
+  errorVisibility: boolean;
+}>();
 
 const countries = useCountries().countries;
+const valOnChange = ref(false);
 
-const codeModel = defineModel<string>('code', { required: true });
-const phoneModel = defineModel<string>('phone', { required: true });
-
-const code = ref<Code>(countries[0]);
-
-const schema = z
-  .object({
-    code: z
-      .string({ message: 'Requerido' })
-      .trim()
-      .refine(
-        (data) => {
-          const regex = /^\+\d+$/;
-          if (data.length > 3) return false;
-          if (!regex.test(`+${data}`)) return false;
-          return true;
-        },
-        { message: 'El código no es válido' },
-      ),
-    phone: z.string({ message: 'Requerido' }).trim().min(1, 'Requerido'),
-  })
-  .refine(
-    (data) => {
-      const parsedPhoneNumber = parsePhoneNumber(`+${data.code}${data.phone}`);
-      if (!parsedPhoneNumber?.isValid()) return false;
-      else return true;
-    },
-    {
-      message: 'Debe ser un teléfono válido',
-      path: ['phone'],
-    },
-  );
-
-const errors = computed<{
-  error: boolean;
-  message?: string;
-}>(() => {
-  try {
-    schema.parse({ code: code.value.callingCode, phone: phoneModel.value });
-
-    return { error: false };
-  } catch (error) {
-    if (error instanceof ZodError) {
-      const fields = error.errors.map((issue) => ({
-        field: issue.path.join('.'),
-        message: issue.message,
-      }));
-
-      const phoneErrors = fields.filter(
-        (value) => value.field === 'phone' || value.field === 'code',
-      );
-
-      return { error: phoneErrors.length !== 0, message: phoneErrors[0]?.message };
-    }
-
-    return { error: true };
-  }
+const { value: codeValue } = useField<string>(() => props.codeName, undefined, {
+  syncVModel: 'code',
+  validateOnMount: true,
 });
 
-const backendError = ref(false);
-const errorVisibility = ref(false);
+const { value: phoneValue, errorMessage: phoneErrorMessage } = useField<string>(
+  () => props.phoneName,
+  undefined,
+  {
+    syncVModel: 'phone',
+    validateOnMount: true,
+  },
+);
+
+function init() {
+  const country = countries.find((country) => country.callingCode === codeValue.value);
+  if (country) return country;
+  else throw showError(createError({ status: 500 }));
+}
+
+const codeState = ref<Code>(init());
 
 function removeAccents(str: string) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -83,41 +47,10 @@ function search(q: string) {
   );
 }
 
-function init() {
-  if (isSupportedCountry(codeModel.value.toUpperCase())) {
-    const country = countries.find((country) => country.code === codeModel.value);
-
-    if (country) {
-      code.value = country;
-      codeModel.value = country.code;
-      return;
-    }
-  }
-
-  throw showError(createError({ status: 500 }));
+function onCodeChange() {
+  codeValue.value = codeState.value.callingCode;
+  valOnChange.value = true;
 }
-
-defineExpose<{
-  setBackendError: () => void;
-  setErrorVisibility: () => void;
-  hasError: () => boolean;
-}>({
-  setBackendError: function () {
-    backendError.value = true;
-  },
-
-  setErrorVisibility: function () {
-    errorVisibility.value = true;
-  },
-
-  hasError: function () {
-    return errors.value.error;
-  },
-});
-
-onMounted(() => {
-  init();
-});
 </script>
 
 <template>
@@ -127,10 +60,7 @@ onMounted(() => {
       size="md"
       label="Teléfono"
       name="phone"
-      :error="
-        (backendError && 'Debe ser un teléfono válido') ||
-        (errors.error && errorVisibility && errors.message)
-      "
+      :error="(valOnChange || props.errorVisibility) && phoneErrorMessage"
     >
       <template #label="{ label, error }">
         <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
@@ -138,7 +68,7 @@ onMounted(() => {
 
       <template #default="{ error }">
         <USelectMenu
-          v-model.trim="code"
+          v-model.trim="codeState"
           :searchable="search"
           placeholder="Código del país"
           :options="countries"
@@ -147,20 +77,20 @@ onMounted(() => {
           :ui="useUIConfigs().countrySelectConfig"
           :ui-menu="useUIConfigs().countrySelectMenuConfig"
           searchable-placeholder="Código del país"
-          @change="codeModel = code.code"
+          @change="onCodeChange"
         >
           <template #label>
             <div class="flex items-center gap-2">
               <div class="flex min-h-4 min-w-5 overflow-hidden rounded-sm">
                 <img
-                  :src="`https://flagcdn.com/w20/${code.code}.png`"
-                  :srcset="`https://flagcdn.com/w40/${code.code}.png 2x`"
+                  :src="`https://flagcdn.com/w20/${codeState.code}.png`"
+                  :srcset="`https://flagcdn.com/w40/${codeState.code}.png 2x`"
                   width="20"
                   alt="Cayman Islands"
                 />
               </div>
               <div class="flex w-min min-w-9 justify-center">
-                <span>+{{ code.callingCode }}</span>
+                <span>+{{ codeState.callingCode }}</span>
               </div>
             </div>
           </template>
@@ -218,20 +148,16 @@ onMounted(() => {
     <UFormGroup
       size="md"
       name="phone"
-      :error="
-        (backendError && 'Debe ser un teléfono válido') ||
-        (errors.error && errorVisibility && errors.message)
-      "
+      :error="(valOnChange || props.errorVisibility) && phoneErrorMessage"
       class="relative top-5 w-full md:top-[22px]"
     >
       <template #default="{ error }">
         <UInput
-          v-model.trim="phoneModel"
+          v-model.trim="phoneValue"
           size="md"
           type="tel"
           :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
-          @input="backendError = false"
-          @blur="errorVisibility = true"
+          @blur="valOnChange = true"
         />
       </template>
 

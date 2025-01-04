@@ -1,9 +1,34 @@
 <script setup lang="ts">
 import type { PostType } from '~/models/PostTypes';
 
-const appConfig = useAppConfig();
+const props = defineProps<{
+  name: string;
+  modelValue: PostType;
+}>();
 
-const model = defineModel<PostType>();
+const { setInsertType } = useGlobalStore();
+
+const { value } = useField<PostType>(() => props.name, undefined, {
+  syncVModel: true,
+});
+
+const state = ref(0);
+
+watch(value, () => {
+  switch (value.value) {
+    case 'rent':
+      state.value = 1;
+      break;
+    case 'exchange':
+      state.value = 2;
+      break;
+    default:
+      state.value = 0;
+      break;
+  }
+});
+
+const appConfig = useAppConfig();
 
 const items = [
   {
@@ -26,50 +51,48 @@ const items = [
 function onChange(index: number) {
   switch (index) {
     case 1:
-      model.value = 'rent';
+      value.value = 'rent';
       appConfig.ui.primary = 'keppel';
+      setInsertType('rent');
       break;
     case 2:
-      model.value = 'exchange';
+      value.value = 'exchange';
       appConfig.ui.primary = 'affair';
+      setInsertType('exchange');
       break;
     default:
-      model.value = 'sale';
+      value.value = 'sale';
       appConfig.ui.primary = 'azure';
+      setInsertType('sale');
       break;
   }
 }
-
-const textColor = computed(() => {
-  switch (model.value) {
-    case 'rent':
-      return 'text-keppel-500 dark:text-keppel-400';
-    case 'exchange':
-      return 'text-affair-500 dark:text-affair-400';
-    default:
-      return 'text-azure-500 dark:text-azure-400';
-  }
-});
-
-onUnmounted(() => {
-  appConfig.ui.primary = 'azure';
-});
 </script>
 
 <template>
-  <UTabs :items="items" :default-index="0" :ui="{ wrapper: 'space-y-3.5' }" @change="onChange">
+  <UTabs
+    v-model="state"
+    :items="items"
+    :default-index="0"
+    :ui="{ wrapper: 'space-y-3.5' }"
+    @change="onChange"
+  >
     <template #icon="{ item, selected }">
       <UIcon
         :name="item.icon"
         class="me-1 hidden h-5 w-5 flex-shrink-0 min-[413px]:block md:me-2 md:h-6 md:w-6"
-        :class="[selected ? textColor : useStyles().textColorSecondary]"
+        :class="[
+          selected ? 'text-primary-500 dark:text-primary-400' : useStyles().textColorSecondary,
+        ]"
       />
     </template>
 
     <template #default="{ item, selected }">
       <span
         class="truncate text-sm font-semibold min-[341px]:text-base md:text-lg"
-        :class="[selected ? textColor : useStyles().textColorSecondary]"
+        :class="[
+          selected ? 'text-primary-500 dark:text-primary-400' : useStyles().textColorSecondary,
+        ]"
         >{{ item.label }}</span
       >
     </template>

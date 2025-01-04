@@ -2,17 +2,22 @@
 const props = defineProps<{
   name: string;
   label: string;
+  nameAttrib: string;
+  modelValue: boolean;
 }>();
 
-const model = defineModel<boolean>({ required: true });
+const { value, errorMessage } = useField<boolean>(() => props.name, undefined, {
+  syncVModel: true,
+});
 </script>
 
 <template>
-  <UCheckbox v-model="model" :name="props.name" :ui="useUIConfigs().checkboxConfig">
+  <UCheckbox v-model="value" :name="props.nameAttrib" :ui="useUIConfigs().checkboxConfig">
     <template #label>
       <span class="relative font-medium leading-none" :class="[useStyles().textSizeBase]">{{
         props.label
       }}</span>
     </template>
   </UCheckbox>
+  <pre>{{ errorMessage }}</pre>
 </template>

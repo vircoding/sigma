@@ -1,17 +1,20 @@
 <script setup lang="ts">
+import {
+  insertSaleFormSchema,
+  insertRentFormSchema,
+  getInsertExchangeFormSchema,
+  type InsertSaleFormSchema,
+  type InsertRentFormSchema,
+  type InsertExchangeFormSchema,
+} from '~/models/ValSchema';
 import type { Insert } from '~/models/PostTypes';
 
 defineEmits<{
   (e: 'agent'): void;
 }>();
 
-const amountInput = useTemplateRef('amountInput');
-const taxInput = useTemplateRef('taxInput');
-const phoneInput = useTemplateRef('phoneInput');
-const bedInputList = useTemplateRef('bedInputList');
-const bathInputList = useTemplateRef('bathInputList');
-const imageInput = useTemplateRef('imageInput');
-const descriptionInput = useTemplateRef('descriptionInput');
+const appConfig = useAppConfig();
+const uiStore = useGlobalStore();
 
 const state = reactive<Insert>({
   type: 'sale',
@@ -30,7 +33,7 @@ const state = reactive<Insert>({
   },
   phone: {
     phone: '',
-    code: 'cu',
+    code: '53',
   },
   whatsapp: true,
   properties: [
@@ -81,102 +84,56 @@ const state = reactive<Insert>({
   description: '',
 });
 
-function showAllErrors() {
-  if (
-    amountInput.value &&
-    taxInput.value &&
-    phoneInput.value &&
-    imageInput.value &&
-    descriptionInput.value &&
-    bedInputList.value &&
-    bedInputList.value[0] &&
-    bedInputList.value[1] &&
-    bedInputList.value[2] &&
-    bathInputList.value &&
-    bathInputList.value[0] &&
-    bathInputList.value[1] &&
-    bathInputList.value[2]
-  ) {
-    amountInput.value.setErrorVisibility();
-    taxInput.value.setErrorVisibility();
-    phoneInput.value.setErrorVisibility();
-    imageInput.value.setErrorVisibility();
-    bedInputList.value[0].setErrorVisibility();
-    bedInputList.value[1].setErrorVisibility();
-    bedInputList.value[2].setErrorVisibility();
-    bathInputList.value[0].setErrorVisibility();
-    bathInputList.value[1].setErrorVisibility();
-    bathInputList.value[2].setErrorVisibility();
-  } else throw showError(createError({ status: 500 }));
-}
-
-function hasAnyError() {
-  const errors: boolean[] = [];
-  if (
-    amountInput.value &&
-    taxInput.value &&
-    phoneInput.value &&
-    imageInput.value &&
-    descriptionInput.value &&
-    bedInputList.value &&
-    bedInputList.value[0] &&
-    bedInputList.value[1] &&
-    bedInputList.value[2] &&
-    bathInputList.value &&
-    bathInputList.value[0] &&
-    bathInputList.value[1] &&
-    bathInputList.value[2]
-  ) {
-    errors.push(phoneInput.value.hasError());
-    errors.push(imageInput.value.hasError());
-    errors.push(descriptionInput.value.hasError());
-    errors.push(bedInputList.value[0].hasError());
-    errors.push(bathInputList.value[0].hasError());
-
+const { handleSubmit } = useForm<
+  InsertSaleFormSchema | InsertRentFormSchema | InsertExchangeFormSchema
+>({
+  validationSchema: computed(() => {
     switch (state.type) {
-      case 'sale':
-        errors.push(amountInput.value.hasError());
-
-        break;
-
       case 'rent':
-        errors.push(taxInput.value.hasError());
-        break;
-
+        return toTypedSchema(insertRentFormSchema);
       case 'exchange':
-        break;
-
+        return toTypedSchema(getInsertExchangeFormSchema(state.exchange.offers));
       default:
-        throw showError(createError({ status: 500 }));
+        return toTypedSchema(insertSaleFormSchema);
     }
+  }),
+});
 
-    if (state.type === 'exchange') {
-      if (state.exchange.offers > 1) {
-        errors.push(bedInputList.value[1].hasError());
-        errors.push(bathInputList.value[1].hasError());
-      }
+const errorVisibility = ref(false);
 
-      if (state.exchange.offers > 2) {
-        errors.push(bedInputList.value[2].hasError());
-        errors.push(bathInputList.value[2].hasError());
-      }
-    }
-  } else throw showError(createError({ status: 500 }));
+const onSubmit = handleSubmit(
+  (values) => {
+    alert(JSON.stringify(values, null, 2));
+  },
+  ({ values, errors, results }) => {
+    errorVisibility.value = true;
+    console.log(values);
+    console.log(errors);
+    console.log(results);
+    // setFieldError(`images.${1}.imageURL`, 'My custom error');
+    // setFieldError(`images.${1}.blob`, 'My custom error');
+  },
+);
 
-  return errors.includes(true);
-}
+onMounted(() => {
+  state.type = uiStore.insertType;
 
-async function onSubmit() {
-  showAllErrors();
-
-  if (!hasAnyError()) {
-    console.log('Form Submitted');
+  switch (state.type) {
+    case 'rent':
+      appConfig.ui.primary = 'keppel';
+      break;
+    case 'exchange':
+      appConfig.ui.primary = 'affair';
+      break;
+    default:
+      appConfig.ui.primary = 'azure';
+      break;
   }
-}
+});
 </script>
 
 <template>
-  <UForm :state="state">
+  <UForm :state="state" @submit="onSubmit">
     <div class="auto-cols-auto grid-cols-2 grid-rows-1 lg:grid lg:gap-x-12 xl:gap-x-20">
       <!-- Left Column -->
       <div class="col-start-1 row-start-1 self-center">
@@ -200,7 +157,7 @@ async function onSubmit() {
             <button
               class="w-min text-nowrap font-medium"
               :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
-              @click="$emit('agent')"
+              @click.prevent="$emit('agent')"
             >
               Contactar agente
             </button>
@@ -211,53 +168,70 @@ async function onSubmit() {
       <!-- Right Column -->
       <div class="col-start-2 row-start-1 self-center">
         <!-- Type Selector -->
-        <InputPostType v-model="state.type">
+        <InputPostType v-model="state.type" name="type">
           <!-- Sale Amount -->
           <template #sale-amount>
-            <InputPostAmount ref="amountInput" v-model="state.sale.amount" />
+            <InputPostAmount
+              v-model="state.sale.amount"
+              :error-visibility="errorVisibility"
+              name="saleAmount"
+              label-attrib="Precio"
+            />
           </template>
 
           <!-- Sale Currency -->
           <template #sale-currency>
-            <InputPostCurrency v-model="state.sale.currency" />
+            <InputPostCurrency v-model="state.sale.currency" name="saleCurrency" />
           </template>
 
           <!-- Rent Tax -->
           <template #rent-tax>
-            <InputPostTax ref="taxInput" v-model="state.rent.tax" />
+            <InputPostAmount
+              v-model="state.rent.tax"
+              :error-visibility="errorVisibility"
+              name="rentTax"
+              label-attrib="Tarifa"
+            />
           </template>
 
           <!-- Rent Currency -->
           <template #rent-currency>
-            <InputPostCurrency v-model="state.rent.currency" />
+            <InputPostCurrency v-model="state.rent.currency" name="rentCurrency" />
           </template>
 
           <!-- Rent Frequency -->
           <template #rent-frequency>
-            <InputPostFrequency v-model="state.rent.frequency" />
+            <InputPostFrequency v-model="state.rent.frequency" name="rentFrequency" />
           </template>
 
           <!-- Exchange Offers -->
           <template #exchange-offers>
-            <InputPostOffers v-model="state.exchange.offers" />
+            <InputPostOffers v-model="state.exchange.offers" name="exchangeOffers" />
           </template>
 
           <!-- Exchange Needs -->
           <template #exchange-needs>
-            <InputPostNeeds v-model="state.exchange.needs" />
+            <InputPostNeeds v-model="state.exchange.needs" name="exchangeNeeds" />
           </template>
         </InputPostType>
 
         <!-- Phone Number -->
         <InputPostPhone
-          ref="phoneInput"
           v-model:code="state.phone.code"
           v-model:phone="state.phone.phone"
+          :error-visibility="errorVisibility"
+          code-name="phone.code"
+          phone-name="phone.phone"
         />
 
         <!-- Whatsapp Checkbox -->
         <div class="mb-4 pl-2">
-          <InputCheckbox v-model="state.whatsapp" name="whatsapp" label="Contactar por Whatsapp" />
+          <InputCheckbox
+            v-model="state.whatsapp"
+            label="Contactar por Whatsapp"
+            name="whatsapp"
+            name-attrib="whatsapp"
+          />
         </div>
       </div>
     </div>
@@ -265,7 +239,7 @@ async function onSubmit() {
     <!-- Properties -->
     <div v-for="(property, index) in state.properties" :key="`property-${index + 1}`">
       <div
-        v-show="(state.type === 'exchange' && index <= state.exchange.offers - 1) || index === 0"
+        v-if="(state.type === 'exchange' && index <= state.exchange.offers - 1) || index === 0"
         class="mb-4 flex flex-col gap-x-3 rounded-xl border border-gray-300 px-3 pb-3 pt-4 lg:flex-row lg:px-5 lg:pt-[18px] dark:border-gray-700"
       >
         <!-- Address -->
@@ -273,6 +247,8 @@ async function onSubmit() {
           v-model:province="state.properties[index].address.province"
           v-model:municipality="state.properties[index].address.municipality"
           :index="index"
+          :province-name="`properties[${index}].address.province`"
+          :municipality-name="`properties[${index}].address.municipality`"
         />
 
         <!-- Features -->
@@ -284,20 +260,20 @@ async function onSubmit() {
             <!-- Bed -->
             <div class="mb-4 w-full">
               <InputPostFeature
-                ref="bedInputList"
                 v-model="state.properties[index].features.bed"
-                :name="`bed-${index + 1}`"
-                label="Cuartos"
+                :error-visibility="errorVisibility"
+                :name="`properties[${index}].features.bed`"
+                label-attrib="Cuartos"
               />
             </div>
 
             <!-- Bath -->
             <div class="mb-2.5 w-full">
               <InputPostFeature
-                ref="bathInputList"
                 v-model="state.properties[index].features.bath"
-                :name="`bath-${index + 1}`"
-                label="Baños"
+                :error-visibility="errorVisibility"
+                :name="`properties[${index}].features.bath`"
+                label-attrib="Baños"
               />
             </div>
           </div>
@@ -310,8 +286,9 @@ async function onSubmit() {
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
                 v-model="state.properties[index].features.garage"
-                :name="`garage-${index + 1}`"
                 label="Garage"
+                :name="`properties[${index}].features.garage`"
+                :name-attrib="`garage-${index + 1}`"
               />
             </div>
 
@@ -319,8 +296,9 @@ async function onSubmit() {
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
                 v-model="state.properties[index].features.garden"
-                :name="`garden-${index + 1}`"
                 label="Jardín"
+                :name="`properties[${index}].features.garden`"
+                :name-attrib="`garden-${index + 1}`"
               />
             </div>
 
@@ -328,8 +306,9 @@ async function onSubmit() {
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
                 v-model="state.properties[index].features.pool"
-                :name="`pool-${index + 1}`"
                 label="Piscina"
+                :name="`properties[${index}].features.pool`"
+                :name-attrib="`pool-${index + 1}`"
               />
             </div>
 
@@ -337,8 +316,9 @@ async function onSubmit() {
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
                 v-model="state.properties[index].features.furnished"
-                :name="`furnished-${index + 1}`"
                 label="Amueblada"
+                :name="`properties[${index}].features.furnished`"
+                :name-attrib="`furnished-${index + 1}`"
               />
             </div>
           </div>
@@ -350,14 +330,18 @@ async function onSubmit() {
     <div class="flex flex-col items-center justify-center gap-x-5 lg:flex-row lg:items-start">
       <!-- Images -->
       <div class="mb-4 w-full grow lg:mb-0">
-        <InputPostImage ref="imageInput" v-model="state.images" />
+        <InputPostImage v-model="state.images" name="images" :error-visibility="errorVisibility" />
       </div>
 
       <!-- Right -->
       <div class="flex w-full flex-col items-center lg:min-w-[408px] lg:max-w-[488px]">
         <!-- Description -->
         <div class="mb-6 w-full">
-          <InputPostDescription ref="descriptionInput" v-model="state.description" />
+          <InputPostDescription
+            v-model="state.description"
+            :error-visibility="errorVisibility"
+            name="description"
+          />
         </div>
 
         <!-- Submit -->
@@ -367,7 +351,6 @@ async function onSubmit() {
           block
           :ui="useUIConfigs().acceptButtonConfig"
           class="font-bold"
-          @click="onSubmit"
           >Publicar</UButton
         >
       </div>

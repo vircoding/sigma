@@ -223,6 +223,15 @@ export const insertSchema = z.object({
         path: ['phone'],
       },
     ),
+  // .transform((data) => {
+  //   const parsedPhoneNumber = parsePhoneNumber(`+${data.code}${data.phone}`);
+  //   if (parsedPhoneNumber)
+  //     return {
+  //       code: data.code,
+  //       phone: parsedPhoneNumber.nationalNumber,
+  //     };
+  // }),
+
   description: z
     .string({ message: 'La Descripción no es válida' })
     .trim()

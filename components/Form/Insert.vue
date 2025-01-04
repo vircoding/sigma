@@ -15,6 +15,7 @@ defineEmits<{
 
 const appConfig = useAppConfig();
 const uiStore = useGlobalStore();
+const { insert } = usePost();
 
 const state = reactive<Insert>({
   type: 'sale',
@@ -103,7 +104,11 @@ const errorVisibility = ref(false);
 
 const onSubmit = handleSubmit(
   (values) => {
-    alert(JSON.stringify(values, null, 2));
+    try {
+      insert(values);
+    } catch (error) {
+      console.log(error);
+    }
   },
   ({ values, errors, results }) => {
     errorVisibility.value = true;
@@ -354,6 +359,10 @@ onMounted(() => {
           >Publicar</UButton
         >
       </div>
+    </div>
+
+    <div>
+      <pre>{{ state.phone }}</pre>
     </div>
   </UForm>
 </template>

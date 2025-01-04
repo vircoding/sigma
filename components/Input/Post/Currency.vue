@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import type { Currency } from '~/models/PostTypes';
 
-const model = defineModel<Currency>({ required: true });
+const props = defineProps<{
+  name: string;
+  modelValue: Currency;
+}>();
+
+const { value } = useField<Currency>(() => props.name, undefined, {
+  syncVModel: true,
+});
 
 const methods = [
   { value: 'USD', label: 'USD' },
@@ -13,7 +20,7 @@ const methods = [
   <URadio
     v-for="method of methods"
     :key="method.value"
-    v-model="model"
+    v-model="value"
     v-bind="method"
     :ui="{ wrapper: 'relative flex items-center ', inner: 'ms-1.5' }"
   >

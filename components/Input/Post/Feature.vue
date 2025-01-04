@@ -1,96 +1,52 @@
 <script setup lang="ts">
-import { z, ZodError } from 'zod';
-
 const props = defineProps<{
   name: string;
-  label: string;
+  labelAttrib: string;
+  modelValue: string;
+  errorVisibility: boolean;
 }>();
 
-const model = defineModel<string>({ required: true });
-
-const schema = z
-  .number({ message: 'Entre 0 y 9' })
-  .int('Entre 0 y 9')
-  .gte(0, 'Entre 0 y 9')
-  .lte(9, 'Entre 0 y 9');
-
-const errors = computed<{
-  error: boolean;
-  message?: string;
-}>(() => {
-  try {
-    schema.parse(Number(model.value));
-
-    return { error: false };
-  } catch (error) {
-    if (error instanceof ZodError) {
-      const messages = error.errors.map((issue) => issue.message);
-
-      return { error: messages.length !== 0, message: messages[0] || '' };
-    }
-
-    return { error: true };
-  }
+const { value, errorMessage } = useField<string>(() => props.name, undefined, {
+  syncVModel: true,
+  validateOnMount: true,
 });
 
-const backendError = ref(false);
-const errorVisibility = ref(false);
-
 function onUp() {
-  if (model.value !== '') {
-    const numericValue = Number(model.value);
+  if (value.value !== '') {
+    const numericValue = Number(value.value);
 
-    if (numericValue < 9) model.value = (numericValue + 1).toString();
+    if (numericValue < 9) value.value = (numericValue + 1).toString();
   }
 }
 
 function onDown() {
-  if (model.value !== '') {
-    const numericValue = Number(model.value);
+  if (value.value !== '') {
+    const numericValue = Number(value.value);
 
-    if (numericValue > 0) model.value = (numericValue - 1).toString();
+    if (numericValue > 0) value.value = (numericValue - 1).toString();
   }
 }
 
 function onBlur() {
-  errorVisibility.value = true;
-  if (model.value === '') model.value = '0';
+  if (value.value === '') value.value = '0';
 }
-
-defineExpose<{
-  setBackendError: () => void;
-  setErrorVisibility: () => void;
-  hasError: () => boolean;
-}>({
-  setBackendError: function () {
-    backendError.value = true;
-  },
-
-  setErrorVisibility: function () {
-    errorVisibility.value = true;
-  },
-
-  hasError: function () {
-    return errors.value.error;
-  },
-});
 </script>
 
 <template>
   <UFormGroup
     size="md"
-    :label="props.label"
+    :label="props.labelAttrib"
     :name="props.name"
-    :error="(backendError && 'Entre 0 y 9') || (errors.error && errorVisibility && errors.message)"
+    :error="props.errorVisibility && errorMessage"
   >
-    <template #label="{ error }">
-      <span :class="[error ? useStyles().textColorError : undefined]">{{ props.label }}</span>
+    <template #label="{ label, error }">
+      <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>
     </template>
 
     <template #default="{ error }">
       <div class="mt-1 flex items-center gap-x-2 min-[380px]:ml-5 min-[380px]:gap-x-3">
         <UInput
-          v-model.trim="model"
+          v-model.trim="value"
           size="md"
           type="text"
           inputmode="numeric"
@@ -99,7 +55,6 @@ defineExpose<{
             base: 'text-center',
           }"
           class="w-9 md:w-10"
-          @input="backendError = false"
           @blur="onBlur"
         />
 
@@ -134,7 +89,7 @@ defineExpose<{
           variant="link"
           class="relative flex h-7 w-7 items-center justify-center rounded-xl bg-red-100 md:h-8 md:w-8 dark:bg-red-950/50"
           :class="{ hidden: !error }"
-          @click="model = '0'"
+          @click="value = '0'"
         >
           <UIcon name="i-heroicons-x-mark-20-solid" class="h-4 w-4 md:h-6 md:w-6" />
         </UButton>

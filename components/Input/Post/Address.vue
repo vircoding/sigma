@@ -2,24 +2,33 @@
 import type { Province } from '~/models/PostTypes';
 
 const props = defineProps<{
+  province: Province;
+  municipality: string;
   index: number;
+  provinceName: string;
+  municipalityName: string;
 }>();
 
 const { getProvinces, getMunicipalitiesByProvince, defaultMunicipality } = useProvinces();
 
 const provinces = getProvinces();
 
-const provinceModel = defineModel<Province>('province', { required: true });
-const municipalityModel = defineModel<string>('municipality', { required: true });
+const { value: provinceValue } = useField<Province>(() => props.provinceName, undefined, {
+  syncVModel: 'province',
+});
+
+const { value: municipalityValue } = useField<string>(() => props.municipalityName, undefined, {
+  syncVModel: 'municipality',
+});
 
 const state = ref<{ province: Province; municipality: string }>({
-  province: provinceModel.value,
-  municipality: municipalityModel.value,
+  province: provinceValue.value,
+  municipality: municipalityValue.value,
 });
 
 watch(state.value, () => {
-  provinceModel.value = state.value.province;
-  municipalityModel.value = state.value.municipality;
+  provinceValue.value = state.value.province;
+  municipalityValue.value = state.value.municipality;
 });
 </script>
 
@@ -53,7 +62,7 @@ watch(state.value, () => {
           >
             <template #label>
               <span :class="[useStyles().textSizeBase, useStyles().textColorPrimary]">{{
-                provinceModel
+                provinceValue
               }}</span>
             </template>
 
@@ -96,7 +105,7 @@ watch(state.value, () => {
           >
             <template #label>
               <span :class="[useStyles().textSizeBase, useStyles().textColorPrimary]">{{
-                municipalityModel
+                municipalityValue
               }}</span>
             </template>
 

@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import type { Frequency } from '~/models/PostTypes';
 
-const model = defineModel<Frequency>({ required: true });
+const props = defineProps<{
+  name: string;
+  modelValue: Frequency;
+}>();
+
+const { value } = useField<Frequency>(() => props.name, undefined, {
+  syncVModel: true,
+});
 
 const methods = [
   { value: 'daily', label: 'Diario' },
@@ -13,7 +20,7 @@ const methods = [
   <URadio
     v-for="method of methods"
     :key="method.value"
-    v-model="model"
+    v-model="value"
     v-bind="method"
     :ui="{ wrapper: 'relative flex items-center ', inner: 'ms-1.5' }"
   >

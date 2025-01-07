@@ -47,6 +47,7 @@ export default defineAppConfig({
     },
     modal: {
       rounded: 'rounded-xl',
+      fullscreen: 'h-dvh',
     },
     dropdown: {
       container: 'z-20',

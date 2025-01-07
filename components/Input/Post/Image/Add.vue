@@ -1,23 +1,36 @@
 <script setup lang="ts">
-import { Cropper, CircleStencil } from 'vue-advanced-cropper';
+import { Cropper, RectangleStencil } from 'vue-advanced-cropper';
 import type { ImageSize, Coordinates } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 
 const props = defineProps<{
-  avatar?: string;
+  index: number;
   error: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: 'change'): void;
   (e: 'crop', imageURL: string, file: Blob): void;
 }>();
 
-const isHelpOpen = ref(false);
-const input = ref<HTMLInputElement>();
+const input = useTemplateRef('input');
 const cropper = ref<InstanceType<typeof Cropper>>();
 const isCropperOpen = ref<boolean>(false);
-const avatarURL = ref<string | undefined>();
+const imageURL = ref<string | undefined>();
+
+const colorStyles = computed(() => {
+  if (props.error)
+    return {
+      background: 'bg-red-100 dark:bg-red-950/50',
+      text: 'text-red-500 dark:text-red-400',
+      focus: 'focus-visible:ring-red-500 dark:focus:ring-red-400',
+    };
+  else
+    return {
+      background: 'bg-primary-100 dark:bg-primary-950/50',
+      text: 'text-primary-500 dark:text-primary-400',
+      focus: 'focus-visible:ring-primary-500 dark:focus:ring-primary-400',
+    };
+});
 
 function closeCropper() {
   isCropperOpen.value = false;
@@ -50,7 +63,10 @@ function defaultBoundaries({ cropper }: { cropper: HTMLElement }) {
   };
 }
 
+const disableButtons = ref(false);
+
 function crop() {
+  disableButtons.value = true;
   const result = cropper.value?.getResult();
   if (result?.canvas) {
     result.canvas?.toBlob(
@@ -62,17 +78,18 @@ function crop() {
         }
       },
       'image/jpeg',
-      0.7,
+      // 0.7,
     );
   }
 }
 
-function loadAvatar(event: Event) {
+function loadImage(event: Event) {
   if (event.target instanceof HTMLInputElement) {
     const files = event.target.files;
 
     if (files) {
-      avatarURL.value = URL.createObjectURL(files[0]);
+      disableButtons.value = false;
+      imageURL.value = URL.createObjectURL(files[0]);
       isCropperOpen.value = true;
     }
 
@@ -82,8 +99,10 @@ function loadAvatar(event: Event) {
 </script>
 
 <template>
-  <div
-    class="aspect-square w-24 min-w-24 cursor-pointer min-[375px]:w-28 min-[375px]:min-w-28 md:top-6"
+  <button
+    type="button"
+    class="group aspect-video w-full min-w-24 cursor-pointer rounded-xl p-px focus:outline-none focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-offset-1 md:top-6 lg:w-[118px] min-[1124px]:w-[136px] min-[1180px]:w-[152px]"
+    :class="[colorStyles.focus]"
     @click="input?.click()"
   >
     <!-- File Input (Hidden) -->
@@ -92,76 +111,33 @@ function loadAvatar(event: Event) {
       type="file"
       accept="image/jpeg, image/png, image/gif, image/webp"
       hidden
-      @change="loadAvatar"
+      @change="loadImage"
     />
 
-    <!-- Avatar -->
+    <!-- Mobile Image -->
     <div
-      class="relative overflow-hidden rounded-full border"
-      :class="[
-        props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
-      ]"
+      v-if="$device.isMobileOrTablet"
+      class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl"
+      :class="[colorStyles.background]"
     >
-      <PlaceholderAvatar
-        class="h-full w-full"
-        :class="[props.error ? useStyles().textColorError : 'text-gray-300 dark:text-gray-700']"
-      />
-      <img v-if="props.avatar" :src="props.avatar" class="absolute top-0 h-full w-full" />
+      <!-- Placeholder -->
+      <PlaceholderImage class="h-[40%] w-[40%]" :class="[colorStyles.text]" />
     </div>
 
-    <!-- Add/Edit Button -->
+    <!-- Desktop Image -->
     <div
-      class="absolute right-5 top-[86px] flex rounded-full border bg-white p-1 dark:bg-neutral-900"
-      :class="[
-        props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
-      ]"
+      v-else
+      class="group relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl"
+      :class="[colorStyles.background]"
     >
-      <UIcon
-        name="i-solar-pen-new-round-linear"
-        class="h-5 w-5"
-        :class="[
-          props.error ? useStyles().textColorError : useStyles().textColorPrimary,
-          !props.avatar ? 'hidden' : undefined,
-        ]"
-      />
-
-      <UIcon
-        name="i-solar-add-circle-broken"
-        class="h-5 w-5"
-        :class="[
-          props.error ? useStyles().textColorError : useStyles().textColorPrimary,
-          props.avatar ? 'hidden' : undefined,
-        ]"
+      <!-- Placeholder -->
+      <PlaceholderImage
+        class="h-[40%] w-[40%] duration-100 group-hover:scale-125 group-focus:scale-125 lg:h-11 lg:w-11"
+        :class="[colorStyles.text]"
       />
     </div>
 
-    <!-- Help Button -->
-    <div
-      class="absolute -right-1 top-[62px] flex rounded-full border bg-white p-1 dark:bg-neutral-900"
-      :class="[
-        props.error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
-      ]"
-      @click.stop="isHelpOpen = true"
-    >
-      <UPopover v-model="isHelpOpen" overlay :popper="{ offsetDistance: 18 }" class="flex">
-        <UIcon
-          name="i-solar-question-circle-broken"
-          class="h-5 w-5"
-          :class="[props.error ? useStyles().textColorError : useStyles().textColorPrimary]"
-        />
-
-        <template #panel>
-          <div class="w-[80vw] max-w-[350px] p-1">
-            <p class="p-1.5" :class="[useStyles().textSizeXS, useStyles().textColorSecondary]">
-              Sigma hará una compresión de esta imagen para mejorar el tráfico de los usuarios por
-              la plataforma. Si depués de este proceso, el tamaño de la imagen es mayor que 5MB, se
-              mostrará una alerta.
-            </p>
-          </div>
-        </template>
-      </UPopover>
-    </div>
-
+    <!-- Cropper Modal -->
     <UModal
       v-model="isCropperOpen"
       prevent-close
@@ -215,7 +191,7 @@ function loadAvatar(event: Event) {
             <ButtonIcon>
               <UIcon
                 name="i-heroicons-x-mark-20-solid"
-                class="h-6 w-6"
+                class="h-8 w-8"
                 :class="[useStyles().textColorPrimary]"
                 @click="closeCropper"
               />
@@ -232,10 +208,10 @@ function loadAvatar(event: Event) {
 
           <Cropper
             ref="cropper"
-            :src="avatarURL"
-            :stencil-component="CircleStencil"
+            :src="imageURL"
+            :stencil-component="RectangleStencil"
             :stencil-props="{
-              aspectRatio: 1,
+              aspectRatio: 16 / 9,
             }"
             :default-position="defaultPosition"
             :default-size="defaultSize"
@@ -254,6 +230,7 @@ function loadAvatar(event: Event) {
             size="md"
             block
             :ui="useUIConfigs().cancelButtonConfig"
+            :disabled="disableButtons"
             class="font-bold"
             @click="cropper?.reset()"
           />
@@ -265,11 +242,12 @@ function loadAvatar(event: Event) {
             size="md"
             block
             :ui="useUIConfigs().acceptButtonConfig"
+            :disabled="disableButtons"
             class="font-bold"
             @click="crop"
           />
         </div>
       </div>
     </UModal>
-  </div>
+  </button>
 </template>

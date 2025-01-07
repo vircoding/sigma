@@ -41,6 +41,16 @@ export class MaxSizeError extends Error {
   }
 }
 
+export class MaxImageSizeError extends Error {
+  index: number;
+
+  constructor(message: string, index: number) {
+    super(message);
+    this.name = 'Max Image Size Error';
+    this.index = index;
+  }
+}
+
 export class BadCredentialsError extends Error {
   constructor(message: string) {
     super(message);
@@ -87,5 +97,19 @@ export class ResetPasswordError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'Reset Password Error';
+  }
+}
+
+export class ClientMaxError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Client Max Error';
+  }
+}
+
+export class AgentMaxError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Agent Max Error';
   }
 }

@@ -1,27 +1,5 @@
 <script setup lang="ts">
-// const userStore = useUserStore();
-
 const initLoading = ref(true);
-
-// async function initUser() {
-//   const accessToken = useCookie('access_token');
-
-//   if (accessToken.value) {
-//     await $fetch('/api/auth', {
-//       headers: {
-//         Authorization: `Bearer ${useCookie('access_token').value}`,
-//       },
-//     })
-//       .then((data) => {
-//         userStore.setUser(data.user);
-//       })
-//       .catch(() => {
-//         showError(createError({ status: 500 }));
-//       });
-//   }
-// }
-
-// initUser();
 
 onMounted(async () => {
   initLoading.value = false;
@@ -74,5 +52,24 @@ html.dark ::-webkit-scrollbar-thumb {
 
 html.dark ::-webkit-scrollbar-thumb:hover {
   background: #525252;
+}
+
+/* Cropper */
+.vue-advanced-cropper__background {
+  background-color: white;
+}
+
+html.dark .vue-advanced-cropper__background {
+  background-color: black;
+}
+
+.vue-simple-handler {
+  background-color: white;
+  border-radius: 50%;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+}
+
+html.dark .vue-simple-handler {
+  background-color: #e5e5e5;
 }
 </style>

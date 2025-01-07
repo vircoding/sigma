@@ -81,3 +81,13 @@ export class MaxPostLengthError extends Error {
     this.name = 'Max Post Length Error';
   }
 }
+
+export class MaxFileSizeImageError extends Error {
+  index: number;
+
+  constructor(message: string, index: number) {
+    super(message);
+    this.name = 'Max File Size Image Error';
+    this.index = index;
+  }
+}

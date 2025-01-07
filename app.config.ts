@@ -34,7 +34,7 @@ export default defineAppConfig({
     },
     selectMenu: {
       input: 'text-base md:text-lg',
-      option: { size: 'text-base md:text-lg' },
+      option: { size: 'text-base md:text-lg', option: 'rounded-none' },
       rounded: 'rounded-xl',
     },
     button: {
@@ -47,6 +47,7 @@ export default defineAppConfig({
     },
     modal: {
       rounded: 'rounded-xl',
+      fullscreen: 'h-dvh',
     },
     dropdown: {
       container: 'z-20',
@@ -55,6 +56,22 @@ export default defineAppConfig({
         active: 'bg-white dark:bg-gray-900',
         base: 'hover:bg-gray-100 hover:dark:bg-gray-800 group/item',
       },
+    },
+    tabs: {
+      list: {
+        rounded: 'rounded-xl',
+        height: 'h-10 md:h-11',
+        marker: {
+          rounded: 'rounded-lg',
+        },
+        tab: {
+          rounded: 'rounded-lg',
+          height: 'h-8 md:h-9',
+        },
+      },
+    },
+    checkbox: {
+      base: 'cursor-pointer',
     },
   },
 });

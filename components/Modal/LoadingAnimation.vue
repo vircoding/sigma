@@ -5,7 +5,7 @@ const modalConfig = {
 </script>
 
 <template>
-  <UModal fullscreen :ui="modalConfig">
+  <UModal fullscreen :ui="modalConfig" :prevent-close="false">
     <UContainer>
       <div class="flex h-screen items-center gap-x-2">
         <div class="loader scale-[.80]"></div>

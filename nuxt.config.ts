@@ -4,7 +4,6 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/fonts', '@nuxtjs/device', '@pinia/nuxt'],
   runtimeConfig: {
     jwtVerificationSecret: process.env.JWT_VERIFICATION_SECRET,
     jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
@@ -13,5 +12,21 @@ export default defineNuxtConfig({
     nodemailerUser: process.env.EMAIL_USER,
     nodemailerPassword: process.env.EMAIL_PASSWORD,
     origin: process.env.ORIGIN,
+  },
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/ui',
+    '@nuxt/fonts',
+    '@nuxtjs/device',
+    '@pinia/nuxt',
+    '@vee-validate/nuxt',
+  ],
+  veeValidate: {
+    componentNames: {
+      Form: 'VeeForm',
+      Field: 'VeeField',
+      FieldArray: 'VeeFieldArray',
+      ErrorMessage: 'VeeErrorMessage',
+    },
   },
 });

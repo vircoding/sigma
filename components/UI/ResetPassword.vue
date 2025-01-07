@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ZodError } from 'zod';
 import { resetPasswordSchema } from '~/models/ValSchema';
-import { ModalLoadingAnimation, ModalMinimalError } from '#components';
+import { ModalMinimalError } from '#components';
 import { ResetPasswordError, FormFieldError, BadRequestError } from '~/models/Error';
 
 defineEmits<{
@@ -45,7 +45,7 @@ const isHelpOpen = ref(false);
 
 type BackendErrorField = 'email' | 'password' | 'repassword' | 'pin';
 
-const modals = useModal();
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 
 const resetPasswordErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
 const badRequestErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
@@ -148,7 +148,7 @@ async function submitPage1() {
   errorVisibility.value.email = true;
 
   if (!errors.value.email.error) {
-    modals.open(ModalLoadingAnimation);
+    openSubmitLoading();
 
     try {
       await postResetPassword({ email: state.email });
@@ -170,7 +170,7 @@ async function submitPage1() {
         if (!anyField) badRequestErrorModal.value?.openModal();
       } else showError(createError({ status: 500 }));
     } finally {
-      await modals.close();
+      closeSubmitLoading();
     }
   }
 }
@@ -180,7 +180,7 @@ async function submitPage2() {
   errorVisibility.value.pin = true;
 
   if (!errors.value.email.error && !errors.value.pin.error) {
-    modals.open(ModalLoadingAnimation);
+    openSubmitLoading();
     try {
       await putResetPassword({ email: state.email, code: pin.value.join('') });
 
@@ -204,7 +204,7 @@ async function submitPage2() {
         if (!anyField) badRequestErrorModal.value?.openModal();
       } else showError(createError({ status: 500 }));
     } finally {
-      await modals.close();
+      closeSubmitLoading();
     }
   }
 }
@@ -215,7 +215,7 @@ async function submitPage3() {
   errorVisibility.value.repassword = true;
 
   if (!Object.values(errors.value).some((field) => field.error)) {
-    modals.open(ModalLoadingAnimation);
+    openSubmitLoading();
 
     try {
       await patchResetPassword(state);
@@ -240,7 +240,7 @@ async function submitPage3() {
         if (!anyField) badRequestErrorModal.value?.openModal();
       } else showError(createError({ status: 500 }));
     } finally {
-      await modals.close();
+      closeSubmitLoading();
     }
   }
 }
@@ -264,12 +264,12 @@ async function onSubmit() {
 
 async function onResend() {
   if (!errors.value.email.error) {
-    modals.open(ModalLoadingAnimation);
+    openSubmitLoading();
 
     await postResetPassword({ email: state.email })
       .catch(() => showError(createError({ status: 500 })))
       .finally(async () => {
-        await modals.close();
+        closeSubmitLoading();
       });
   }
   timer.restart();

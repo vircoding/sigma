@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ModalLoadingAnimation } from '#components';
-
 const props = defineProps<{
   isLoggedIn: boolean;
 }>();
@@ -8,7 +6,11 @@ const props = defineProps<{
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
-const modals = useModal();
+const { setInsertType } = useGlobalStore();
+
+const { $event } = useNuxtApp();
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
+
 const { logout } = useAuth();
 
 const insertLinks = [
@@ -17,16 +19,28 @@ const insertLinks = [
       label: 'Vende',
       to: { name: 'insert' },
       border: 'group-hover/item:border-azure-500 group-hover/item:dark:border-azure-400',
+      click: () => {
+        setInsertType('sale');
+        $event('navigation:insert', 'sale');
+      },
     },
     {
       label: 'Renta',
       to: { name: 'insert' },
       border: 'group-hover/item:border-keppel-500 group-hover/item:dark:border-keppel-400',
+      click: () => {
+        setInsertType('rent');
+        $event('navigation:insert', 'rent');
+      },
     },
     {
       label: 'Permuta',
       to: { name: 'insert' },
       border: 'group-hover/item:border-affair-500 group-hover/item:dark:border-affair-400',
+      click: () => {
+        setInsertType('exchange');
+        $event('navigation:insert', 'exchange');
+      },
     },
   ],
 ];
@@ -143,16 +157,16 @@ const linkIconStyles = `ml-1 md:ml-2 h-[22px] w-[22px] md:h-[26px] md:w-[26px] $
 const linkTitleStyles = `font-semibold ${useStyles().textSizeLG}`;
 
 async function handleLogout() {
-  modals.open(ModalLoadingAnimation);
+  openSubmitLoading();
 
   await logout().catch(async () => {
-    await modals.close();
+    closeSubmitLoading();
     throw showError(createError({ status: 500 }));
   });
 
   await navigateTo({ name: 'index' });
 
-  await modals.close();
+  closeSubmitLoading();
 }
 </script>
 

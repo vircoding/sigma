@@ -7,6 +7,7 @@ import {
   MaxPostLengthError,
   UnexpectedError,
   NotFoundError,
+  MaxFileSizeImageError,
 } from '~/server/models/Error';
 import {
   postTypeSchema,
@@ -17,6 +18,8 @@ import {
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;
+  let imageErrorIndex = 0;
+  const images: { path: string; url: string }[] = [];
 
   const form = formidable({
     maxFields: 2,
@@ -36,7 +39,9 @@ export default defineEventHandler(async (event) => {
     },
   });
 
-  const images: { path: string; url: string }[] = [];
+  form.on('file', () => {
+    imageErrorIndex++;
+  });
 
   try {
     // Get the userId
@@ -44,8 +49,12 @@ export default defineEventHandler(async (event) => {
 
     // Parse the multipart form
     const { fields, files } = await parseMultipart(event, form).catch((error) => {
-      if (error.code === 1016 || error.code === 1009)
-        throw new BadRequestError('File exceeds the maximum allowed size of 5MB');
+      if (error.code === 1016) {
+        throw new MaxFileSizeImageError(
+          'File exceeds the maximum allowed size of 5MB',
+          imageErrorIndex,
+        );
+      }
 
       throw new BadRequestError('Invalid multipart form');
     });
@@ -109,6 +118,18 @@ export default defineEventHandler(async (event) => {
         status: 400,
         statusMessage: 'Bad Request',
         message: error.message,
+      });
+    }
+
+    // Max File Size Image Error
+    if (error instanceof MaxFileSizeImageError) {
+      throw createError({
+        status: 400,
+        statusMessage: 'Bad Request',
+        message: error.message,
+        data: {
+          index: error.index,
+        },
       });
     }
 

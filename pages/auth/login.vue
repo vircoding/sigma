@@ -2,7 +2,7 @@
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { loginSchema, type LoginSchema } from '~/models/ValSchema';
-import { ModalLoadingAnimation, ModalMinimalError } from '#components';
+import { ModalMinimalError } from '#components';
 import { BadCredentialsError, FormFieldError, BadRequestError } from '~/models/Error';
 
 definePageMeta({
@@ -18,7 +18,7 @@ type BackendErrorField = 'email' | 'password';
 
 const { login } = useAuth();
 
-const modals = useModal();
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 
 const badCredentialsErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
 const badRequestErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
@@ -108,7 +108,7 @@ async function onSubmit(event: FormSubmitEvent<LoginSchema>) {
   turnAllErrorsVisible();
 
   if (!Object.values(errors.value).some((field) => field.error)) {
-    modals.open(ModalLoadingAnimation);
+    openSubmitLoading();
 
     try {
       await login(event.data);
@@ -130,7 +130,7 @@ async function onSubmit(event: FormSubmitEvent<LoginSchema>) {
         if (!anyField) badRequestErrorModal.value?.openModal();
       } else showError(createError({ status: 500 }));
     } finally {
-      await modals.close();
+      closeSubmitLoading();
     }
   }
 }

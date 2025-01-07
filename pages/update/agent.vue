@@ -2,7 +2,7 @@
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { updateAgentSchema } from '~/models/ValSchema';
-import { ModalLoadingAnimation, ModalMinimalError } from '#components';
+import { ModalMinimalError } from '#components';
 import {
   AccessTokenExpiredError,
   BadRequestError,
@@ -26,8 +26,8 @@ const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
 const { updateAgent, refresh } = useAuth();
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 
-const modals = useModal();
 const countries = useCountries().countries;
 
 const badRequestErrorModal = ref<InstanceType<typeof ModalMinimalError>>();
@@ -196,7 +196,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
   turnAllErrorsVisible();
 
   if (!Object.values(errors.value).some((field) => field.error)) {
-    modals.open(ModalLoadingAnimation);
+    openSubmitLoading();
 
     if (user.value?.type !== 'agent') throw showError(createError({ status: 500 }));
 
@@ -243,10 +243,10 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
           await updateAgent(body);
         } else showError(createError({ status: 500 }));
       } finally {
-        await modals.close();
+        closeSubmitLoading();
       }
     }
-    await modals.close();
+    closeSubmitLoading();
   }
 }
 

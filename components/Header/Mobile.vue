@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { ModalLoadingAnimation } from '#components';
 import type { PostType } from '~/models/PostTypes';
 
 const props = defineProps<{
   isLoggedIn: boolean;
 }>();
 
-const modals = useModal();
-
 const { $event } = useNuxtApp();
 const { setInsertType } = useGlobalStore();
+
 const { logout } = useAuth();
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 
 const isSlideoverOpen = ref(false);
 const isAccountModalOpen = ref(false);
@@ -32,16 +31,16 @@ function openAccountModal() {
 
 async function handleLogout() {
   isAccountModalOpen.value = false;
-  modals.open(ModalLoadingAnimation);
+  openSubmitLoading();
 
   await logout().catch(async () => {
-    await modals.close();
+    closeSubmitLoading();
     throw showError(createError({ status: 500 }));
   });
 
   await navigateTo({ name: 'index' });
 
-  await modals.close();
+  closeSubmitLoading();
 }
 
 function onNavigateToInsert(type: PostType) {

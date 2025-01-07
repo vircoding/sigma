@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ModalLoadingAnimation } from '#components';
-
 const props = defineProps<{
   isLoggedIn: boolean;
 }>();
@@ -8,10 +6,11 @@ const props = defineProps<{
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
-const { $event } = useNuxtApp();
 const { setInsertType } = useGlobalStore();
 
-const modals = useModal();
+const { $event } = useNuxtApp();
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
+
 const { logout } = useAuth();
 
 const insertLinks = [
@@ -158,16 +157,16 @@ const linkIconStyles = `ml-1 md:ml-2 h-[22px] w-[22px] md:h-[26px] md:w-[26px] $
 const linkTitleStyles = `font-semibold ${useStyles().textSizeLG}`;
 
 async function handleLogout() {
-  modals.open(ModalLoadingAnimation);
+  openSubmitLoading();
 
   await logout().catch(async () => {
-    await modals.close();
+    closeSubmitLoading();
     throw showError(createError({ status: 500 }));
   });
 
   await navigateTo({ name: 'index' });
 
-  await modals.close();
+  closeSubmitLoading();
 }
 </script>
 

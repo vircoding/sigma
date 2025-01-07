@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ModalLoadingAnimation } from '#components';
 import {
   insertSaleFormSchema,
   insertRentFormSchema,
@@ -23,12 +22,11 @@ defineEmits<{
 }>();
 
 const appConfig = useAppConfig();
-const uiStore = useGlobalStore();
-
-const modals = useModal();
+const globalStore = useGlobalStore();
 
 const { refresh } = useAuth();
 const { insert } = usePost();
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 
 const imagesInput = useTemplateRef('imagesInput');
 const badRequestErrorModal = useTemplateRef('badRequest');
@@ -123,7 +121,8 @@ const errorVisibility = ref(false);
 const onSubmit = handleSubmit(
   async (values) => {
     try {
-      modals.open(ModalLoadingAnimation);
+      openSubmitLoading();
+
       const data = await insert(values);
       await navigateTo({ name: 'posts-id', params: { id: data.postId } });
     } catch (error) {
@@ -143,7 +142,7 @@ const onSubmit = handleSubmit(
         showError(createError({ status: 500 }));
       }
     } finally {
-      await modals.close();
+      closeSubmitLoading();
     }
   },
   () => {
@@ -152,7 +151,7 @@ const onSubmit = handleSubmit(
 );
 
 onMounted(() => {
-  state.type = uiStore.insertType;
+  state.type = globalStore.insertType;
 
   switch (state.type) {
     case 'rent':

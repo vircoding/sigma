@@ -36,7 +36,7 @@
     "libphonenumber-js": "^1.11.17",
     "mitt": "^3.0.1",
     "nodemailer": "^6.9.16",
-    "nuxt": "^3.15.0",
+    "nuxt": "^3.15.1",
     "pinia": "^2.3.0",
     "ua-parser-js": "^2.0.0",
     "url-pattern": "^1.0.3",

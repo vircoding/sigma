@@ -2,7 +2,7 @@
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { registerClientSchema, type RegisterClientSchema } from '~/models/ValSchema';
-import { ModalLoadingAnimation, ModalMinimalError, UIVerify } from '#components';
+import { ModalMinimalError, UIVerify } from '#components';
 import {
   BadRequestError,
   ConflictError,
@@ -22,8 +22,8 @@ type ErrorItem = {
 type BackendErrorField = 'email' | 'password' | 'repassword';
 
 const { registerClient, resendVerificationEmail, login } = useAuth();
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 
-const modals = useModal();
 const isVerify = ref(false);
 const canLogin = ref(false);
 
@@ -127,7 +127,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
   turnAllErrorsVisible();
 
   if (!Object.values(errors.value).some((field) => field.error)) {
-    modals.open(ModalLoadingAnimation);
+    openSubmitLoading();
 
     try {
       await registerClient(event.data);
@@ -150,20 +150,20 @@ async function onSubmit(event: FormSubmitEvent<RegisterClientSchema>) {
         if (!anyField) badRequestErrorModal.value?.openModal();
       } else showError(createError({ status: 500 }));
     } finally {
-      await modals.close();
+      closeSubmitLoading();
     }
   }
 }
 
 async function handleResendVerificationEmail() {
-  modals.open(ModalLoadingAnimation);
+  openSubmitLoading();
   try {
     await resendVerificationEmail(state.email);
   } catch (error) {
     if (!(error instanceof ConflictError)) showError(createError({ status: 500 }));
   } finally {
     verifyComponent.value?.disableAndRestart();
-    await modals.close();
+    closeSubmitLoading();
   }
 }
 

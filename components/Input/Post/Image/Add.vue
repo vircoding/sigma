@@ -78,7 +78,7 @@ function crop() {
         }
       },
       'image/jpeg',
-      0.7,
+      // 0.7,
     );
   }
 }

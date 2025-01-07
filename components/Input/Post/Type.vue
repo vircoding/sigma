@@ -6,6 +6,7 @@ const props = defineProps<{
   modelValue: PostType;
 }>();
 
+const { $listen } = useNuxtApp();
 const { setInsertType } = useGlobalStore();
 
 const { value } = useField<PostType>(() => props.name, undefined, {
@@ -13,6 +14,23 @@ const { value } = useField<PostType>(() => props.name, undefined, {
 });
 
 const state = ref(0);
+
+$listen('navigation:insert', (type) => {
+  switch (type) {
+    case 'rent':
+      value.value = 'rent';
+      appConfig.ui.primary = 'keppel';
+      break;
+    case 'exchange':
+      value.value = 'exchange';
+      appConfig.ui.primary = 'affair';
+      break;
+    default:
+      value.value = 'sale';
+      appConfig.ui.primary = 'azure';
+      break;
+  }
+});
 
 watch(value, () => {
   switch (value.value) {

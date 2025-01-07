@@ -8,6 +8,8 @@ const props = defineProps<{
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
+const { $event } = useNuxtApp();
+
 const globalStore = useGlobalStore();
 
 const modals = useModal();
@@ -21,6 +23,7 @@ const insertLinks = [
       border: 'group-hover/item:border-azure-500 group-hover/item:dark:border-azure-400',
       click: () => {
         globalStore.setInsertType('sale');
+        $event('navigation:insert', 'sale');
       },
     },
     {
@@ -29,6 +32,7 @@ const insertLinks = [
       border: 'group-hover/item:border-keppel-500 group-hover/item:dark:border-keppel-400',
       click: () => {
         globalStore.setInsertType('rent');
+        $event('navigation:insert', 'rent');
       },
     },
     {
@@ -37,6 +41,7 @@ const insertLinks = [
       border: 'group-hover/item:border-affair-500 group-hover/item:dark:border-affair-400',
       click: () => {
         globalStore.setInsertType('exchange');
+        $event('navigation:insert', 'exchange');
       },
     },
   ],

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ModalLoadingAnimation } from '#components';
 import {
   insertSaleFormSchema,
   insertRentFormSchema,
@@ -8,6 +9,14 @@ import {
   type InsertExchangeFormSchema,
 } from '~/models/ValSchema';
 import type { Insert } from '~/models/PostTypes';
+import {
+  AccessTokenExpiredError,
+  FormFieldError,
+  BadRequestError,
+  ClientMaxError,
+  AgentMaxError,
+  MaxImageSizeError,
+} from '~/models/Error';
 
 defineEmits<{
   (e: 'agent'): void;
@@ -15,7 +24,16 @@ defineEmits<{
 
 const appConfig = useAppConfig();
 const uiStore = useGlobalStore();
+
+const modals = useModal();
+
+const { refresh } = useAuth();
 const { insert } = usePost();
+
+const imagesInput = useTemplateRef('imagesInput');
+const badRequestErrorModal = useTemplateRef('badRequest');
+const clientMaxErrorModal = useTemplateRef('clientMax');
+const agentMaxErrorModal = useTemplateRef('agentMax');
 
 const state = reactive<Insert>({
   type: 'sale',
@@ -85,7 +103,7 @@ const state = reactive<Insert>({
   description: '',
 });
 
-const { handleSubmit } = useForm<
+const { handleSubmit, setFieldError } = useForm<
   InsertSaleFormSchema | InsertRentFormSchema | InsertExchangeFormSchema
 >({
   validationSchema: computed(() => {
@@ -103,20 +121,33 @@ const { handleSubmit } = useForm<
 const errorVisibility = ref(false);
 
 const onSubmit = handleSubmit(
-  (values) => {
+  async (values) => {
     try {
-      insert(values);
+      modals.open(ModalLoadingAnimation);
+      const _data = await insert(values);
+      await navigateTo({ name: 'posts' });
     } catch (error) {
-      console.log(error);
+      if (error instanceof AccessTokenExpiredError) {
+        await refresh().catch(() => showError(createError({ status: 500 })));
+        onSubmit();
+      } else if (error instanceof BadRequestError || error instanceof FormFieldError) {
+        badRequestErrorModal.value?.openModal();
+      } else if (error instanceof MaxImageSizeError) {
+        setFieldError('images', 'La imagen es muy grande');
+        imagesInput.value?.setBackendError(error.index);
+      } else if (error instanceof ClientMaxError) {
+        clientMaxErrorModal.value?.openModal();
+      } else if (error instanceof AgentMaxError) {
+        agentMaxErrorModal.value?.openModal();
+      } else {
+        showError(createError({ status: 500 }));
+      }
+    } finally {
+      await modals.close();
     }
   },
-  ({ values, errors, results }) => {
+  () => {
     errorVisibility.value = true;
-    console.log(values);
-    console.log(errors);
-    console.log(results);
-    // setFieldError(`images.${1}.imageURL`, 'My custom error');
-    // setFieldError(`images.${1}.blob`, 'My custom error');
   },
 );
 
@@ -335,7 +366,12 @@ onMounted(() => {
     <div class="flex flex-col items-center justify-center gap-x-5 lg:flex-row lg:items-start">
       <!-- Images -->
       <div class="mb-4 w-full grow lg:mb-0">
-        <InputPostImage v-model="state.images" name="images" :error-visibility="errorVisibility" />
+        <InputPostImage
+          ref="imagesInput"
+          v-model="state.images"
+          name="images"
+          :error-visibility="errorVisibility"
+        />
       </div>
 
       <!-- Right -->
@@ -361,8 +397,25 @@ onMounted(() => {
       </div>
     </div>
 
-    <div>
-      <pre>{{ state.phone }}</pre>
-    </div>
+    <!-- Bad Request Error -->
+    <ModalMinimalError
+      ref="badRequest"
+      title="Error de solicitud"
+      body="Estamos afrontando dificultades para procesar tu solicitud. Por favor, refresca esta página e inténtalo más tarde."
+    />
+
+    <!-- Client Max Error -->
+    <ModalMinimalError
+      ref="clientMax"
+      title="Límite de publicaciones"
+      body="Las cuentas de propietarios están limitadas a solo una publicación. Si quieres publicar otros anuncios deberás cambiar a una cuenta de Agente."
+    />
+
+    <!-- Agent Max Error -->
+    <ModalMinimalError
+      ref="agentMax"
+      title="Límite de publicaciones"
+      body="Las cuentas de propietarios están limitadas a 35 publicaciones. Para poder publicar otros anuncios deberás eliminar alguno de los existentes."
+    />
   </UForm>
 </template>

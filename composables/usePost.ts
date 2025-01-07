@@ -1,8 +1,17 @@
+import { FetchError } from 'ofetch';
 import type {
   InsertSaleFormSchema,
   InsertRentFormSchema,
   InsertExchangeFormSchema,
 } from '~/models/ValSchema';
+import {
+  AccessTokenExpiredError,
+  AgentMaxError,
+  BadRequestError,
+  ClientMaxError,
+  FatalError,
+  MaxImageSizeError,
+} from '~/models/Error';
 
 function getInputByType(
   body: InsertSaleFormSchema | InsertRentFormSchema | InsertExchangeFormSchema,
@@ -61,9 +70,32 @@ async function insert(
       },
     });
 
-    console.log(data);
+    return { postId: data.postId };
   } catch (error) {
-    console.log(error);
+    if (error instanceof FetchError) {
+      if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
+        throw new AccessTokenExpiredError(error.message);
+      }
+      if (error.status === 400) {
+        if (error.data.message === 'Invalid or missing required parameters')
+          throw new BadRequestError(error.message);
+        if (
+          error.data.message === 'File exceeds the maximum allowed size of 5MB' &&
+          'data' in error.data &&
+          'index' in error.data.data
+        )
+          throw new MaxImageSizeError(error.message, error.data.data.index);
+        if (error.data.message === 'Invalid or missing access token') throw new FatalError();
+        throw new BadRequestError(error.message);
+      }
+      if (error.status === 403) {
+        if (error.data.message === 'Clients are limited to a maximum of 1 post')
+          throw new ClientMaxError(error.message);
+        if (error.data.message === 'Agents are limited to a maximum of 35 posts')
+          throw new AgentMaxError(error.message);
+      }
+    }
+    throw new FatalError();
   }
 }
 

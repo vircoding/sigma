@@ -6,6 +6,7 @@ import 'vue-advanced-cropper/dist/style.css';
 const props = defineProps<{
   image?: string;
   index: number;
+  backendError: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -122,7 +123,10 @@ function onClick() {
     <div
       v-if="$device.isMobileOrTablet"
       class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl"
-      :class="[colorStyles.background]"
+      :class="[
+        colorStyles.background,
+        props.backendError ? 'ring-2 ring-red-500 ring-offset-2 dark:ring-red-400' : undefined,
+      ]"
     >
       <!-- Image -->
       <img :src="props.image" class="w-full rounded-xl" />
@@ -162,7 +166,10 @@ function onClick() {
     <div
       v-else
       class="group/overlay relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl"
-      :class="[colorStyles.background]"
+      :class="[
+        colorStyles.background,
+        props.backendError ? 'ring-2 ring-red-500 ring-offset-2 dark:ring-red-400' : undefined,
+      ]"
     >
       <!-- Image -->
       <img :src="props.image" class="top-0 h-full w-full" />

@@ -54,14 +54,20 @@ export const registerAgentSchema = z
       .string()
       .trim()
       .min(1)
-      .refine(
-        (data) => {
-          const parsedPhoneNumber = parsePhoneNumber(data);
-          if (!parsedPhoneNumber?.isValid()) return false;
-          else return true;
-        },
-        { message: 'Must be a valid phone number' },
-      ),
+      .transform((value, ctx) => {
+        const parsed = parsePhoneNumber(value);
+
+        if (!parsed?.isValid()) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Must be a valid phone number',
+          });
+
+          return z.NEVER;
+        }
+
+        return parsed.number;
+      }),
   })
   .refine((data) => data.password === data.repassword, {
     message: 'Passwords do not match',
@@ -125,15 +131,20 @@ export const updateSchema = z.object({
     .string()
     .trim()
     .min(1)
-    .refine(
-      (data) => {
-        const parsedPhoneNumber = parsePhoneNumber(data);
-        if (!parsedPhoneNumber?.isValid()) return false;
-        else return true;
-      },
-      { message: 'Must be a valid phone number' },
-    )
-    .optional(),
+    .transform((value, ctx) => {
+      const parsed = parsePhoneNumber(value);
+
+      if (!parsed?.isValid()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Must be a valid phone number',
+        });
+
+        return z.NEVER;
+      }
+
+      return parsed.number;
+    }),
 });
 
 export const requestPasswordSchema = z.object({
@@ -209,14 +220,20 @@ export const insertSaleSchema = z.object({
     .string()
     .trim()
     .min(1)
-    .refine(
-      (data) => {
-        const parsedPhoneNumber = parsePhoneNumber(data);
-        if (!parsedPhoneNumber?.isValid()) return false;
-        else return true;
-      },
-      { message: 'Must be a valid phone number' },
-    ),
+    .transform((value, ctx) => {
+      const parsed = parsePhoneNumber(value);
+
+      if (!parsed?.isValid()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Must be a valid phone number',
+        });
+
+        return z.NEVER;
+      }
+
+      return parsed.number;
+    }),
 });
 
 export const insertRentSchema = z.object({
@@ -269,14 +286,20 @@ export const insertRentSchema = z.object({
     .string()
     .trim()
     .min(1)
-    .refine(
-      (data) => {
-        const parsedPhoneNumber = parsePhoneNumber(data);
-        if (!parsedPhoneNumber?.isValid()) return false;
-        else return true;
-      },
-      { message: 'Must be a valid phone number' },
-    ),
+    .transform((value, ctx) => {
+      const parsed = parsePhoneNumber(value);
+
+      if (!parsed?.isValid()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Must be a valid phone number',
+        });
+
+        return z.NEVER;
+      }
+
+      return parsed.number;
+    }),
 });
 
 export const insertExchangeSchema = z
@@ -313,14 +336,20 @@ export const insertExchangeSchema = z
       .string()
       .trim()
       .min(1)
-      .refine(
-        (data) => {
-          const parsedPhoneNumber = parsePhoneNumber(data);
-          if (!parsedPhoneNumber?.isValid()) return false;
-          else return true;
-        },
-        { message: 'Must be a valid phone number' },
-      ),
+      .transform((value, ctx) => {
+        const parsed = parsePhoneNumber(value);
+
+        if (!parsed?.isValid()) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Must be a valid phone number',
+          });
+
+          return z.NEVER;
+        }
+
+        return parsed.number;
+      }),
   })
   .refine((data) => data.offers === data.properties.length, {
     message: 'Property count and offers must match',

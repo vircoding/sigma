@@ -11,6 +11,8 @@ const valOnChange = ref(false);
 
 const model = defineModel<Image[]>({ required: true });
 
+const backendErrors = ref([false, false, false, false, false, false, false, false, false, false]);
+
 const { errorMessage, validate } = useField(() => props.name, undefined, {
   syncVModel: true,
   validateOnMount: true,
@@ -19,6 +21,7 @@ const { errorMessage, validate } = useField(() => props.name, undefined, {
 const { update, push, remove, fields } = useFieldArray<Image>(() => props.name);
 
 function onUpdate(index: number, imageURL: string, blob: Blob) {
+  if (backendErrors.value[index]) backendErrors.value[index] = false;
   update(index, { imageURL, blob });
   validate();
 }
@@ -33,6 +36,14 @@ function handleRemove(index: number) {
   remove(index);
   validate();
 }
+
+defineExpose<{
+  setBackendError: (index: number) => void;
+}>({
+  setBackendError: function (index: number) {
+    backendErrors.value[index] = true;
+  },
+});
 </script>
 
 <template>
@@ -74,6 +85,7 @@ function handleRemove(index: number) {
             :key="index"
             :index="index"
             :image="image.value.imageURL"
+            :backend-error="backendErrors[index]"
             @crop="onUpdate"
             @remove="handleRemove"
           />

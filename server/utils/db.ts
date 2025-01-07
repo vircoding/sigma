@@ -515,10 +515,11 @@ export function insertSale(saleData: SaleInsertData, userId: string, images: Ima
     if (!founded) throw new NotFoundError('User not found');
 
     if (founded.type === 'client') {
-      if (founded.posts.length > 1) throw new MaxPostLengthError('Clients are limited to one post');
+      if (founded.posts.length > 1)
+        throw new MaxPostLengthError('Clients are limited to a maximum of 1 post');
     } else {
       if (founded.posts.length > 35)
-        throw new MaxPostLengthError('Agents are limited to a maximum if 35 posts');
+        throw new MaxPostLengthError('Agents are limited to a maximum of 35 posts');
     }
 
     const post = await tx.post.create({
@@ -584,10 +585,11 @@ export function insertRent(rentData: RentInsertData, userId: string, images: Ima
     if (!founded) throw new NotFoundError('User not found');
 
     if (founded.type === 'client') {
-      if (founded.posts.length > 1) throw new MaxPostLengthError('Clients are limited to one post');
+      if (founded.posts.length > 1)
+        throw new MaxPostLengthError('Clients are limited to a maximum of 1 post');
     } else {
       if (founded.posts.length > 35)
-        throw new MaxPostLengthError('Agents are limited to a maximum if 35 posts');
+        throw new MaxPostLengthError('Agents are limited to a maximum of 35 posts');
     }
 
     const post = await tx.post.create({
@@ -658,10 +660,11 @@ export function insertExchange(
     if (!founded) throw new NotFoundError('User not found');
 
     if (founded.type === 'client') {
-      if (founded.posts.length > 1) throw new MaxPostLengthError('Clients are limited to one post');
+      if (founded.posts.length > 1)
+        throw new MaxPostLengthError('Clients are limited to a maximum of 1 post');
     } else {
       if (founded.posts.length > 35)
-        throw new MaxPostLengthError('Agents are limited to a maximum if 35 posts');
+        throw new MaxPostLengthError('Agents are limited to a maximum of 35 posts');
     }
 
     const post = await tx.post.create({

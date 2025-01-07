@@ -1,3 +1,3 @@
 <template>
-  <h2>Posts View</h2>
+  <h2>Find View</h2>
 </template>

@@ -124,8 +124,8 @@ const onSubmit = handleSubmit(
   async (values) => {
     try {
       modals.open(ModalLoadingAnimation);
-      const _data = await insert(values);
-      await navigateTo({ name: 'posts' });
+      const data = await insert(values);
+      await navigateTo({ name: 'posts-id', params: { id: data.postId } });
     } catch (error) {
       if (error instanceof AccessTokenExpiredError) {
         await refresh().catch(() => showError(createError({ status: 500 })));

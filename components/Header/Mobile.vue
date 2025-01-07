@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ModalLoadingAnimation } from '#components';
+import type { PostType } from '~/models/PostTypes';
 
 const props = defineProps<{
   isLoggedIn: boolean;
 }>();
 
 const modals = useModal();
+
+const { $event } = useNuxtApp();
+const { setInsertType } = useGlobalStore();
 const { logout } = useAuth();
 
 const isSlideoverOpen = ref(false);
@@ -38,6 +42,12 @@ async function handleLogout() {
   await navigateTo({ name: 'index' });
 
   await modals.close();
+}
+
+function onNavigateToInsert(type: PostType) {
+  setInsertType(type);
+  $event('navigation:insert', type);
+  isSlideoverOpen.value = false;
 }
 </script>
 
@@ -112,24 +122,24 @@ async function handleLogout() {
                 <NuxtLink
                   :to="{ name: 'insert' }"
                   class="flex w-full items-center justify-end gap-1.5 py-1"
-                  @click="isSlideoverOpen = false"
+                  @click="onNavigateToInsert('sale')"
                 >
                   <h4 :class="linkTitleStyles">Publica</h4>
                   <UIcon name="i-solar-home-add-angle-broken" :class="linkIconStyles" />
                 </NuxtLink>
                 <ul class="leading-snug">
                   <li>
-                    <NuxtLink :to="{ name: 'insert' }" @click="isSlideoverOpen = false">
+                    <NuxtLink :to="{ name: 'insert' }" @click="onNavigateToInsert('sale')">
                       <span :class="[useStyles().textSizeBase]">Vende</span>
                     </NuxtLink>
                   </li>
                   <li>
-                    <NuxtLink :to="{ name: 'insert' }" @click="isSlideoverOpen = false">
+                    <NuxtLink :to="{ name: 'insert' }" @click="onNavigateToInsert('rent')">
                       <span :class="[useStyles().textSizeBase]">Renta</span>
                     </NuxtLink>
                   </li>
                   <li>
-                    <NuxtLink :to="{ name: 'insert' }" @click="isSlideoverOpen = false">
+                    <NuxtLink :to="{ name: 'insert' }" @click="onNavigateToInsert('exchange')">
                       <span :class="[useStyles().textSizeBase]">Permuta</span>
                     </NuxtLink>
                   </li>

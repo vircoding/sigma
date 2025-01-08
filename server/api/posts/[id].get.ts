@@ -1,23 +1,24 @@
 import { H3Error } from 'h3';
-import { NotFoundError } from '~/server/models/Error';
+import { UnexpectedError, NotFoundError } from '~/server/models/Error';
 
 export default defineEventHandler(async (event) => {
   try {
-    // Get the userId
-    const userId = event.context.userId as string;
+    // Get the Post Id
+    const { id } = getRouterParams(event);
+    if (!id) throw new UnexpectedError();
 
-    // Find the user by id
-    const user = await findUserById(userId);
+    // Find the post by id
+    const post = await findPostById(id);
 
     // Send the response
-    return { user: userTransformer(user) };
+    return { post: postTransformer(post) };
   } catch (error) {
     // Not Found Error
     if (error instanceof NotFoundError) {
       throw createError({
         status: 404,
         statusMessage: 'Not Found',
-        message: 'User not found',
+        message: 'Post not found',
       });
     }
 

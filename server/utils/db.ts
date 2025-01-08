@@ -715,3 +715,20 @@ export function insertExchange(
     return post;
   });
 }
+
+export async function findPostById(id: string) {
+  const post = await prisma.post.findUnique({
+    where: { id },
+    include: {
+      sale: true,
+      rent: true,
+      exchange: true,
+      properties: true,
+      images: true,
+    },
+  });
+
+  if (!post) throw new NotFoundError('Post not found');
+
+  return post;
+}

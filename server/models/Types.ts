@@ -1,3 +1,126 @@
+export type UserData =
+  | {
+      type: 'client';
+      id: string;
+    }
+  | {
+      type: 'agent';
+      avatar: string;
+      firstname: string;
+      lastname: string;
+      phone: string;
+      bio: string;
+      id: string;
+    };
+
+export type PostData =
+  | {
+      type: 'sale';
+      id: string;
+      amount: number;
+      currency: 'USD' | 'CUP';
+      description: string;
+      contact: {
+        whatsapp: boolean;
+        phone: string;
+      };
+      images: string[];
+      author: {
+        authorId: string;
+        agent?: {
+          firstname: string;
+          lastname: string;
+          avatar: string;
+          email: string;
+        };
+      };
+      properties: {
+        address: {
+          province: string;
+          municipality: string;
+        };
+        features: {
+          bed: number;
+          bath: number;
+          garage: boolean;
+          garden: boolean;
+          pool: boolean;
+          furnished: boolean;
+        };
+      }[];
+    }
+  | {
+      type: 'rent';
+      id: string;
+      tax: number;
+      currency: 'USD' | 'CUP';
+      frequency: 'daily' | 'monthly';
+      description: string;
+      contact: {
+        whatsapp: boolean;
+        phone: string;
+      };
+      images: string[];
+      author: {
+        authorId: string;
+        agent?: {
+          firstname: string;
+          lastname: string;
+          avatar: string;
+          email: string;
+        };
+      };
+      properties: {
+        address: {
+          province: string;
+          municipality: string;
+        };
+        features: {
+          bed: number;
+          bath: number;
+          garage: boolean;
+          garden: boolean;
+          pool: boolean;
+          furnished: boolean;
+        };
+      }[];
+    }
+  | {
+      type: 'exchange';
+      id: string;
+      needs: number;
+      offers: number;
+      description: string;
+      contact: {
+        whatsapp: boolean;
+        phone: string;
+      };
+      images: string[];
+      author: {
+        authorId: string;
+        agent?: {
+          firstname: string;
+          lastname: string;
+          avatar: string;
+          email: string;
+        };
+      };
+      properties: {
+        address: {
+          province: string;
+          municipality: string;
+        };
+        features: {
+          bed: number;
+          bath: number;
+          garage: boolean;
+          garden: boolean;
+          pool: boolean;
+          furnished: boolean;
+        };
+      }[];
+    };
+
 export enum PROVINCES {
   'Pinar del Río' = 'Pinar del Río',
   'Artemisa' = 'Artemisa',

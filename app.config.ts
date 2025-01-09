@@ -73,5 +73,9 @@ export default defineAppConfig({
     checkbox: {
       base: 'cursor-pointer',
     },
+    skeleton: {
+      background: 'bg-gray-300 dark:bg-gray-700',
+      rounded: 'rounded-xl',
+    },
   },
 });

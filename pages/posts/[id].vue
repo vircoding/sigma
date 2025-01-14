@@ -41,23 +41,14 @@ onUnmounted(() => {
 
 <template>
   <UContainer class="w-full" :class="[useStyles().pageContainer]">
-    <!-- <div v-if="false">
-      <SkeletonPost />
-    </div>
-
-    <div v-else>
-      <Post :post="data.post" />
-    </div> -->
-
+    <!-- Skeleton -->
     <div v-if="status === 'pending'">
       <SkeletonPost />
     </div>
 
     <div v-else-if="status === 'success' && data">
+      <!-- Post Info -->
       <Post :post="data.post" @share="onShare" />
     </div>
-
-    <!-- Phone Actions -->
-    <!-- <section class="sticky bottom-[0vh] z-50 h-24 bg-black"></section> -->
   </UContainer>
 </template>

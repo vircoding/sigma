@@ -197,5 +197,10 @@ const props = defineProps<{
         </div>
       </section>
     </div>
+
+    <!-- Phone Actions -->
+    <section class="sticky bottom-[0vh] z-50">
+      <PostPhone v-bind="{ ...props.post.contact, id: props.post.id }" />
+    </section>
   </div>
 </template>

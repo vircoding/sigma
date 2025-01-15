@@ -13,12 +13,33 @@ export type UserData =
       id: string;
     };
 
+export type Address = {
+  province: PROVINCES;
+  municipality: string;
+};
+
+export type Features = {
+  bed: number;
+  bath: number;
+  garage: boolean;
+  garden: boolean;
+  pool: boolean;
+  furnished: boolean;
+};
+
+export type Property = {
+  address: Address;
+  features: Features;
+};
+
 export type PostData =
   | {
       type: 'sale';
       id: string;
-      amount: number;
-      currency: 'USD' | 'CUP';
+      details: {
+        amount: number;
+        currency: 'USD' | 'CUP';
+      };
       description: string;
       contact: {
         whatsapp: boolean;
@@ -52,9 +73,11 @@ export type PostData =
   | {
       type: 'rent';
       id: string;
-      tax: number;
-      currency: 'USD' | 'CUP';
-      frequency: 'daily' | 'monthly';
+      details: {
+        tax: number;
+        currency: 'USD' | 'CUP';
+        frequency: 'daily' | 'monthly';
+      };
       description: string;
       contact: {
         whatsapp: boolean;
@@ -88,8 +111,10 @@ export type PostData =
   | {
       type: 'exchange';
       id: string;
-      needs: number;
-      offers: number;
+      details: {
+        needs: number;
+        offers: number;
+      };
       description: string;
       contact: {
         whatsapp: boolean;

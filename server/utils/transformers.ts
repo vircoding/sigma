@@ -50,8 +50,10 @@ export function postTransformer(u: PostInput): PostData {
     return {
       type: 'sale',
       id: u.id,
-      amount: u.sale.amount,
-      currency: u.sale.currency,
+      details: {
+        amount: u.sale.amount,
+        currency: u.sale.currency,
+      },
       description: u.description || '',
       contact: {
         whatsapp: u.whatsapp,
@@ -89,9 +91,11 @@ export function postTransformer(u: PostInput): PostData {
     return {
       type: 'rent',
       id: u.id,
-      tax: u.rent.amount,
-      currency: u.rent.currency,
-      frequency: u.rent.frequency,
+      details: {
+        tax: u.rent.amount,
+        currency: u.rent.currency,
+        frequency: u.rent.frequency,
+      },
       description: u.description || '',
       contact: {
         whatsapp: u.whatsapp,
@@ -129,8 +133,10 @@ export function postTransformer(u: PostInput): PostData {
     return {
       type: 'exchange',
       id: u.id,
-      needs: u.exchange.needs,
-      offers: u.exchange.offers,
+      details: {
+        needs: u.exchange.needs,
+        offers: u.exchange.offers,
+      },
       description: u.description || '',
       contact: {
         whatsapp: u.whatsapp,

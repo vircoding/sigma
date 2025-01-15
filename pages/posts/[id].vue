@@ -40,7 +40,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <UContainer class="w-full" :class="[useStyles().pageContainer]">
+  <UContainer class="w-full px-0 min-[350px]:px-4" :class="[useStyles().pageContainer]">
     <!-- Skeleton -->
     <div v-if="status === 'pending'">
       <SkeletonPost />

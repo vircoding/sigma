@@ -76,7 +76,7 @@ function onNavigateToInsert(type: PostType) {
         <!-- Wrapper -->
         <UContainer class="flex w-full flex-col items-end">
           <!-- Close Slideover Button -->
-          <div class="flex items-center py-5 sm:py-6 md:py-7">
+          <div class="flex items-center py-[22px] sm:py-6 md:py-7">
             <ButtonIcon @click="isSlideoverOpen = false">
               <UIcon
                 name="i-charm-cross"

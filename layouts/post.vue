@@ -5,7 +5,7 @@
     <Header />
 
     <!-- Content -->
-    <div class="flex grow flex-col justify-start pb-6">
+    <div class="flex grow flex-col justify-start pb-6 md:pb-8">
       <slot />
     </div>
 

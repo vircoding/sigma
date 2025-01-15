@@ -14,7 +14,7 @@ const props = defineProps<{
     <aside class="flex items-center gap-x-1.5">
       <!-- Icon -->
       <div
-        class="h-9 w-9"
+        class="h-9 w-9 md:h-11 md:w-11"
         :class="[
           props.state ? 'text-primary-500 dark:text-primary-400' : useStyles().textColorDisabled,
         ]"
@@ -23,7 +23,6 @@ const props = defineProps<{
       </div>
 
       <!-- Count -->
-      <!-- <span class="font-bold" :class="[useStyles().textSizeXL]">{{ props.state }}</span> -->
       <UIcon
         v-if="props.state"
         name="i-charm-tick"

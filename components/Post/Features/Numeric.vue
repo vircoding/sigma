@@ -14,7 +14,7 @@ const props = defineProps<{
     <aside class="flex items-center gap-x-2">
       <!-- Icon -->
       <div
-        class="h-9 w-9"
+        class="h-9 w-9 md:h-11 md:w-11"
         :class="[
           props.count !== 0
             ? 'text-primary-500 dark:text-primary-400'
@@ -26,7 +26,7 @@ const props = defineProps<{
 
       <!-- Count -->
       <span
-        class="font-bold"
+        class="font-semibold"
         :class="[
           useStyles().textSizeXL,
           props.count !== 0 ? useStyles().textColorSecondary : useStyles().textColorDisabled,

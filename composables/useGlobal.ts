@@ -1,8 +1,7 @@
 import { ModalLoadingAnimation } from '#components';
 
-const modals = useModal();
-
 function openSubmitLoading() {
+  const modals = useModal();
   const { setAbortNavigate } = useGlobalStore();
 
   setAbortNavigate(true);
@@ -10,6 +9,7 @@ function openSubmitLoading() {
 }
 
 async function closeSubmitLoading() {
+  const modals = useModal();
   const { setAbortNavigate } = useGlobalStore();
 
   await modals.close();

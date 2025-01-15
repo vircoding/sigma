@@ -5,60 +5,44 @@ defineEmits<{
   (e: 'share'): void;
 }>();
 
+const props = defineProps<{
+  post: PostData;
+}>();
+
 const { user } = useUserStore();
 
 const isOwn = computed(() => {
   return user?.id === props.post.author.authorId;
 });
-
-const props = defineProps<{
-  post: PostData;
-}>();
 </script>
 
 <template>
   <div class="flex flex-col">
     <!-- Gallery -->
-    <div class="absolute left-[0vw] top-[72px] sm:top-[84px]">
+    <div class="absolute left-[0vw] top-[72px] w-screen sm:top-[84px] md:top-24">
       <PostGallery :images="props.post.images" />
     </div>
 
     <!-- Details -->
     <div class="flex flex-col pt-[calc(100vw/1.78)]">
       <!-- Hero -->
-      <section class="flex flex-col py-3">
+      <section class="flex flex-col pt-3 md:pt-5">
         <!-- Top -->
         <div
           class="flex items-center justify-between font-ubuntu"
           :class="[useStyles().textColorPrimary]"
         >
           <!-- Sale Info -->
-          <div v-if="props.post.type === 'sale'">
-            <span class="font-black" :class="[useStyles().textSize3XL]"
-              >{{ props.post.amount }}
-              <span class="font-semibold" :class="[useStyles().textSizeXL]">{{
-                props.post.currency
-              }}</span></span
-            >
-          </div>
+          <PostDetailsSale v-if="props.post.type === 'sale'" v-bind="props.post.details" />
 
           <!-- Rent Info -->
-          <div v-if="props.post.type === 'rent'">
-            <span class="font-bold" :class="[useStyles().textSize3XL]"
-              >{{ props.post.tax }}
-              <span class="font-semibold" :class="[useStyles().textSizeXL]"
-                >{{ props.post.currency }} /
-                {{ props.post.frequency === 'daily' ? 'día' : 'mes' }}</span
-              ></span
-            >
-          </div>
+          <PostDetailsRent v-else-if="props.post.type === 'rent'" v-bind="props.post.details" />
 
           <!-- Exchange Info -->
-          <div v-if="props.post.type === 'exchange'">
-            <span class="font-bold" :class="[useStyles().textSize3XL]"
-              >56,000 <span class="font-semibold" :class="[useStyles().textSizeXL]">USD</span></span
-            >
-          </div>
+          <PostDetailsExchange
+            v-else-if="props.post.type === 'exchange'"
+            v-bind="props.post.details"
+          />
 
           <!-- CTA's -->
           <div class="flex items-center gap-x-1">
@@ -70,7 +54,7 @@ const props = defineProps<{
             >
               <UIcon
                 name="i-solar-pen-bold"
-                class="h-[30px] w-[30px]"
+                class="h-[30px] w-[30px] md:h-[38px] md:w-[38px]"
                 :class="[useStyles().textColorPrimary]"
               />
             </NuxtLink>
@@ -79,99 +63,44 @@ const props = defineProps<{
             <ButtonIcon @click="$emit('share')">
               <UIcon
                 name="i-solar-share-bold"
-                class="h-8 w-8"
+                class="h-8 w-8 md:h-10 md:w-10"
                 :class="[useStyles().textColorPrimary]"
               />
             </ButtonIcon>
           </div>
         </div>
+      </section>
 
-        <!-- Address -->
-        <aside>
+      <!-- Properties -->
+      <div v-for="(property, index) in props.post.properties" :key="index">
+        <aside
+          v-if="props.post.type === 'exchange' && props.post.details.offers > 1"
+          :class="{ 'pt-3 md:pt-5': index >= 1 }"
+        >
           <span
-            >{{ props.post.properties[0].address.municipality }},
-            {{ props.post.properties[0].address.province }}</span
+            class="font-bold leading-none"
+            :class="[useStyles().textColorPrimary, useStyles().textSizeLG]"
+            >Propiedad {{ index + 1 }}</span
           >
         </aside>
-      </section>
 
-      <!-- Divider -->
-      <UDivider type="dashed" />
+        <!-- Address -->
+        <aside class="pb-3 md:pb-5">
+          <span>{{ property.address.municipality }}, {{ property.address.province }}</span>
+        </aside>
 
-      <!-- Features -->
-      <section class="grid grid-cols-4 grid-rows-2 gap-y-2 pb-5 pt-3">
-        <!-- Bed -->
-        <PostFeatureNumeric
-          label="Cuartos"
-          :count="props.post.properties[0].features.bed"
-          class="col-start-1 row-start-1"
-        >
-          <template #icon>
-            <IconFeatureBed />
-          </template>
-        </PostFeatureNumeric>
+        <!-- Divider -->
+        <UDivider type="dashed" />
 
-        <!-- Bath -->
-        <PostFeatureNumeric
-          label="Baños"
-          :count="props.post.properties[0].features.bath"
-          class="col-start-2 row-start-1"
-        >
-          <template #icon>
-            <IconFeatureBath />
-          </template>
-        </PostFeatureNumeric>
+        <!-- Features -->
+        <PostFeatures :features="property.features" />
 
-        <!-- Garage -->
-        <PostFeatureBoolean
-          label="Garage"
-          :state="props.post.properties[0].features.garage"
-          class="col-start-3 row-start-1"
-        >
-          <template #icon>
-            <IconFeatureGarage />
-          </template>
-        </PostFeatureBoolean>
-
-        <!-- Garden -->
-        <PostFeatureBoolean
-          label="Jardín"
-          :state="props.post.properties[0].features.garden"
-          class="col-start-1 row-start-2"
-        >
-          <template #icon>
-            <IconFeatureGarden />
-          </template>
-        </PostFeatureBoolean>
-
-        <!-- Pool -->
-        <PostFeatureBoolean
-          label="Piscina"
-          :state="props.post.properties[0].features.pool"
-          class="col-start-2 row-start-2"
-        >
-          <template #icon>
-            <IconFeaturePool />
-          </template>
-        </PostFeatureBoolean>
-
-        <!-- Furnished -->
-        <PostFeatureBoolean
-          label="Amueblada"
-          :state="props.post.properties[0].features.furnished"
-          class="col-start-3 row-start-2"
-        >
-          <template #icon>
-            <IconFeatureFurnished />
-          </template>
-        </PostFeatureBoolean>
-      </section>
-
-      <!-- Divider -->
-      <UDivider type="dashed" />
+        <!-- Divider -->
+        <UDivider type="dashed" />
+      </div>
 
       <!-- Description -->
-      <section class="py-3.5">
+      <section class="py-3.5 md:py-[22px]">
         <p class="whitespace-pre-wrap">
           {{ props.post.description.length === 0 ? 'Sin Descripción :(' : props.post.description }}
         </p>
@@ -181,25 +110,11 @@ const props = defineProps<{
       <UDivider type="dashed" />
 
       <!-- Agent Details -->
-      <section v-if="props.post.author.agent" class="py-3.5">
-        <div class="flex items-center gap-x-2">
-          <img :src="props.post.author.agent.avatar" class="aspect-square w-1/5 rounded-full" />
-          <div class="flex w-4/5 flex-col">
-            <span class="leading-none"
-              >Por
-              <span class="font-bold" :class="[useStyles().textColorPrimary]"
-                >{{ props.post.author.agent.firstname }}
-                {{ props.post.author.agent.lastname }}</span
-              ></span
-            >
-            <span :class="[useStyles().textSizeSM]">{{ props.post.author.agent.email }}</span>
-          </div>
-        </div>
-      </section>
+      <PostAuthor v-if="props.post.author.agent" v-bind="props.post.author.agent" />
     </div>
 
     <!-- Phone Actions -->
-    <section class="sticky bottom-[0vh] z-50">
+    <section class="sticky bottom-3 z-50 md:bottom-5">
       <PostPhone v-bind="{ ...props.post.contact, id: props.post.id }" />
     </section>
   </div>

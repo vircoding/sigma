@@ -23,7 +23,7 @@ https://sigmacuba.com/posts/${props.id}`;
 
 <template>
   <div
-    class="relative -left-4 grid w-[calc(100vw-32px)] grid-cols-2 gap-x-2 rounded-2xl bg-gray-300/30 p-2 backdrop-blur-md dark:bg-gray-500/30"
+    class="relative -left-2 grid w-[calc(100vw-16px)] max-w-lg grid-cols-2 gap-x-2 rounded-2xl bg-gray-300/30 p-2 backdrop-blur-md min-[350px]:-left-4 min-[350px]:w-[calc(100vw-32px)] dark:bg-gray-500/30"
   >
     <!-- Call -->
     <UButton

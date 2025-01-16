@@ -76,7 +76,7 @@ onMounted(() => {
       ref="carousel"
       :items="props.images"
       :ui="carouselConfig"
-      class="overflow-hidden"
+      class="overflow-hidden lg:rounded-xl"
       indicators
     >
       <template #default="{ item }">

@@ -4,7 +4,7 @@ definePageMeta({
 });
 
 const appConfig = useAppConfig();
-const { params, fullPath } = useRoute();
+const { params } = useRoute();
 
 const { status, data } = useLazyFetch(`/api/posts/${params.id}`);
 
@@ -24,16 +24,6 @@ watch(data, (newData) => {
   }
 });
 
-function onShare() {
-  const shareData = {
-    title: 'Publicación en Sigma',
-    text: 'Mira esta casa',
-    url: fullPath,
-  };
-
-  navigator.share(shareData).catch();
-}
-
 onUnmounted(() => {
   appConfig.ui.primary = 'azure';
 });
@@ -48,7 +38,7 @@ onUnmounted(() => {
 
     <div v-else-if="status === 'success' && data">
       <!-- Post Info -->
-      <Post :post="data.post" @share="onShare" />
+      <Post :post="data.post" />
     </div>
   </UContainer>
 </template>

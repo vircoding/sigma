@@ -7,7 +7,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <section class="grid grid-cols-4 grid-rows-2 gap-y-2 pb-5 pt-3 md:pb-7 md:pt-5">
+  <section class="grid grid-cols-4 grid-rows-2 gap-y-2 pb-5 pt-3 md:pb-7 md:pt-5 lg:pt-1">
     <!-- Bed -->
     <PostFeaturesNumeric
       label="Cuartos"

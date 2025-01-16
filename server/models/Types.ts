@@ -32,118 +32,69 @@ export type Property = {
   features: Features;
 };
 
+export type SaleDetails = {
+  amount: number;
+  currency: 'USD' | 'CUP';
+};
+
+export type RentDetails = {
+  tax: number;
+  currency: 'USD' | 'CUP';
+  frequency: 'daily' | 'monthly';
+};
+
+export type ExchangeDetails = {
+  needs: number;
+  offers: number;
+};
+
+export type Details = SaleDetails | RentDetails | ExchangeDetails;
+
+export type Author = {
+  authorId: string;
+  agent?: {
+    firstname: string;
+    lastname: string;
+    avatar: string;
+    email: string;
+  };
+};
+
+export type Contact = {
+  whatsapp: boolean;
+  phone: string;
+};
+
 export type PostData =
   | {
       type: 'sale';
       id: string;
-      details: {
-        amount: number;
-        currency: 'USD' | 'CUP';
-      };
+      details: SaleDetails;
       description: string;
-      contact: {
-        whatsapp: boolean;
-        phone: string;
-      };
+      contact: Contact;
       images: string[];
-      author: {
-        authorId: string;
-        agent?: {
-          firstname: string;
-          lastname: string;
-          avatar: string;
-          email: string;
-        };
-      };
-      properties: {
-        address: {
-          province: string;
-          municipality: string;
-        };
-        features: {
-          bed: number;
-          bath: number;
-          garage: boolean;
-          garden: boolean;
-          pool: boolean;
-          furnished: boolean;
-        };
-      }[];
+      author: Author;
+      properties: Property[];
     }
   | {
       type: 'rent';
       id: string;
-      details: {
-        tax: number;
-        currency: 'USD' | 'CUP';
-        frequency: 'daily' | 'monthly';
-      };
+      details: RentDetails;
       description: string;
-      contact: {
-        whatsapp: boolean;
-        phone: string;
-      };
+      contact: Contact;
       images: string[];
-      author: {
-        authorId: string;
-        agent?: {
-          firstname: string;
-          lastname: string;
-          avatar: string;
-          email: string;
-        };
-      };
-      properties: {
-        address: {
-          province: string;
-          municipality: string;
-        };
-        features: {
-          bed: number;
-          bath: number;
-          garage: boolean;
-          garden: boolean;
-          pool: boolean;
-          furnished: boolean;
-        };
-      }[];
+      author: Author;
+      properties: Property[];
     }
   | {
       type: 'exchange';
       id: string;
-      details: {
-        needs: number;
-        offers: number;
-      };
+      details: ExchangeDetails;
       description: string;
-      contact: {
-        whatsapp: boolean;
-        phone: string;
-      };
+      contact: Contact;
       images: string[];
-      author: {
-        authorId: string;
-        agent?: {
-          firstname: string;
-          lastname: string;
-          avatar: string;
-          email: string;
-        };
-      };
-      properties: {
-        address: {
-          province: string;
-          municipality: string;
-        };
-        features: {
-          bed: number;
-          bath: number;
-          garage: boolean;
-          garden: boolean;
-          pool: boolean;
-          furnished: boolean;
-        };
-      }[];
+      author: Author;
+      properties: Property[];
     };
 
 export enum PROVINCES {

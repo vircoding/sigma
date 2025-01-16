@@ -22,36 +22,38 @@ https://sigmacuba.com/posts/${props.id}`;
 </script>
 
 <template>
-  <div
-    class="relative -left-2 grid w-[calc(100vw-16px)] max-w-lg grid-cols-2 gap-x-2 rounded-2xl bg-gray-300/30 p-2 backdrop-blur-md min-[350px]:-left-4 min-[350px]:w-[calc(100vw-32px)] dark:bg-gray-500/30"
-  >
-    <!-- Call -->
-    <UButton
-      :label="formattedPhone"
-      :to="`tel:${props.phone}`"
-      size="md"
-      block
-      :ui="props.whatsapp ? useUIConfigs().cancelButtonConfig : useUIConfigs().acceptButtonConfig"
-      class="gap-x-1 font-bold"
+  <nav class="sticky bottom-3 z-50 md:bottom-5 lg:relative lg:bottom-0 lg:z-0">
+    <div
+      class="relative -left-2 grid w-[calc(100vw-16px)] max-w-lg grid-cols-2 gap-x-2 rounded-2xl bg-gray-300/30 p-2 backdrop-blur-md min-[350px]:-left-4 min-[350px]:w-[calc(100vw-32px)] lg:left-0 lg:w-full lg:max-w-none lg:gap-x-3 lg:bg-transparent lg:p-0 lg:backdrop-blur-none dark:bg-gray-500/30 lg:dark:bg-transparent"
     >
-      <template #leading>
-        <UIcon name="i-solar-phone-calling-outline" class="h-5 w-5" />
-      </template>
-    </UButton>
+      <!-- Call -->
+      <UButton
+        :label="formattedPhone"
+        :to="`tel:${props.phone}`"
+        size="md"
+        block
+        :ui="props.whatsapp ? useUIConfigs().cancelButtonConfig : useUIConfigs().acceptButtonConfig"
+        class="gap-x-1 font-bold md:gap-x-1.5"
+      >
+        <template #leading>
+          <UIcon name="i-solar-phone-calling-outline" class="h-5 w-5 md:h-6 md:w-6" />
+        </template>
+      </UButton>
 
-    <!-- Whatsapp -->
-    <UButton
-      v-if="props.whatsapp"
-      :label="formattedPhone"
-      :to="`https://wa.me/${props.phone}?text=${encodeURIComponent(whatsappMessage)}`"
-      size="md"
-      block
-      :ui="useUIConfigs().acceptButtonConfig"
-      class="gap-x-1 font-bold"
-    >
-      <template #leading>
-        <UIcon name="i-fa6-brands-whatsapp" class="h-5 w-5" />
-      </template>
-    </UButton>
-  </div>
+      <!-- Whatsapp -->
+      <UButton
+        v-if="props.whatsapp"
+        :label="formattedPhone"
+        :to="`https://wa.me/${props.phone}?text=${encodeURIComponent(whatsappMessage)}`"
+        size="md"
+        block
+        :ui="useUIConfigs().acceptButtonConfig"
+        class="gap-x-1 font-bold md:gap-x-1.5"
+      >
+        <template #leading>
+          <UIcon name="i-fa6-brands-whatsapp" class="h-5 w-5 md:h-6 md:w-6" />
+        </template>
+      </UButton>
+    </div>
+  </nav>
 </template>

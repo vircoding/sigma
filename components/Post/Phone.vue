@@ -34,6 +34,7 @@ https://sigmacuba.com/posts/${props.id}`;
         block
         :ui="props.whatsapp ? useUIConfigs().cancelButtonConfig : useUIConfigs().acceptButtonConfig"
         class="gap-x-1 font-bold md:gap-x-1.5"
+        :class="{ 'col-span-2': !props.whatsapp }"
       >
         <template #leading>
           <UIcon name="i-solar-phone-calling-outline" class="h-5 w-5 md:h-6 md:w-6" />

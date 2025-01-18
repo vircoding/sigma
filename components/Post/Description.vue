@@ -5,8 +5,8 @@ const props = defineProps<{
 </script>
 
 <template>
-  <section class="py-3.5 md:py-[22px]">
-    <p class="whitespace-pre-wrap">
+  <section class="flex py-3.5 md:py-[22px] lg:pb-0">
+    <p class="max-h-[480px] w-full overflow-y-auto whitespace-pre-wrap lg:max-h-80">
       {{ props.description.length === 0 ? 'Sin Descripción :(' : props.description }}
     </p>
   </section>

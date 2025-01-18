@@ -24,10 +24,10 @@ const isOwn = computed(() => {
     </div>
 
     <div
-      class="flex grid-cols-2 grid-rows-1 flex-col pt-[calc(100vw/1.78)] lg:grid lg:gap-x-12 lg:pt-0"
+      class="flex auto-cols-min grid-cols-2 grid-rows-1 flex-col pt-[calc(100vw/1.78)] lg:grid lg:items-center lg:gap-x-12 lg:pt-0"
     >
       <!-- Left Column (Desktop) -->
-      <div>
+      <div class="">
         <!-- Desktop Gallery -->
         <PostGallery :images="props.post.images" class="hidden lg:block" />
 

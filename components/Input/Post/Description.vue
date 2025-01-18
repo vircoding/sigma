@@ -5,6 +5,8 @@ const props = defineProps<{
   errorVisibility: boolean;
 }>();
 
+const valOnChange = ref(false);
+
 const { value, errorMessage } = useField<string>(() => props.name, undefined, {
   syncVModel: true,
   validateOnMount: true,
@@ -16,7 +18,7 @@ const { value, errorMessage } = useField<string>(() => props.name, undefined, {
     size="md"
     label="Descripción (Opcional)"
     name="description"
-    :error="props.errorVisibility && errorMessage"
+    :error="(valOnChange || props.errorVisibility) && errorMessage"
   >
     <template #label="{ label, error }">
       <span class="h-min" :class="[error ? useStyles().textColorError : undefined]">{{
@@ -43,6 +45,7 @@ const { value, errorMessage } = useField<string>(() => props.name, undefined, {
         :rows="12"
         type="text"
         :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
+        @blur="valOnChange = true"
       />
     </template>
 

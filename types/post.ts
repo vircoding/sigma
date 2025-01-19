@@ -1,25 +1,26 @@
 import type { UserInstance } from '~/types/user';
 import type {
+  Currency as CurrencyDB,
   Post as PostDB,
   Sale as SaleDB,
   Rent as RentDB,
   Exchange as ExchangeDB,
   Property as PropertyDB,
   Image as ImageDB,
+  Frequency as FrequencyDB,
+  PostType as PostTypeDB,
 } from '@prisma/client';
 
-export enum POST {
-  'sale' = 'sale',
-  'rent' = 'rent',
-  'exchange' = 'exchange',
-}
+export type Frequency = FrequencyDB;
+export type Currency = CurrencyDB;
+export type PostType = PostTypeDB;
 
 type Address = {
   province: PROVINCES;
   municipality: string;
 };
 
-type Features = {
+export type Features = {
   bed: number;
   bath: number;
   garage: boolean;
@@ -28,26 +29,82 @@ type Features = {
   furnished: boolean;
 };
 
-type Property = {
+type FeaturesInput = {
+  bed: string;
+  bath: string;
+  garage: boolean;
+  garden: boolean;
+  pool: boolean;
+  furnished: boolean;
+};
+
+export type Property = {
   address: Address;
   features: Features;
 };
 
-type SaleDetails = {
+type PropertyInput = {
+  address: Address;
+  features: FeaturesInput;
+};
+
+export type Image = {
+  imageURL: string;
+  blob: Blob;
+};
+
+export type Offers = 1 | 2 | 3;
+export type Needs = 0 | 1 | 2 | 3;
+
+export type Code = {
+  code: string;
+  esName: string;
+  enName: string;
+  callingCode: string;
+};
+
+export type InsertInput = {
+  type: PostType;
+  sale: {
+    amount: string;
+    currency: Currency;
+  };
+  rent: {
+    tax: string;
+    currency: Currency;
+    frequency: Frequency;
+  };
+  exchange: {
+    offers: Offers;
+    needs: Needs;
+  };
+  phone: {
+    phone: string;
+    code: string;
+  };
+  whatsapp: boolean;
+  properties: PropertyInput[];
+  images: Image[];
+  description: string;
+};
+
+export type SaleDetails = {
   amount: number;
-  currency: 'USD' | 'CUP';
+  currency: Currency;
 };
 
-type RentDetails = {
+export type RentDetails = {
   tax: number;
-  currency: 'USD' | 'CUP';
-  frequency: 'daily' | 'monthly';
+  currency: Currency;
+  frequency: Frequency;
 };
 
-type ExchangeDetails = {
+export type ExchangeDetails = {
   needs: number;
   offers: number;
 };
+
+export type Details = SaleDetails | RentDetails | ExchangeDetails;
 
 type Author = {
   authorId: string;
@@ -64,7 +121,7 @@ type Contact = {
   phone: string;
 };
 
-export type PostTransformer = {
+export type Post = {
   id: string;
   description: string;
   contact: Contact;

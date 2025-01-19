@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Property } from '~/server/models/Types';
+import type { Property } from '~/types/post';
 
 const props = defineProps<{
   property: Property;

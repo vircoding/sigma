@@ -7,7 +7,7 @@ import {
   type InsertRentFormSchema,
   type InsertExchangeFormSchema,
 } from '~/models/ValSchema';
-import type { Insert } from '~/models/PostTypes';
+import { type InsertInput, PROVINCES } from '~/types/post';
 import {
   AccessTokenExpiredError,
   FormFieldError,
@@ -33,7 +33,7 @@ const badRequestErrorModal = useTemplateRef('badRequest');
 const clientMaxErrorModal = useTemplateRef('clientMax');
 const agentMaxErrorModal = useTemplateRef('agentMax');
 
-const state = reactive<Insert>({
+const state = reactive<InsertInput>({
   type: 'sale',
   sale: {
     amount: '',
@@ -56,7 +56,7 @@ const state = reactive<Insert>({
   properties: [
     {
       address: {
-        province: 'La Habana',
+        province: PROVINCES['La Habana'],
         municipality: 'La Habana Vieja',
       },
       features: {
@@ -70,7 +70,7 @@ const state = reactive<Insert>({
     },
     {
       address: {
-        province: 'La Habana',
+        province: PROVINCES['La Habana'],
         municipality: 'La Habana Vieja',
       },
       features: {
@@ -84,7 +84,7 @@ const state = reactive<Insert>({
     },
     {
       address: {
-        province: 'La Habana',
+        province: PROVINCES['La Habana'],
         municipality: 'La Habana Vieja',
       },
       features: {

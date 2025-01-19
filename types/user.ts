@@ -9,7 +9,7 @@ export type UserInstance = { agent: (AgentDB & { avatar: AvatarDB | null }) | nu
   client: ClientDB | null;
 } & UserDB;
 
-export type UserTransformer =
+export type User =
   | {
       type: 'client';
       id: string;

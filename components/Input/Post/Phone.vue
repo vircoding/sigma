@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Code } from '~/models/PostTypes';
+import type { Code } from '~/types/post';
 
 const props = defineProps<{
   code: string;

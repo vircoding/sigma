@@ -1,8 +1,8 @@
-import type { PostInstance, PostTransformer, PROVINCES } from '~/types/post';
-import type { UserInstance, UserTransformer } from '~/types/user';
+import type { PostInstance, Post, PROVINCES } from '~/types/post';
+import type { UserInstance, User } from '~/types/user';
 import { UnexpectedError } from '../models/Error';
 
-export function userTransformer(u: UserInstance): UserTransformer {
+export function userTransformer(u: UserInstance): User {
   if (u.type === 'client') {
     return {
       id: u.id,
@@ -21,7 +21,7 @@ export function userTransformer(u: UserInstance): UserTransformer {
   } else throw new UnexpectedError();
 }
 
-export function postTransformer(u: PostInstance): PostTransformer {
+export function postTransformer(u: PostInstance): Post {
   if (u.type === 'sale' && u.sale) {
     return {
       type: 'sale',

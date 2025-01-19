@@ -21,17 +21,18 @@ defineEmits<{
   (e: 'agent'): void;
 }>();
 
-const appConfig = useAppConfig();
 const globalStore = useGlobalStore();
 
 const { refresh } = useAuth();
 const { insert } = usePost();
-const { openSubmitLoading, closeSubmitLoading } = useGlobal();
+const { openSubmitLoading, closeSubmitLoading, setUIPrimary } = useGlobal();
 
 const imagesInput = useTemplateRef('imagesInput');
 const badRequestErrorModal = useTemplateRef('badRequest');
 const clientMaxErrorModal = useTemplateRef('clientMax');
 const agentMaxErrorModal = useTemplateRef('agentMax');
+
+const errorVisibility = ref(false);
 
 const state = reactive<InsertInput>({
   type: 'sale',
@@ -116,8 +117,6 @@ const { handleSubmit, setFieldError } = useForm<
   }),
 });
 
-const errorVisibility = ref(false);
-
 const onSubmit = handleSubmit(
   async (values) => {
     try {
@@ -152,18 +151,7 @@ const onSubmit = handleSubmit(
 
 onMounted(() => {
   state.type = globalStore.insertType;
-
-  switch (state.type) {
-    case 'rent':
-      appConfig.ui.primary = 'keppel';
-      break;
-    case 'exchange':
-      appConfig.ui.primary = 'affair';
-      break;
-    default:
-      appConfig.ui.primary = 'azure';
-      break;
-  }
+  setUIPrimary(state.type);
 });
 </script>
 
@@ -190,8 +178,9 @@ onMounted(() => {
           <!-- Desktop CTA's -->
           <section class="mb-7 flex flex-col lg:mb-0">
             <button
+              type="button"
               class="w-min text-nowrap font-medium"
-              :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
+              :class="[useStyles().linkActiveState]"
               @click.prevent="$emit('agent')"
             >
               Contactar agente

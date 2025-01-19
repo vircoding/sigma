@@ -23,3 +23,8 @@ export type User =
       bio: string;
       id: string;
     };
+
+export type LoginInput = {
+  email: string;
+  password: string;
+};

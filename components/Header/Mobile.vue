@@ -62,7 +62,7 @@ function onNavigateToInsert(type: PostType) {
       <!-- Open Slideover Button -->
       <ButtonIcon @click="isSlideoverOpen = true">
         <UIcon
-          name="i-charm-menu-hamburger"
+          name="i-solar-hamburger-menu-outline"
           class="h-6 w-6 min-[354px]:h-7 min-[354px]:w-7 sm:h-9 sm:w-9 md:h-10 md:w-10"
           :class="[useStyles().textColorPrimary]"
         />
@@ -76,7 +76,7 @@ function onNavigateToInsert(type: PostType) {
         <!-- Wrapper -->
         <UContainer class="flex w-full flex-col items-end">
           <!-- Close Slideover Button -->
-          <div class="flex items-center py-5 sm:py-6 md:py-7">
+          <div class="flex items-center py-[22px] sm:py-6 md:py-7">
             <ButtonIcon @click="isSlideoverOpen = false">
               <UIcon
                 name="i-charm-cross"
@@ -217,9 +217,15 @@ function onNavigateToInsert(type: PostType) {
 
     <UModal
       v-model="isAccountModalOpen"
-      :ui="{ width: 'w-full max-w-96 sm:max-w-96', container: 'sm:items-end' }"
+      :ui="{
+        width: 'w-full max-w-96 sm:max-w-96',
+        container: 'sm:items-end',
+        background: 'bg-gray-200/30 dark:bg-gray-500/30',
+      }"
     >
-      <div class="flex flex-col items-center justify-center gap-y-2 p-2">
+      <div
+        class="flex flex-col items-center justify-center gap-y-2 overflow-hidden rounded-xl p-2 backdrop-blur-sm"
+      >
         <!-- Top -->
         <NuxtLink
           v-if="user?.type === 'agent'"

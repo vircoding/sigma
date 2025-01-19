@@ -725,6 +725,16 @@ export async function findPostById(id: string) {
       exchange: true,
       properties: true,
       images: true,
+      user: {
+        include: {
+          client: true,
+          agent: {
+            include: {
+              avatar: true,
+            },
+          },
+        },
+      },
     },
   });
 

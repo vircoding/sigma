@@ -1,3 +1,4 @@
+import type { PostData, PROVINCES, UserData } from '~/server/models/Types';
 import type {
   Agent as AgentDB,
   Client as ClientDB,
@@ -22,106 +23,8 @@ type PostInput = PostDB & {
   sale: SaleDB | null;
   rent: RentDB | null;
   exchange: ExchangeDB | null;
+  user: UserInput | null;
 };
-
-type UserData =
-  | {
-      type: 'client';
-      id: string;
-    }
-  | {
-      type: 'agent';
-      avatar: string;
-      firstname: string;
-      lastname: string;
-      phone: string;
-      bio: string;
-      id: string;
-    };
-
-type PostData =
-  | {
-      type: 'sale';
-      id: string;
-      amount: number;
-      currency: 'USD' | 'CUP';
-      description: string;
-      contact: {
-        whatsapp: boolean;
-        phone: string;
-      };
-      images: string[];
-      userId: string;
-      properties: {
-        address: {
-          province: string;
-          municipality: string;
-        };
-        features: {
-          bed: number;
-          bath: number;
-          garage: boolean;
-          garden: boolean;
-          pool: boolean;
-          furnished: boolean;
-        };
-      }[];
-    }
-  | {
-      type: 'rent';
-      id: string;
-      amount: number;
-      currency: 'USD' | 'CUP';
-      frequency: 'daily' | 'monthly';
-      description: string;
-      contact: {
-        whatsapp: boolean;
-        phone: string;
-      };
-      images: string[];
-      userId: string;
-      properties: {
-        address: {
-          province: string;
-          municipality: string;
-        };
-        features: {
-          bed: number;
-          bath: number;
-          garage: boolean;
-          garden: boolean;
-          pool: boolean;
-          furnished: boolean;
-        };
-      }[];
-    }
-  | {
-      type: 'exchange';
-      id: string;
-      needs: number;
-      offers: number;
-      description: string;
-      contact: {
-        whatsapp: boolean;
-        phone: string;
-      };
-      images: string[];
-      userId: string;
-      properties: {
-        address: {
-          province: string;
-          municipality: string;
-        };
-        features: {
-          bed: number;
-          bath: number;
-          garage: boolean;
-          garden: boolean;
-          pool: boolean;
-          furnished: boolean;
-        };
-      }[];
-    };
 
 export function userTransformer(u: UserInput): UserData {
   if (u.type === 'client') {
@@ -143,24 +46,35 @@ export function userTransformer(u: UserInput): UserData {
 }
 
 export function postTransformer(u: PostInput): PostData {
-  console.log(u);
-
   if (u.type === 'sale' && u.sale) {
     return {
       type: 'sale',
       id: u.id,
-      amount: u.sale.amount,
-      currency: u.sale.currency,
+      details: {
+        amount: u.sale.amount,
+        currency: u.sale.currency,
+      },
       description: u.description || '',
       contact: {
         whatsapp: u.whatsapp,
         phone: u.phone,
       },
       images: u.images.map((item) => item.url),
-      userId: u.userId,
+      author: {
+        authorId: u.userId,
+        agent:
+          u.user?.type === 'agent' && u.user.agent && u.user.agent.avatar
+            ? {
+                firstname: u.user.agent.firstname,
+                lastname: u.user.agent.lastname,
+                avatar: u.user.agent.avatar.url,
+                email: u.user.email,
+              }
+            : undefined,
+      },
       properties: u.properties.map((item) => ({
         address: {
-          province: item.address.province,
+          province: item.address.province as PROVINCES,
           municipality: item.address.municipality,
         },
         features: {
@@ -177,19 +91,32 @@ export function postTransformer(u: PostInput): PostData {
     return {
       type: 'rent',
       id: u.id,
-      amount: u.rent.amount,
-      currency: u.rent.currency,
-      frequency: u.rent.frequency,
+      details: {
+        tax: u.rent.amount,
+        currency: u.rent.currency,
+        frequency: u.rent.frequency,
+      },
       description: u.description || '',
       contact: {
         whatsapp: u.whatsapp,
         phone: u.phone,
       },
       images: u.images.map((item) => item.url),
-      userId: u.userId,
+      author: {
+        authorId: u.userId,
+        agent:
+          u.user?.type === 'agent' && u.user.agent && u.user.agent.avatar
+            ? {
+                firstname: u.user.agent.firstname,
+                lastname: u.user.agent.lastname,
+                avatar: u.user.agent.avatar.url,
+                email: u.user.email,
+              }
+            : undefined,
+      },
       properties: u.properties.map((item) => ({
         address: {
-          province: item.address.province,
+          province: item.address.province as PROVINCES,
           municipality: item.address.municipality,
         },
         features: {
@@ -206,18 +133,31 @@ export function postTransformer(u: PostInput): PostData {
     return {
       type: 'exchange',
       id: u.id,
-      needs: u.exchange.needs,
-      offers: u.exchange.offers,
+      details: {
+        needs: u.exchange.needs,
+        offers: u.exchange.offers,
+      },
       description: u.description || '',
       contact: {
         whatsapp: u.whatsapp,
         phone: u.phone,
       },
       images: u.images.map((item) => item.url),
-      userId: u.userId,
+      author: {
+        authorId: u.userId,
+        agent:
+          u.user?.type === 'agent' && u.user.agent && u.user.agent.avatar
+            ? {
+                firstname: u.user.agent.firstname,
+                lastname: u.user.agent.lastname,
+                avatar: u.user.agent.avatar.url,
+                email: u.user.email,
+              }
+            : undefined,
+      },
       properties: u.properties.map((item) => ({
         address: {
-          province: item.address.province,
+          province: item.address.province as PROVINCES,
           municipality: item.address.municipality,
         },
         features: {

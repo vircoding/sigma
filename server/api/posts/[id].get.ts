@@ -3,7 +3,7 @@ import { UnexpectedError, NotFoundError } from '~/server/models/Error';
 
 export default defineEventHandler(async (event) => {
   try {
-    // Get the Post Id
+    // Get the post Id
     const { id } = getRouterParams(event);
     if (!id) throw new UnexpectedError();
 

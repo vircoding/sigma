@@ -214,7 +214,7 @@ export const insertSaleSchema = z.object({
     })
     .array()
     .length(1),
-  description: z.string().trim().max(1200).optional(),
+  description: z.string().trim().max(1250).optional(),
   whatsapp: z.boolean(),
   phone: z
     .string()
@@ -280,7 +280,7 @@ export const insertRentSchema = z.object({
     })
     .array()
     .length(1),
-  description: z.string().trim().max(1200).optional(),
+  description: z.string().trim().max(1250).optional(),
   whatsapp: z.boolean(),
   phone: z
     .string()
@@ -330,7 +330,7 @@ export const insertExchangeSchema = z
       .array()
       .min(1)
       .max(3),
-    description: z.string().trim().max(1200).optional(),
+    description: z.string().trim().max(1250).optional(),
     whatsapp: z.boolean(),
     phone: z
       .string()

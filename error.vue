@@ -34,21 +34,21 @@ const getInfo = computed(() => {
 
     switch (props.error.statusCode) {
       case 404:
-        if ('url' in props.error && (props.error.url as string).startsWith('/posts/')) {
+        if ('message' in props.error && props.error.message === 'Post not found')
           info =
             'El anuncio al que intentas acceder no existe. Es posible que el autor lo haya eliminado recientemente.';
-        } else info = 'La página a la que intentas acceder no existe.';
+        else info = 'La página a la que intentas acceder no existe.';
         break;
       default:
         info =
-          'Lamentablemente, ha ocurrido un problema en el servidor. Te sugerimos que intentes refrescar la página. Si el problema persiste, por favor, espera unos minutos e inténtalo más tarde.';
+          'Lamentablemente, estamos afrontando dificultades. Te sugerimos que intentes refrescar la página. Si el problema persiste, por favor, espera unos minutos e inténtalo más tarde.';
         break;
     }
 
     return info;
   }
 
-  return 'Lamentablemente, ha ocurrido un problema en el servidor. Te sugerimos que intentes refrescar la página. Si el problema persiste, por favor, espera unos minutos e inténtalo más tarde';
+  return 'Lamentablemente, estamos afrontando dificultades. Te sugerimos que intentes refrescar la página. Si el problema persiste, por favor, espera unos minutos e inténtalo más tarde';
 });
 
 function handleRefresh() {

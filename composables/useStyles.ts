@@ -2,6 +2,7 @@ export default function useStyles() {
   return {
     textColorPrimary: 'text-azure-950 dark:text-gray-200',
     textColorSecondary: 'text-gray-500 dark:text-gray-400',
+    textColorDisabled: 'text-gray-400 dark:text-gray-800',
     textColorError: 'text-red-500 dark:text-red-400',
     textSizeXS: 'text-xs md:text-sm',
     textSizeSM: 'text-sm md:text-base',

@@ -19,6 +19,7 @@
     "@nuxt/fonts": "^0.10.3",
     "@nuxt/ui": "^2.20.0",
     "@nuxtjs/device": "^3.2.4",
+    "@panzoom/panzoom": "^4.5.1",
     "@pinia/nuxt": "^0.9.0",
     "@prisma/client": "^5.22.0",
     "@types/bcrypt": "^5.0.2",

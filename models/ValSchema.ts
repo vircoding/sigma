@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import validator from 'validator';
 import parsePhoneNumber from 'libphonenumber-js';
-import { PROVINCES } from '~/server/models/Types';
+import { PROVINCES } from '~/types/post';
 import { getMunicipalities } from '~/server/utils/provinces';
 
 // Register Client

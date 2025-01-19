@@ -1,26 +1,10 @@
-export type Province =
-  | 'Pinar del Río'
-  | 'Artemisa'
-  | 'La Habana'
-  | 'Mayabeque'
-  | 'Matanzas'
-  | 'Villa Clara'
-  | 'Cienfuegos'
-  | 'Sancti Spíritus'
-  | 'Ciego de Ávila'
-  | 'Camagüey'
-  | 'Las Tunas'
-  | 'Holguín'
-  | 'Granma'
-  | 'Santiago de Cuba'
-  | 'Guantánamo'
-  | 'Isla de la Juventud';
+import type { PROVINCES } from '~/types/post';
 
 export type PostType = 'sale' | 'rent' | 'exchange';
 
 export type Property = {
   address: {
-    province: Province;
+    province: PROVINCES;
     municipality: string;
   };
   features: {

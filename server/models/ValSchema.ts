@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import validator from 'validator';
 import parsePhoneNumber from 'libphonenumber-js';
-import { PROVINCES } from '~/server/models/Types';
+import { PROVINCES } from '~/types/post';
 
 export type ClientRegisterData = z.infer<typeof registerClientSchema>;
 export type AgentRegisterData = z.infer<typeof registerAgentSchema>;

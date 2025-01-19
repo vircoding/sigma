@@ -1,32 +1,8 @@
-import type { PostData, PROVINCES, UserData } from '~/server/models/Types';
-import type {
-  Agent as AgentDB,
-  Client as ClientDB,
-  User as UserDB,
-  Avatar as AvatarDB,
-  Post as PostDB,
-  Sale as SaleDB,
-  Rent as RentDB,
-  Exchange as ExchangeDB,
-  Property as PropertyDB,
-  Image as ImageDB,
-} from '@prisma/client';
+import type { PostInstance, PostTransformer, PROVINCES } from '~/types/post';
+import type { UserInstance, UserTransformer } from '~/types/user';
 import { UnexpectedError } from '../models/Error';
 
-type UserInput = { agent: (AgentDB & { avatar: AvatarDB | null }) | null } & {
-  client: ClientDB | null;
-} & UserDB;
-
-type PostInput = PostDB & {
-  properties: PropertyDB[];
-  images: ImageDB[];
-  sale: SaleDB | null;
-  rent: RentDB | null;
-  exchange: ExchangeDB | null;
-  user: UserInput | null;
-};
-
-export function userTransformer(u: UserInput): UserData {
+export function userTransformer(u: UserInstance): UserTransformer {
   if (u.type === 'client') {
     return {
       id: u.id,
@@ -45,7 +21,7 @@ export function userTransformer(u: UserInput): UserData {
   } else throw new UnexpectedError();
 }
 
-export function postTransformer(u: PostInput): PostData {
+export function postTransformer(u: PostInstance): PostTransformer {
   if (u.type === 'sale' && u.sale) {
     return {
       type: 'sale',

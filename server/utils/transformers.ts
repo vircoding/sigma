@@ -1,4 +1,4 @@
-import type { PostData, UserData } from '~/server/models/Types';
+import type { PostData, PROVINCES, UserData } from '~/server/models/Types';
 import type {
   Agent as AgentDB,
   Client as ClientDB,
@@ -74,7 +74,7 @@ export function postTransformer(u: PostInput): PostData {
       },
       properties: u.properties.map((item) => ({
         address: {
-          province: item.address.province,
+          province: item.address.province as PROVINCES,
           municipality: item.address.municipality,
         },
         features: {
@@ -116,7 +116,7 @@ export function postTransformer(u: PostInput): PostData {
       },
       properties: u.properties.map((item) => ({
         address: {
-          province: item.address.province,
+          province: item.address.province as PROVINCES,
           municipality: item.address.municipality,
         },
         features: {
@@ -157,7 +157,7 @@ export function postTransformer(u: PostInput): PostData {
       },
       properties: u.properties.map((item) => ({
         address: {
-          province: item.address.province,
+          province: item.address.province as PROVINCES,
           municipality: item.address.municipality,
         },
         features: {

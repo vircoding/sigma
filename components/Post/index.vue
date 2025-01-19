@@ -19,7 +19,14 @@ const isOwn = computed(() => {
 <template>
   <div class="flex flex-col">
     <!-- Mobile Gallery -->
-    <div class="absolute left-[0vw] top-[72px] w-screen sm:top-[84px] md:top-24 lg:hidden">
+    <div
+      class="absolute left-[0vw] w-screen lg:hidden"
+      :class="[
+        $device.isMobileOrTablet
+          ? 'top-[72px] sm:top-[84px] md:top-24'
+          : 'top-[116px] sm:top-[128px] md:top-[143px]',
+      ]"
+    >
       <PostGallery :images="props.post.images" />
     </div>
 

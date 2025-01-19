@@ -1,4 +1,5 @@
 import { ModalLoadingAnimation } from '#components';
+import type { PostType } from '~/models/PostTypes';
 
 function openSubmitLoading() {
   const modals = useModal();
@@ -6,6 +7,27 @@ function openSubmitLoading() {
 
   setAbortNavigate(true);
   modals.open(ModalLoadingAnimation);
+}
+
+function setUIPrimary(type: PostType) {
+  const appConfig = useAppConfig();
+
+  switch (type) {
+    case 'rent':
+      appConfig.ui.primary = 'keppel';
+      break;
+    case 'exchange':
+      appConfig.ui.primary = 'affair';
+      break;
+    default:
+      appConfig.ui.primary = 'azure';
+      break;
+  }
+}
+
+function resetUIPrimary() {
+  const appConfig = useAppConfig();
+  appConfig.ui.primary = 'azure';
 }
 
 async function closeSubmitLoading() {
@@ -17,5 +39,5 @@ async function closeSubmitLoading() {
 }
 
 export default function () {
-  return { openSubmitLoading, closeSubmitLoading };
+  return { openSubmitLoading, closeSubmitLoading, setUIPrimary, resetUIPrimary };
 }

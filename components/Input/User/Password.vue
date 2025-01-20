@@ -1,27 +1,26 @@
 <script setup lang="ts">
 const props = defineProps<{
   name: string;
-  modelValue: string;
   errorVisibility: boolean;
 }>();
 
+defineModel<string>('password', { required: true });
+const passwordVisibility = defineModel<boolean>('passwordVisibility', { default: false });
+
 const valOnChange = ref(false);
-const passwordVisibility = ref(false);
 
 const { value, errorMessage } = useField<string>(() => props.name, undefined, {
-  syncVModel: true,
+  syncVModel: 'password',
   validateOnMount: true,
 });
 </script>
 
 <template>
-  <!-- Password -->
   <UFormGroup
     size="md"
     label="Contraseña"
     name="password"
     :error="(valOnChange || props.errorVisibility) && errorMessage"
-    class="mb-6"
   >
     <template #label="{ label, error }">
       <span :class="[error ? useStyles().textColorError : undefined]">{{ label }}</span>

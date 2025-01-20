@@ -28,3 +28,9 @@ export type LoginInput = {
   email: string;
   password: string;
 };
+
+export type RegisterClientInput = {
+  email: string;
+  password: string;
+  repassword: string;
+};

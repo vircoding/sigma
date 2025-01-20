@@ -85,13 +85,19 @@ const onSubmit = handleSubmit(
     <!-- Right Column -->
     <div class="col-start-2 row-start-1 self-center">
       <!-- Email -->
-      <InputUserEmail v-model="state.email" :error-visibility="errorVisibility" name="email" />
+      <InputUserEmail
+        v-model="state.email"
+        :error-visibility="errorVisibility"
+        name="email"
+        class="mb-4"
+      />
 
       <!-- Password -->
       <InputUserPassword
-        v-model="state.password"
+        v-model:password="state.password"
         :error-visibility="errorVisibility"
         name="password"
+        class="mb-6"
       />
 
       <!-- Submit -->

@@ -3,6 +3,7 @@ const props = defineProps<{
   name: string;
   modelValue: string;
   errorVisibility: boolean;
+  passwordVisibility: boolean;
 }>();
 
 const valOnChange = ref(false);
@@ -16,8 +17,8 @@ const { value, errorMessage } = useField<string>(() => props.name, undefined, {
 <template>
   <UFormGroup
     size="md"
-    label="Correo Electrónico"
-    name="email"
+    label="Confirmar Contraseña"
+    name="repassword"
     :error="(valOnChange || props.errorVisibility) && errorMessage"
   >
     <template #label="{ label, error }">
@@ -28,9 +29,7 @@ const { value, errorMessage } = useField<string>(() => props.name, undefined, {
       <UInput
         v-model.trim="value"
         size="md"
-        type="email"
-        autocomplete="email"
-        inputmode="email"
+        :type="props.passwordVisibility ? 'text' : 'password'"
         :trailing-icon="error ? 'i-heroicons-exclamation-circle' : undefined"
         @blur="valOnChange = true"
       />

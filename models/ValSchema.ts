@@ -42,7 +42,10 @@ export const registerAgentSchema = z
       .min(6, 'Debe contener entre 6 y 20 caracteres')
       .max(20, 'Debe contener entre 6 y 20 caracteres'),
     repassword: z.string({ message: 'Requerido' }).trim().min(1, 'Requerido'),
-    avatar: z.string({ message: 'Requerido' }).trim().min(1, 'Requerido'),
+    avatar: z.object({
+      avatarURL: z.string(),
+      blob: z.instanceof(Blob),
+    }),
     firstname: z
       .string({ message: 'Requerido' })
       .trim()
@@ -59,19 +62,37 @@ export const registerAgentSchema = z
       .refine((data) => validator.isAlpha(data, 'es-ES', { ignore: ' ' }), {
         message: 'Los apellidos no son válidos',
       }),
-    code: z
-      .string({ message: 'Requerido' })
-      .trim()
+    phone: z
+      .object({
+        code: z
+          .string({ message: 'Requerido' })
+          .trim()
+          .refine(
+            (data) => {
+              const regex = /^\+\d+$/;
+              if (data.length > 3) return false;
+              if (!regex.test(`+${data}`)) return false;
+              return true;
+            },
+            { message: 'El código no es válido' },
+          ),
+        phone: z
+          .string({ message: 'Requerido' })
+          .trim()
+          .min(1, 'Requerido')
+          .max(17, 'Debe ser un teléfono válido'),
+      })
       .refine(
         (data) => {
-          const regex = /^\+\d+$/;
-          if (data.length > 3) return false;
-          if (!regex.test(`+${data}`)) return false;
-          return true;
+          const parsedPhoneNumber = parsePhoneNumber(`+${data.code}${data.phone}`);
+          if (!parsedPhoneNumber?.isValid()) return false;
+          else return true;
         },
-        { message: 'El código no es válido' },
+        {
+          message: 'Debe ser un teléfono válido',
+          path: ['phone'],
+        },
       ),
-    phone: z.string({ message: 'Requerido' }).trim().min(1, 'Requerido'),
     bio: z
       .string({ message: 'La biografía no es válida' })
       .trim()
@@ -81,18 +102,7 @@ export const registerAgentSchema = z
   .refine((data) => data.password === data.repassword, {
     message: 'Las contraseñas deben coincidir',
     path: ['repassword'],
-  })
-  .refine(
-    (data) => {
-      const parsedPhoneNumber = parsePhoneNumber(`+${data.code}${data.phone}`);
-      if (!parsedPhoneNumber?.isValid()) return false;
-      else return true;
-    },
-    {
-      message: 'Debe ser un teléfono válido',
-      path: ['phone'],
-    },
-  );
+  });
 
 export type RegisterAgentSchema = z.output<typeof registerAgentSchema>;
 

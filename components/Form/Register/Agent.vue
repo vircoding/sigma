@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { BadRequestError, ConflictError, FormFieldError } from '~/models/Error';
-import { registerClientSchema, type RegisterClientSchema } from '~/models/ValSchema';
-import type { LoginInput, RegisterClientInput } from '~/types/user';
+import { BadRequestError, ConflictError, FormFieldError, MaxSizeError } from '~/models/Error';
+import { registerAgentSchema, type RegisterAgentSchema } from '~/models/ValSchema';
+import type { LoginInput, RegisterAgentInput } from '~/types/user';
 
 const emit = defineEmits<{
   (e: 'verify', login: LoginInput): void;
 }>();
 
-const { registerClient } = useAuth();
+const { registerAgent } = useAuth();
 const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 
 const conflictErrorModal = useTemplateRef('conflict');
@@ -16,14 +16,21 @@ const badRequestErrorModal = useTemplateRef('badRequest');
 const errorVisibility = ref(false);
 const passwordVisibility = ref(false);
 
-const state = reactive<RegisterClientInput>({
+const state = reactive<RegisterAgentInput>({
   email: '',
   password: '',
   repassword: '',
+  firstname: '',
+  lastname: '',
+  bio: '',
+  phone: {
+    phone: '',
+    code: '53',
+  },
 });
 
-const { handleSubmit, isSubmitting } = useForm<RegisterClientSchema>({
-  validationSchema: toTypedSchema(registerClientSchema),
+const { handleSubmit, setFieldError, isSubmitting } = useForm<RegisterAgentSchema>({
+  validationSchema: toTypedSchema(registerAgentSchema),
 });
 
 const onSubmit = handleSubmit(
@@ -31,10 +38,12 @@ const onSubmit = handleSubmit(
     try {
       openSubmitLoading();
 
-      await registerClient(values);
+      await registerAgent(values);
       emit('verify', { email: values.email, password: values.password });
     } catch (error) {
-      if (error instanceof ConflictError) {
+      if (error instanceof MaxSizeError) {
+        setFieldError('avatar', 'La imagen es muy grande');
+      } else if (error instanceof ConflictError) {
         conflictErrorModal.value?.openModal();
       } else if (error instanceof BadRequestError || error instanceof FormFieldError) {
         badRequestErrorModal.value?.openModal();
@@ -43,25 +52,30 @@ const onSubmit = handleSubmit(
       closeSubmitLoading();
     }
   },
-  () => {
+  ({ errors }) => {
+    console.log(errors);
     errorVisibility.value = true;
   },
 );
 </script>
 
 <template>
-  <UForm :state="state" class="grid-cols-2 lg:grid lg:gap-x-12 xl:gap-x-20" @submit="onSubmit">
-    <!-- Left Column -->
-    <div class="flex-col gap-5 lg:flex lg:self-center">
+  <UForm
+    :state="state"
+    class="auto-cols-auto grid-cols-2 grid-rows-2 lg:grid lg:gap-x-12 xl:gap-x-20"
+    @submit="onSubmit"
+  >
+    <!-- Top Left Column -->
+    <div class="col-start-1 row-start-1 flex-col justify-end gap-5 lg:flex">
       <!-- Hero -->
       <section class="mb-7 flex flex-col gap-2 lg:mb-0">
         <h2
           class="font-ubuntu font-bold"
           :class="[useStyles().textColorPrimary, useStyles().textSize4XL]"
         >
-          Regístrate como Propietario
+          Regístrate como Agente
         </h2>
-        <p>Crea tu cuenta como Propietario si deseas vender o rentar tu casa.</p>
+        <p>Crea tu cuenta como Agente si deseas vender o rentar más de una casa.</p>
       </section>
 
       <!-- Desktop CTA's -->
@@ -74,16 +88,16 @@ const onSubmit = handleSubmit(
         >
 
         <NuxtLink
-          :to="{ name: 'auth-register-agent' }"
+          :to="{ name: 'auth-register-client' }"
           class="w-min text-nowrap font-medium"
           :class="[useStyles().linkActiveState]"
-          >¿Eres agente?</NuxtLink
+          >¿No eres agente?</NuxtLink
         >
       </section>
     </div>
 
-    <!-- Right Column -->
-    <div class="col-start-2 row-start-1 self-center">
+    <!-- Bottom Left Column -->
+    <div class="col-start-1 row-start-2 self-end">
       <!-- Email -->
       <InputUserEmail
         v-model="state.email"
@@ -107,9 +121,65 @@ const onSubmit = handleSubmit(
         :error-visibility="errorVisibility"
         :password-visibility="passwordVisibility"
         name="repassword"
-        class="mb-6"
+        class="mb-4 lg:mb-0"
       />
+    </div>
 
+    <!-- Right Column -->
+    <div class="col-start-2 row-span-2 row-start-1">
+      <div class="col-start-2 row-span-2 row-start-1">
+        <div class="flex gap-2">
+          <!-- Avatar -->
+          <InputUserAvatar
+            v-model="state.avatar"
+            name="avatar"
+            :error-visibility="errorVisibility"
+            class="mb-4"
+          />
+
+          <div class="flex grow flex-col">
+            <!-- Firstname -->
+            <InputUserName
+              v-model="state.firstname"
+              name="firstname"
+              label-attrib="Nombre"
+              :error-visibility="errorVisibility"
+              class="mb-4"
+            />
+
+            <!-- Lastname -->
+            <InputUserName
+              v-model="state.lastname"
+              name="lastname"
+              label-attrib="Apellidos"
+              :error-visibility="errorVisibility"
+              class="mb-4"
+            />
+          </div>
+        </div>
+
+        <!-- Whatsapp -->
+        <InputPhone
+          v-model:code="state.phone.code"
+          v-model:phone="state.phone.phone"
+          :error-visibility="errorVisibility"
+          label-attrib="Whatsapp"
+          code-name="phone.code"
+          phone-name="phone.phone"
+          class="mb-4"
+        />
+
+        <InputUserBio
+          v-model="state.bio"
+          :error-visibility="errorVisibility"
+          name="bio"
+          class="mb-6 lg:mb-0"
+        />
+      </div>
+    </div>
+
+    <!-- Bottom Right Column -->
+    <div class="col-start-2 row-start-3 lg:mt-6">
       <!-- Submit -->
       <UButton
         type="submit"
@@ -149,12 +219,14 @@ const onSubmit = handleSubmit(
         >
 
         <NuxtLink
-          :to="{ name: 'auth-register-agent' }"
+          :to="{ name: 'auth-register-client' }"
           class="w-min text-nowrap font-medium"
           :class="[useStyles().linkActiveState]"
-          >¿Eres agente?</NuxtLink
+          >¿No eres agente?</NuxtLink
         >
       </section>
+
+      <pre>{{ state }}</pre>
     </div>
 
     <!-- Conflict Error -->

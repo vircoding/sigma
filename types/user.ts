@@ -34,3 +34,22 @@ export type RegisterClientInput = {
   password: string;
   repassword: string;
 };
+
+export type RegisterAgentInput = {
+  email: string;
+  password: string;
+  repassword: string;
+  firstname: string;
+  lastname: string;
+  phone: {
+    phone: string;
+    code: string;
+  };
+  bio: string;
+  avatar?: Avatar;
+};
+
+export type Avatar = {
+  avatarURL: string;
+  blob: Blob;
+};

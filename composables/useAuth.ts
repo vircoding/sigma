@@ -14,6 +14,19 @@ import {
   ResetPasswordError,
 } from '~/models/Error';
 
+function getAgentInput(body: RegisterAgentSchema) {
+  return JSON.stringify({
+    type: 'agent',
+    email: body.email,
+    password: body.password,
+    repassword: body.repassword,
+    firstname: body.firstname,
+    lastname: body.lastname,
+    bio: body.bio,
+    phone: `+${body.phone.code}${body.phone.phone}`,
+  });
+}
+
 async function registerClient(body: RegisterClientSchema) {
   try {
     const formData = new FormData();
@@ -37,15 +50,11 @@ async function registerClient(body: RegisterClientSchema) {
   }
 }
 
-async function registerAgent(
-  body: Omit<RegisterAgentSchema, 'code' | 'avatar'> & {
-    avatar?: Blob;
-  },
-) {
+async function registerAgent(body: RegisterAgentSchema) {
   try {
     const formData = new FormData();
-    formData.append('input', JSON.stringify({ type: 'agent', ...body }));
-    if (body.avatar) formData.append('avatar', body.avatar);
+    formData.append('input', getAgentInput(body));
+    formData.append('avatar', body.avatar.blob);
 
     await $fetch('/api/auth/register', {
       method: 'POST',

@@ -102,7 +102,7 @@ const state = reactive<InsertInput>({
   description: '',
 });
 
-const { handleSubmit, setFieldError } = useForm<
+const { handleSubmit, setFieldError, isSubmitting } = useForm<
   InsertSaleFormSchema | InsertRentFormSchema | InsertExchangeFormSchema
 >({
   validationSchema: computed(() => {
@@ -240,12 +240,14 @@ onMounted(() => {
         </InputPostType>
 
         <!-- Phone Number -->
-        <InputPostPhone
+        <InputPhone
           v-model:code="state.phone.code"
           v-model:phone="state.phone.phone"
           :error-visibility="errorVisibility"
+          label-attrib="Teléfono"
           code-name="phone.code"
           phone-name="phone.phone"
+          class="mb-1.5"
         />
 
         <!-- Whatsapp Checkbox -->
@@ -378,6 +380,7 @@ onMounted(() => {
           type="submit"
           size="md"
           block
+          :disabled="isSubmitting"
           :ui="useUIConfigs().acceptButtonConfig"
           class="font-bold"
           >Publicar</UButton

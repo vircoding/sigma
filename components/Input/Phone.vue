@@ -4,6 +4,7 @@ import type { Code } from '~/types/post';
 const props = defineProps<{
   code: string;
   codeName: string;
+  labelAttrib: string;
   phone: string;
   phoneName: string;
   errorVisibility: boolean;
@@ -54,11 +55,11 @@ function onCodeChange() {
 </script>
 
 <template>
-  <div class="mb-2.5 flex justify-between gap-x-3">
+  <div class="flex justify-between gap-x-3">
     <!-- Code -->
     <UFormGroup
       size="md"
-      label="Teléfono"
+      :label="props.labelAttrib"
       name="phone"
       :error="(valOnChange || props.errorVisibility) && phoneErrorMessage"
     >

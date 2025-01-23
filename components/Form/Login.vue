@@ -20,7 +20,7 @@ const state = reactive<LoginInput>({
   password: '',
 });
 
-const { handleSubmit } = useForm<LoginSchema>({
+const { handleSubmit, isSubmitting } = useForm<LoginSchema>({
   validationSchema: toTypedSchema(loginSchema),
 });
 
@@ -105,6 +105,7 @@ const onSubmit = handleSubmit(
         type="submit"
         size="md"
         block
+        :disabled="isSubmitting"
         :ui="useUIConfigs().acceptButtonConfig"
         class="mb-6 font-bold lg:mb-0"
         >Ingresar</UButton

@@ -13,8 +13,8 @@ import {
   insertSaleSchema,
   insertRentSchema,
   insertExchangeSchema,
-} from '~/server/models/validations/InsertSchema';
-import { postTypeSchema } from '~/server/models/validations/GlobalSchema';
+} from '~/models/schemas/server/InsertSchema';
+import { postTypeSchema } from '~/models/schemas/server/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;

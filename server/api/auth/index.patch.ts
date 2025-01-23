@@ -3,7 +3,7 @@ import formidable from 'formidable';
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
 import { BadRequestError, NotAgentError, NotFoundError } from '~/models/classes/server/Error';
-import { updateAgentSchema } from '~/server/models/validations/UpdateAgentSchema';
+import { updateAgentSchema } from '~/models/schemas/server/UpdateAgentSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ZodError } from 'zod';
-import { resetPasswordSchema } from '~/models/validations/ResetPasswordSchema';
+import { resetPasswordSchema } from '~/models/schemas/client/ResetPasswordSchema';
 import { ModalMinimalError } from '#components';
 import { ResetPasswordError, FormFieldError, BadRequestError } from '~/models/classes/client/Error';
 

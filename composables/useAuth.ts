@@ -2,7 +2,7 @@ import { FetchError } from 'ofetch';
 import type {
   RegisterClientSchema,
   RegisterAgentSchema,
-} from '~/models/validations/RegisterSchema';
+} from '~/models/schemas/client/RegisterSchema';
 import {
   FormFieldError,
   BadRequestError,

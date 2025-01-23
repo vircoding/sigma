@@ -3,7 +3,7 @@ import { BadRequestError, ConflictError, FormFieldError } from '~/models/classes
 import {
   registerClientSchema,
   type RegisterClientSchema,
-} from '~/models/validations/RegisterSchema';
+} from '~/models/schemas/client/RegisterSchema';
 import type { LoginInput, RegisterClientInput } from '~/types/user';
 
 const emit = defineEmits<{

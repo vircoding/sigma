@@ -4,7 +4,7 @@ import {
   insertRentSchema,
   getInsertExchangeSchema,
   type InsertSchema,
-} from '~/models/validations/InsertSchema';
+} from '~/models/schemas/client/InsertSchema';
 import { type InsertInput, PROVINCES } from '~/types/post';
 import {
   AccessTokenExpiredError,

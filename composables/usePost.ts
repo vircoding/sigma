@@ -1,5 +1,5 @@
 import { FetchError } from 'ofetch';
-import type { InsertSchema } from '~/models/validations/InsertSchema';
+import type { InsertSchema } from '~/models/schemas/client/InsertSchema';
 import {
   AccessTokenExpiredError,
   AgentMaxError,

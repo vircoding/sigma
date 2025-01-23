@@ -5,7 +5,7 @@ import { RefreshTokenError } from '~/models/classes/server/Error';
 import {
   decodedRefreshTokenSchema,
   refreshTokenSchema,
-} from '~/server/models/validations/GlobalSchema';
+} from '~/models/schemas/server/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   try {

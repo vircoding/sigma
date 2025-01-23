@@ -2,7 +2,7 @@ import { VerificationTokenError, VerifiedError } from '~/models/classes/server/E
 import {
   decodedVerificationTokenSchema,
   verificationTokenSchema,
-} from '~/server/models/validations/GlobalSchema';
+} from '~/models/schemas/server/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   try {

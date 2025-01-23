@@ -5,13 +5,13 @@ import type {
   InsertSaleSchema,
   InsertRentSchema,
   InsertExchangeSchema,
-} from '~/server/models/validations/InsertSchema';
-import type { LoginSchema } from '~/server/models/validations/LoginSchema';
-import type { UpdateAgentSchema } from '~/server/models/validations/UpdateAgentSchema';
+} from '~/models/schemas/server/InsertSchema';
+import type { LoginSchema } from '~/models/schemas/server/LoginSchema';
+import type { UpdateAgentSchema } from '~/models/schemas/server/UpdateAgentSchema';
 import type {
   RegisterClientSchema,
   RegisterAgentSchema,
-} from '~/server/models/validations/RegisterSchema';
+} from '~/models/schemas/server/RegisterSchema';
 
 import {
   ConflictError,

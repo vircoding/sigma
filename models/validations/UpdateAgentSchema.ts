@@ -2,10 +2,8 @@ import { z } from 'zod';
 import validator from 'validator';
 import parsePhoneNumber from 'libphonenumber-js';
 
-// Types
 export type UpdateAgentSchema = z.output<typeof updateAgentSchema>;
 
-// Update Agent
 export const updateAgentSchema = z
   .object({
     firstname: z

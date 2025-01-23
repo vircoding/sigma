@@ -1,6 +1,6 @@
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { passwordCodeSchema } from '~/server/models/ValSchema';
+import { passwordCodeSchema } from '~/server/models/validations/ResetPasswordSchema';
 import { BodyError, PasswordCodeError } from '~/server/models/Error';
 
 export default defineEventHandler(async (event) => {

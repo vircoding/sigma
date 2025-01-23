@@ -3,7 +3,7 @@ import formidable from 'formidable';
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
 import { BadRequestError, NotAgentError, NotFoundError } from '~/server/models/Error';
-import { updateSchema } from '~/server/models/ValSchema';
+import { updateAgentSchema } from '~/server/models/validations/UpdateAgentSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;
@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
     else throw new BadRequestError('Invalid multipart form');
 
     // Validate the input
-    const data = await updateSchema.parseAsync(input);
+    const data = await updateAgentSchema.parseAsync(input);
 
     // Parse the avatar
     if (files.avatar) avatar = parseAvatar(files.avatar[0]);

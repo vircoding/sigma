@@ -10,11 +10,11 @@ import {
   MaxFileSizeImageError,
 } from '~/server/models/Error';
 import {
-  postTypeSchema,
   insertSaleSchema,
   insertRentSchema,
   insertExchangeSchema,
-} from '~/server/models/ValSchema';
+} from '~/server/models/validations/InsertSchema';
+import { postTypeSchema } from '~/server/models/validations/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;

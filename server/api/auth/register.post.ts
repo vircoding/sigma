@@ -4,10 +4,10 @@ import { H3Error } from 'h3';
 import { ZodError } from 'zod';
 import { ConflictError, UnexpectedError, BadRequestError } from '~/server/models/Error';
 import {
-  userTypeSchema,
   registerClientSchema,
   registerAgentSchema,
-} from '~/server/models/ValSchema';
+} from '~/server/models/validations/RegisterSchema';
+import { userTypeSchema } from '~/server/models/validations/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;

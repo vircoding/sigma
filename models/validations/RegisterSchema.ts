@@ -2,11 +2,9 @@ import { z } from 'zod';
 import validator from 'validator';
 import parsePhoneNumber from 'libphonenumber-js';
 
-// Types
 export type RegisterClientSchema = z.output<typeof registerClientSchema>;
 export type RegisterAgentSchema = z.output<typeof registerAgentSchema>;
 
-// Register Client
 export const registerClientSchema = z
   .object({
     email: z
@@ -27,7 +25,6 @@ export const registerClientSchema = z
     path: ['repassword'],
   });
 
-// Register Agent
 export const registerAgentSchema = z
   .object({
     email: z

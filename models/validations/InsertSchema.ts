@@ -3,13 +3,11 @@ import parsePhoneNumber from 'libphonenumber-js';
 import { PROVINCES } from '~/types/post';
 import { getMunicipalities } from '~/server/utils/provinces';
 
-// Types
 export type InsertSaleSchema = z.output<typeof insertSaleSchema>;
 export type InsertRentSchema = z.output<typeof insertRentSchema>;
 export type InsertExchangeSchema = z.output<typeof _insertExchangeSchema>;
 export type InsertSchema = InsertSaleSchema | InsertRentSchema | InsertExchangeSchema;
 
-// Insert Partial Schema
 const insertPartialSchema = z.object({
   whatsapp: z.boolean(),
   phone: z
@@ -58,7 +56,6 @@ const insertPartialSchema = z.object({
     .max(10),
 });
 
-// Insert Sale Partial Schema
 const insertSalePartialSchema = z.object({
   type: z.literal('sale'),
   saleAmount: z.coerce
@@ -69,7 +66,6 @@ const insertSalePartialSchema = z.object({
   saleCurrency: z.enum(['USD', 'CUP']),
 });
 
-// Insert Rent Partial Schema
 const insertRentPartialSchema = z.object({
   type: z.literal('rent'),
   rentTax: z.coerce
@@ -81,7 +77,6 @@ const insertRentPartialSchema = z.object({
   rentFrequency: z.enum(['daily', 'monthly']),
 });
 
-// Insert Exchange Partial Schema
 const insertExchangePartialSchema = z.object({
   type: z.literal('exchange'),
   exchangeOffers: z.number().int().gte(1).lte(3),
@@ -116,17 +111,14 @@ const insertPropertyPartialSchema = z.object({
   }),
 });
 
-// Insert Sale Schema
 export const insertSaleSchema = insertPartialSchema.extend(insertSalePartialSchema.shape).extend({
   properties: z.object(insertPropertyPartialSchema.shape).array().length(1),
 });
 
-// Insert Rent Schema
 export const insertRentSchema = insertPartialSchema.extend(insertRentPartialSchema.shape).extend({
   properties: z.object(insertPropertyPartialSchema.shape).array().length(1),
 });
 
-// Insert Exchange Schema
 const _insertExchangeSchema = insertPartialSchema.extend(insertExchangePartialSchema.shape).extend({
   properties: z.object(insertPropertyPartialSchema.shape).array(),
 });

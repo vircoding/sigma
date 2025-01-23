@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-// Types
 export type LoginSchema = z.output<typeof loginSchema>;
 
-// Login Schema
 export const loginSchema = z.object({
   email: z
     .string({ message: 'Requerido' })

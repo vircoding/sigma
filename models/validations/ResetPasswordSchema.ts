@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-// Types
 export type ResetPasswordSchema = z.output<typeof resetPasswordSchema>;
 
-// Reset Password Schema
 export const resetPasswordSchema = z
   .object({
     email: z

@@ -1,7 +1,7 @@
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
 import { BodyError, NotFoundError, VerifiedError } from '~/server/models/Error';
-import { resendSchema } from '~/server/models/ValSchema';
+import { resendSchema } from '~/server/models/validations/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   try {

@@ -9,7 +9,7 @@ import {
   registerAgentSchema,
   type RegisterAgentSchema,
 } from '~/models/schemas/client/RegisterSchema';
-import type { LoginInput, RegisterAgentInput } from '~/types/user';
+import type { LoginInput, RegisterAgentInput } from '~/models/types/User';
 
 const emit = defineEmits<{
   (e: 'verify', login: LoginInput): void;

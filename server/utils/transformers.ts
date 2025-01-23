@@ -1,5 +1,5 @@
-import type { PostInstance, Post, PROVINCES } from '~/types/post';
-import type { UserInstance, User } from '~/types/user';
+import type { PostInstance, Post, PROVINCES } from '~/models/types/Post';
+import type { UserInstance, User } from '~/models/types/User';
 import { UnexpectedError } from '~/models/classes/server/Error';
 
 export function userTransformer(u: UserInstance): User {

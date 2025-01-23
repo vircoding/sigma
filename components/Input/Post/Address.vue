@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PROVINCES } from '~/types/post';
+import type { PROVINCES } from '~/models/types/Post';
 
 const props = defineProps<{
   province: PROVINCES;

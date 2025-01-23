@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Post } from '~/types/post';
+import type { Post } from '~/models/types/Post';
 
 defineEmits<{
   (e: 'share'): void;

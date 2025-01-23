@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Needs } from '~/types/post';
+import type { Needs } from '~/models/types/Post';
 
 type Option = { value: Needs; label: string };
 

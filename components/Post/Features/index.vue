@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Features } from '~/types/post';
+import type { Features } from '~/models/types/Post';
 
 const props = defineProps<{
   features: Features;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BadCredentialsError, ConflictError } from '~/models/classes/client/Error';
-import type { LoginInput } from '~/types/user';
+import type { LoginInput } from '~/models/types/User';
 
 const props = defineProps<{
   loginData: LoginInput;

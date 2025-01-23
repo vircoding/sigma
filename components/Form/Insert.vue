@@ -5,7 +5,7 @@ import {
   getInsertExchangeSchema,
   type InsertSchema,
 } from '~/models/schemas/client/InsertSchema';
-import { type InsertInput, PROVINCES } from '~/types/post';
+import { type InsertInput, PROVINCES } from '~/models/types/Post';
 import {
   AccessTokenExpiredError,
   FormFieldError,

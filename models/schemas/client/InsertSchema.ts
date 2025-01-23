@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import parsePhoneNumber from 'libphonenumber-js';
-import { PROVINCES } from '~/types/post';
+import { PROVINCES } from '~/models/types/Post';
 import { getMunicipalities } from '~/server/utils/provinces';
 
 export type InsertSaleSchema = z.output<typeof insertSaleSchema>;

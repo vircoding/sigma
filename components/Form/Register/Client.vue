@@ -4,7 +4,7 @@ import {
   registerClientSchema,
   type RegisterClientSchema,
 } from '~/models/schemas/client/RegisterSchema';
-import type { LoginInput, RegisterClientInput } from '~/types/user';
+import type { LoginInput, RegisterClientInput } from '~/models/types/User';
 
 const emit = defineEmits<{
   (e: 'verify', login: LoginInput): void;

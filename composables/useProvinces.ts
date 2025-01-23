@@ -1,4 +1,4 @@
-import { PROVINCES } from '~/types/post';
+import { PROVINCES } from '~/models/types/Post';
 
 function getProvinces(): PROVINCES[] {
   return Object.values(PROVINCES);

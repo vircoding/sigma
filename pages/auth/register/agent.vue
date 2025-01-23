@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LoginInput } from '~/types/user';
+import type { LoginInput } from '~/models/types/User';
 
 definePageMeta({
   middleware: 'no-auth',

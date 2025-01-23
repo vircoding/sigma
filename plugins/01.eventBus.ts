@@ -1,5 +1,5 @@
 import mitt from 'mitt';
-import type { PostType } from '~/types/post';
+import type { PostType } from '~/models/types/Post';
 
 type ApplicationEvents = {
   'navigation:insert': PostType;

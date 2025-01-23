@@ -1,4 +1,4 @@
-import type { UserInstance } from '~/types/user';
+import type { UserInstance } from '~/models/types/User';
 import type {
   Currency as CurrencyDB,
   Post as PostDB,

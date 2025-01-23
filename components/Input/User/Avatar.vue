@@ -2,7 +2,7 @@
 import { Cropper, CircleStencil } from 'vue-advanced-cropper';
 import type { ImageSize, Coordinates } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
-import type { Avatar } from '~/types/user';
+import type { Avatar } from '~/models/types/User';
 
 const props = defineProps<{
   name: string;

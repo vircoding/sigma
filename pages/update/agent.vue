@@ -8,7 +8,7 @@ import {
   BadRequestError,
   FormFieldError,
   MaxSizeError,
-} from '~/models/Error';
+} from '~/models/classes/client/Error';
 import parsePhoneNumber from 'libphonenumber-js';
 
 definePageMeta({

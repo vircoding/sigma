@@ -13,7 +13,7 @@ import {
   ClientMaxError,
   AgentMaxError,
   MaxImageSizeError,
-} from '~/models/Error';
+} from '~/models/classes/client/Error';
 
 defineEmits<{
   (e: 'agent'): void;

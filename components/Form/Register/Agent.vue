@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { BadRequestError, ConflictError, FormFieldError, MaxSizeError } from '~/models/Error';
+import {
+  BadRequestError,
+  ConflictError,
+  FormFieldError,
+  MaxSizeError,
+} from '~/models/classes/client/Error';
 import { registerAgentSchema, type RegisterAgentSchema } from '~/models/validations/RegisterSchema';
 import type { LoginInput, RegisterAgentInput } from '~/types/user';
 

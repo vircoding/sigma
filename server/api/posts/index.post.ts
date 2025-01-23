@@ -8,7 +8,7 @@ import {
   UnexpectedError,
   NotFoundError,
   MaxFileSizeImageError,
-} from '~/server/models/Error';
+} from '~/models/classes/server/Error';
 import {
   insertSaleSchema,
   insertRentSchema,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BadRequestError, ConflictError, FormFieldError } from '~/models/Error';
+import { BadRequestError, ConflictError, FormFieldError } from '~/models/classes/client/Error';
 import {
   registerClientSchema,
   type RegisterClientSchema,

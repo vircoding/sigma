@@ -2,7 +2,7 @@
 import { ZodError } from 'zod';
 import { resetPasswordSchema } from '~/models/validations/ResetPasswordSchema';
 import { ModalMinimalError } from '#components';
-import { ResetPasswordError, FormFieldError, BadRequestError } from '~/models/Error';
+import { ResetPasswordError, FormFieldError, BadRequestError } from '~/models/classes/client/Error';
 
 defineEmits<{
   (e: 'cancel'): void;

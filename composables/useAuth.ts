@@ -15,7 +15,7 @@ import {
   InvalidRefreshTokenError,
   AccessTokenExpiredError,
   ResetPasswordError,
-} from '~/models/Error';
+} from '~/models/classes/client/Error';
 
 function getAgentInput(body: RegisterAgentSchema) {
   return JSON.stringify({

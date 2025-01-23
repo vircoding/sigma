@@ -2,7 +2,7 @@ import fs from 'fs';
 import formidable from 'formidable';
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { BadRequestError, NotAgentError, NotFoundError } from '~/server/models/Error';
+import { BadRequestError, NotAgentError, NotFoundError } from '~/models/classes/server/Error';
 import { updateAgentSchema } from '~/server/models/validations/UpdateAgentSchema';
 
 export default defineEventHandler(async (event) => {

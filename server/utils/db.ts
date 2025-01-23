@@ -22,7 +22,7 @@ import {
   RefreshTokenError,
   PasswordCodeError,
   MaxPostLengthError,
-} from '../models/Error';
+} from '~/models/classes/server/Error';
 import { UAParser } from 'ua-parser-js';
 
 type AvatarData = {

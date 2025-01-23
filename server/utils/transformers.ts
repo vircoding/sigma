@@ -1,6 +1,6 @@
 import type { PostInstance, Post, PROVINCES } from '~/types/post';
 import type { UserInstance, User } from '~/types/user';
-import { UnexpectedError } from '../models/Error';
+import { UnexpectedError } from '~/models/classes/server/Error';
 
 export function userTransformer(u: UserInstance): User {
   if (u.type === 'client') {

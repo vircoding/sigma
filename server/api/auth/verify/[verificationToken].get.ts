@@ -1,4 +1,4 @@
-import { VerificationTokenError, VerifiedError } from '~/server/models/Error';
+import { VerificationTokenError, VerifiedError } from '~/models/classes/server/Error';
 import {
   decodedVerificationTokenSchema,
   verificationTokenSchema,

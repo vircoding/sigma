@@ -2,7 +2,7 @@ import fs from 'fs';
 import formidable from 'formidable';
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { ConflictError, UnexpectedError, BadRequestError } from '~/server/models/Error';
+import { ConflictError, UnexpectedError, BadRequestError } from '~/models/classes/server/Error';
 import {
   registerClientSchema,
   registerAgentSchema,

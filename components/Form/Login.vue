@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { BadCredentialsError, BadRequestError, FormFieldError } from '~/models/Error';
+import {
+  BadCredentialsError,
+  BadRequestError,
+  FormFieldError,
+} from '~/models/classes/client/Error';
 import { loginSchema, type LoginSchema } from '~/models/validations/LoginSchema';
 import type { LoginInput } from '~/types/user';
 

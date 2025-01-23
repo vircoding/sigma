@@ -7,7 +7,7 @@ import {
   ClientMaxError,
   FatalError,
   MaxImageSizeError,
-} from '~/models/Error';
+} from '~/models/classes/client/Error';
 
 function getInputByType(body: InsertSchema) {
   switch (body.type) {

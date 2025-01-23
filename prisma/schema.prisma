@@ -162,7 +162,7 @@ model Sale {
 model Rent {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  amount    Int
+  tax    Int
   frequency Frequency
   currency  Currency
 

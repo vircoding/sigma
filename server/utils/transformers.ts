@@ -68,7 +68,7 @@ export function postTransformer(u: PostInstance): Post {
       type: 'rent',
       id: u.id,
       details: {
-        tax: u.rent.amount,
+        tax: u.rent.tax,
         currency: u.rent.currency,
         frequency: u.rent.frequency,
       },

@@ -603,7 +603,7 @@ export function insertRent(rentData: InsertRentSchema, userId: string, images: I
         phone: rentData.phone,
         rent: {
           create: {
-            amount: rentData.tax,
+            tax: rentData.tax,
             currency: rentData.currency,
             frequency: rentData.frequency,
           },

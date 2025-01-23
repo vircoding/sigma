@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ZodError } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { updateAgentSchema } from '~/models/ValSchema';
+import { updateAgentSchema } from '~/models/validations/UpdateAgentSchema';
 import { ModalMinimalError } from '#components';
 import {
   AccessTokenExpiredError,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BadRequestError, ConflictError, FormFieldError, MaxSizeError } from '~/models/Error';
-import { registerAgentSchema, type RegisterAgentSchema } from '~/models/ValSchema';
+import { registerAgentSchema, type RegisterAgentSchema } from '~/models/validations/RegisterSchema';
 import type { LoginInput, RegisterAgentInput } from '~/types/user';
 
 const emit = defineEmits<{

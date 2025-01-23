@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BadCredentialsError, BadRequestError, FormFieldError } from '~/models/Error';
-import { loginSchema, type LoginSchema } from '~/models/ValSchema';
+import { loginSchema, type LoginSchema } from '~/models/validations/LoginSchema';
 import type { LoginInput } from '~/types/user';
 
 defineEmits<{

@@ -1,5 +1,8 @@
 import { FetchError } from 'ofetch';
-import type { RegisterClientSchema, RegisterAgentSchema } from '~/models/ValSchema';
+import type {
+  RegisterClientSchema,
+  RegisterAgentSchema,
+} from '~/models/validations/RegisterSchema';
 import {
   FormFieldError,
   BadRequestError,

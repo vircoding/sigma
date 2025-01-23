@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import {
-  insertSaleFormSchema,
-  insertRentFormSchema,
-  getInsertExchangeFormSchema,
-  type InsertSaleFormSchema,
-  type InsertRentFormSchema,
-  type InsertExchangeFormSchema,
-} from '~/models/ValSchema';
+  insertSaleSchema,
+  insertRentSchema,
+  getInsertExchangeSchema,
+  type InsertSchema,
+} from '~/models/validations/InsertSchema';
 import { type InsertInput, PROVINCES } from '~/types/post';
 import {
   AccessTokenExpiredError,
@@ -102,17 +100,15 @@ const state = reactive<InsertInput>({
   description: '',
 });
 
-const { handleSubmit, setFieldError, isSubmitting } = useForm<
-  InsertSaleFormSchema | InsertRentFormSchema | InsertExchangeFormSchema
->({
+const { handleSubmit, setFieldError, isSubmitting } = useForm<InsertSchema>({
   validationSchema: computed(() => {
     switch (state.type) {
       case 'rent':
-        return toTypedSchema(insertRentFormSchema);
+        return toTypedSchema(insertRentSchema);
       case 'exchange':
-        return toTypedSchema(getInsertExchangeFormSchema(state.exchange.offers));
+        return toTypedSchema(getInsertExchangeSchema(state.exchange.offers));
       default:
-        return toTypedSchema(insertSaleFormSchema);
+        return toTypedSchema(insertSaleSchema);
     }
   }),
 });

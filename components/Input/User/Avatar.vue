@@ -2,12 +2,11 @@
 import { Cropper, CircleStencil } from 'vue-advanced-cropper';
 import type { ImageSize, Coordinates } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
-import type { Avatar } from '~/models/types/User';
 
 const props = defineProps<{
   name: string;
-  modelValue: Avatar | undefined;
   errorVisibility: boolean;
+  previousAvatar?: string;
 }>();
 
 const valOnChange = ref(false);
@@ -15,9 +14,12 @@ const isHelpOpen = ref(false);
 const input = useTemplateRef('input');
 const cropper = ref<InstanceType<typeof Cropper>>();
 const isCropperOpen = ref<boolean>(false);
-const avatarURL = ref<string | undefined>();
+const loadedURL = ref<string | undefined>();
+const croppedURL = ref<string>();
 
-const { value, errorMessage } = useField<Avatar | undefined>(() => props.name, undefined, {
+defineModel<Blob>();
+
+const { value, errorMessage } = useField<Blob | undefined>(() => props.name, undefined, {
   syncVModel: true,
   validateOnMount: true,
 });
@@ -59,11 +61,8 @@ function crop() {
     result.canvas?.toBlob(
       (blob) => {
         if (blob) {
-          const croppedAvatarURL = URL.createObjectURL(blob);
-          value.value = {
-            avatarURL: croppedAvatarURL,
-            blob: blob,
-          };
+          croppedURL.value = URL.createObjectURL(blob);
+          value.value = blob;
           valOnChange.value = true;
           closeCropper();
         }
@@ -79,7 +78,7 @@ function loadAvatar(event: Event) {
     const files = event.target.files;
 
     if (files) {
-      avatarURL.value = URL.createObjectURL(files[0]);
+      loadedURL.value = URL.createObjectURL(files[0]);
       isCropperOpen.value = true;
     }
 
@@ -127,8 +126,15 @@ function loadAvatar(event: Event) {
             :class="[error ? useStyles().textColorError : 'text-gray-300 dark:text-gray-700']"
           />
 
+          <!-- Previous Avatar -->
+          <img
+            v-show="!croppedURL && props.previousAvatar"
+            :src="props.previousAvatar"
+            class="absolute top-0 h-full w-full"
+          />
+
           <!-- Cropped Avatar -->
-          <img v-if="value" :src="value.avatarURL" class="absolute top-0 h-full w-full" />
+          <img v-show="croppedURL" :src="croppedURL" class="absolute top-0 h-full w-full" />
         </div>
 
         <!-- Add/Edit Button -->
@@ -138,24 +144,20 @@ function loadAvatar(event: Event) {
             error ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-700',
           ]"
         >
-          <!-- Edit -->
-          <UIcon
-            name="i-solar-pen-new-round-linear"
-            class="h-5 w-5"
-            :class="[
-              error ? useStyles().textColorError : useStyles().textColorPrimary,
-              !value ? 'hidden' : undefined,
-            ]"
-          />
-
           <!-- Add -->
           <UIcon
+            v-show="!value && !props.previousAvatar"
             name="i-solar-add-circle-broken"
             class="h-5 w-5"
-            :class="[
-              error ? useStyles().textColorError : useStyles().textColorPrimary,
-              value ? 'hidden' : undefined,
-            ]"
+            :class="[error ? useStyles().textColorError : useStyles().textColorPrimary]"
+          />
+
+          <!-- Edit -->
+          <UIcon
+            v-show="value || props.previousAvatar"
+            name="i-solar-pen-new-round-linear"
+            class="h-5 w-5"
+            :class="[error ? useStyles().textColorError : useStyles().textColorPrimary]"
           />
         </div>
 
@@ -257,7 +259,7 @@ function loadAvatar(event: Event) {
 
               <Cropper
                 ref="cropper"
-                :src="avatarURL"
+                :src="loadedURL"
                 :stencil-component="CircleStencil"
                 :stencil-props="{
                   aspectRatio: 1,

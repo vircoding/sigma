@@ -39,10 +39,7 @@ export const registerAgentSchema = z
       .min(6, 'Debe contener entre 6 y 20 caracteres')
       .max(20, 'Debe contener entre 6 y 20 caracteres'),
     repassword: z.string({ message: 'Requerido' }).trim().min(1, 'Requerido'),
-    avatar: z.object({
-      avatarURL: z.string(),
-      blob: z.instanceof(Blob),
-    }),
+    avatar: z.instanceof(Blob, { message: 'Requerido' }),
     firstname: z
       .string({ message: 'Requerido' })
       .trim()

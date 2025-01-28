@@ -77,5 +77,14 @@ export default defineAppConfig({
       background: 'bg-gray-300 dark:bg-gray-700',
       rounded: 'rounded-xl',
     },
+    notification: {
+      title: 'text-lg md:text-xl font-ubuntu text-azure-950 dark:text-gray-200 font-semibold',
+      rounded: 'rounded-xl',
+      default: {
+        closeButton: {
+          icon: 'i-charm-cross',
+        },
+      },
+    },
   },
 });

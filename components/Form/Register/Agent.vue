@@ -233,8 +233,6 @@ const onSubmit = handleSubmit(
           >¿No eres agente?</NuxtLink
         >
       </section>
-
-      <pre>{{ state }}</pre>
     </div>
 
     <!-- Conflict Error -->

@@ -13,22 +13,8 @@ import {
   BadCredentialsError,
   RefreshTokenExpiredError,
   InvalidRefreshTokenError,
-  AccessTokenExpiredError,
   ResetPasswordError,
 } from '~/models/classes/client/Error';
-
-function getAgentInput(body: RegisterAgentSchema) {
-  return JSON.stringify({
-    type: 'agent',
-    email: body.email,
-    password: body.password,
-    repassword: body.repassword,
-    firstname: body.firstname,
-    lastname: body.lastname,
-    bio: body.bio,
-    phone: `+${body.phone.code}${body.phone.phone}`,
-  });
-}
 
 async function registerClient(body: RegisterClientSchema) {
   try {
@@ -56,8 +42,20 @@ async function registerClient(body: RegisterClientSchema) {
 async function registerAgent(body: RegisterAgentSchema) {
   try {
     const formData = new FormData();
-    formData.append('input', getAgentInput(body));
-    formData.append('avatar', body.avatar.blob);
+    formData.append(
+      'input',
+      JSON.stringify({
+        type: 'agent',
+        email: body.email,
+        password: body.password,
+        repassword: body.repassword,
+        firstname: body.firstname,
+        lastname: body.lastname,
+        bio: body.bio,
+        phone: `+${body.phone.code}${body.phone.phone}`,
+      }),
+    );
+    formData.append('avatar', body.avatar);
 
     await $fetch('/api/auth/register', {
       method: 'POST',
@@ -165,47 +163,6 @@ async function logout() {
   }
 }
 
-async function updateAgent(body: {
-  firstname?: string;
-  lastname?: string;
-  phone?: string;
-  bio?: string;
-  avatar?: Blob;
-}) {
-  const userStore = useUserStore();
-
-  try {
-    const formData = new FormData();
-    formData.append('input', JSON.stringify({ type: 'agent', ...body }));
-    if (body.avatar) formData.append('avatar', body.avatar);
-
-    const data = await $fetch('/api/auth', {
-      method: 'PATCH',
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${useCookie('access_token').value}`,
-      },
-    });
-
-    userStore.setUser(data.user);
-  } catch (error) {
-    if (error instanceof FetchError) {
-      if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
-        throw new AccessTokenExpiredError(error.message);
-      }
-      if (error.status === 400) {
-        if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
-          throw new FormFieldError(error.message, error.data.data);
-        if (error.data.message === 'File exceeds the maximum allowed size of 5MB')
-          throw new MaxSizeError(error.message);
-        if (error.data.message === 'Invalid or missing access token') throw new FatalError();
-        throw new BadRequestError(error.message);
-      }
-    }
-    throw new FatalError();
-  }
-}
-
 async function postResetPassword(body: { email: string }) {
   try {
     await $fetch('/api/auth/password', {
@@ -278,7 +235,6 @@ export default function () {
     login,
     refresh,
     logout,
-    updateAgent,
     postResetPassword,
     putResetPassword,
     patchResetPassword,

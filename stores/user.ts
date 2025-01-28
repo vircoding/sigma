@@ -1,17 +1,4 @@
-type User =
-  | {
-      type: 'client';
-      id: string;
-    }
-  | {
-      type: 'agent';
-      avatar: string;
-      firstname: string;
-      lastname: string;
-      phone: string;
-      bio: string;
-      id: string;
-    };
+import type { User } from '~/models/types/User';
 
 export const useUserStore = defineStore('User', () => {
   // State

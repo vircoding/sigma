@@ -19,5 +19,4 @@ const { value, errorMessage } = useField<boolean>(() => props.name, undefined, {
       }}</span>
     </template>
   </UCheckbox>
-  <pre>{{ errorMessage }}</pre>
 </template>

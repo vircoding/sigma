@@ -9,20 +9,22 @@ export type UserInstance = { agent: (AgentDB & { avatar: AvatarDB | null }) | nu
   client: ClientDB | null;
 } & UserDB;
 
-export type User =
-  | {
-      type: 'client';
-      id: string;
-    }
-  | {
-      type: 'agent';
-      avatar: string;
-      firstname: string;
-      lastname: string;
-      phone: string;
-      bio: string;
-      id: string;
-    };
+export type Client = {
+  type: 'client';
+  id: string;
+};
+
+export type Agent = {
+  type: 'agent';
+  avatar: string;
+  firstname: string;
+  lastname: string;
+  phone: string;
+  bio: string;
+  id: string;
+};
+
+export type User = Client | Agent;
 
 export type LoginInput = {
   email: string;
@@ -46,10 +48,21 @@ export type RegisterAgentInput = {
     code: string;
   };
   bio: string;
-  avatar?: Avatar;
+  avatar?: Blob;
 };
 
 export type Avatar = {
   avatarURL: string;
   blob: Blob;
+};
+
+export type UpdateAgentInput = {
+  firstname: string;
+  lastname: string;
+  phone: {
+    phone: string;
+    code: string;
+  };
+  bio: string;
+  avatar?: Blob;
 };

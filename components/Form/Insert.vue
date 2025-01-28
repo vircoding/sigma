@@ -24,6 +24,7 @@ const globalStore = useGlobalStore();
 const { refresh } = useAuth();
 const { insert } = usePost();
 const { openSubmitLoading, closeSubmitLoading, setUIPrimary } = useGlobal();
+const toast = useToast();
 
 const imagesInput = useTemplateRef('imagesInput');
 const badRequestErrorModal = useTemplateRef('badRequest');
@@ -120,6 +121,10 @@ const onSubmit = handleSubmit(
 
       const data = await insert(values);
       await navigateTo({ name: 'posts-id', params: { id: data.postId } });
+      toast.add({
+        timeout: 4000,
+        title: 'Auncio publicado',
+      });
     } catch (error) {
       if (error instanceof AccessTokenExpiredError) {
         await refresh().catch(() => showError(createError({ status: 500 })));

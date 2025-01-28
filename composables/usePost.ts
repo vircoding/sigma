@@ -14,7 +14,7 @@ function getInputByType(body: InsertSchema) {
     case 'rent':
       return JSON.stringify({
         type: body.type,
-        amount: body.rentTax,
+        tax: body.rentTax,
         currency: body.rentCurrency,
         frequency: body.rentFrequency,
         description: body.description,

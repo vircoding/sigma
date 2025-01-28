@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import {
-  insertSaleFormSchema,
-  insertRentFormSchema,
-  getInsertExchangeFormSchema,
-  type InsertSaleFormSchema,
-  type InsertRentFormSchema,
-  type InsertExchangeFormSchema,
-} from '~/models/ValSchema';
-import type { Insert } from '~/models/PostTypes';
+  insertSaleSchema,
+  insertRentSchema,
+  getInsertExchangeSchema,
+  type InsertSchema,
+} from '~/models/schemas/client/InsertSchema';
+import { type InsertInput, PROVINCES } from '~/models/types/Post';
 import {
   AccessTokenExpiredError,
   FormFieldError,
@@ -15,25 +13,27 @@ import {
   ClientMaxError,
   AgentMaxError,
   MaxImageSizeError,
-} from '~/models/Error';
+} from '~/models/classes/client/Error';
 
 defineEmits<{
   (e: 'agent'): void;
 }>();
 
-const appConfig = useAppConfig();
 const globalStore = useGlobalStore();
 
 const { refresh } = useAuth();
 const { insert } = usePost();
-const { openSubmitLoading, closeSubmitLoading } = useGlobal();
+const { openSubmitLoading, closeSubmitLoading, setUIPrimary } = useGlobal();
+const toast = useToast();
 
 const imagesInput = useTemplateRef('imagesInput');
 const badRequestErrorModal = useTemplateRef('badRequest');
 const clientMaxErrorModal = useTemplateRef('clientMax');
 const agentMaxErrorModal = useTemplateRef('agentMax');
 
-const state = reactive<Insert>({
+const errorVisibility = ref(false);
+
+const state = reactive<InsertInput>({
   type: 'sale',
   sale: {
     amount: '',
@@ -56,7 +56,7 @@ const state = reactive<Insert>({
   properties: [
     {
       address: {
-        province: 'La Habana',
+        province: PROVINCES['La Habana'],
         municipality: 'La Habana Vieja',
       },
       features: {
@@ -70,7 +70,7 @@ const state = reactive<Insert>({
     },
     {
       address: {
-        province: 'La Habana',
+        province: PROVINCES['La Habana'],
         municipality: 'La Habana Vieja',
       },
       features: {
@@ -84,7 +84,7 @@ const state = reactive<Insert>({
     },
     {
       address: {
-        province: 'La Habana',
+        province: PROVINCES['La Habana'],
         municipality: 'La Habana Vieja',
       },
       features: {
@@ -101,22 +101,18 @@ const state = reactive<Insert>({
   description: '',
 });
 
-const { handleSubmit, setFieldError } = useForm<
-  InsertSaleFormSchema | InsertRentFormSchema | InsertExchangeFormSchema
->({
+const { handleSubmit, setFieldError, isSubmitting } = useForm<InsertSchema>({
   validationSchema: computed(() => {
     switch (state.type) {
       case 'rent':
-        return toTypedSchema(insertRentFormSchema);
+        return toTypedSchema(insertRentSchema);
       case 'exchange':
-        return toTypedSchema(getInsertExchangeFormSchema(state.exchange.offers));
+        return toTypedSchema(getInsertExchangeSchema(state.exchange.offers));
       default:
-        return toTypedSchema(insertSaleFormSchema);
+        return toTypedSchema(insertSaleSchema);
     }
   }),
 });
-
-const errorVisibility = ref(false);
 
 const onSubmit = handleSubmit(
   async (values) => {
@@ -125,6 +121,10 @@ const onSubmit = handleSubmit(
 
       const data = await insert(values);
       await navigateTo({ name: 'posts-id', params: { id: data.postId } });
+      toast.add({
+        timeout: 4000,
+        title: 'Auncio Publicado',
+      });
     } catch (error) {
       if (error instanceof AccessTokenExpiredError) {
         await refresh().catch(() => showError(createError({ status: 500 })));
@@ -152,18 +152,7 @@ const onSubmit = handleSubmit(
 
 onMounted(() => {
   state.type = globalStore.insertType;
-
-  switch (state.type) {
-    case 'rent':
-      appConfig.ui.primary = 'keppel';
-      break;
-    case 'exchange':
-      appConfig.ui.primary = 'affair';
-      break;
-    default:
-      appConfig.ui.primary = 'azure';
-      break;
-  }
+  setUIPrimary(state.type);
 });
 </script>
 
@@ -190,8 +179,9 @@ onMounted(() => {
           <!-- Desktop CTA's -->
           <section class="mb-7 flex flex-col lg:mb-0">
             <button
+              type="button"
               class="w-min text-nowrap font-medium"
-              :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
+              :class="[useStyles().linkActiveState]"
               @click.prevent="$emit('agent')"
             >
               Contactar agente
@@ -251,12 +241,14 @@ onMounted(() => {
         </InputPostType>
 
         <!-- Phone Number -->
-        <InputPostPhone
+        <InputPhone
           v-model:code="state.phone.code"
           v-model:phone="state.phone.phone"
           :error-visibility="errorVisibility"
+          label-attrib="Teléfono"
           code-name="phone.code"
           phone-name="phone.phone"
+          class="mb-1.5"
         />
 
         <!-- Whatsapp Checkbox -->
@@ -389,6 +381,7 @@ onMounted(() => {
           type="submit"
           size="md"
           block
+          :disabled="isSubmitting"
           :ui="useUIConfigs().acceptButtonConfig"
           class="font-bold"
           >Publicar</UButton

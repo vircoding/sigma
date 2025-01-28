@@ -1,5 +1,8 @@
-import { VerificationTokenError, VerifiedError } from '~/server/models/Error';
-import { decodedVerificationTokenSchema, verificationTokenSchema } from '~/server/models/ValSchema';
+import { VerificationTokenError, VerifiedError } from '~/models/classes/server/Error';
+import {
+  decodedVerificationTokenSchema,
+  verificationTokenSchema,
+} from '~/models/schemas/server/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   try {

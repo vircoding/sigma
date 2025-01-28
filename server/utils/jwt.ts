@@ -15,7 +15,7 @@ export function decodeVerificationToken(token: string) {
 
 // Refresh token
 export function generateRefreshToken(payload: { code: string; id: string; userId: string }) {
-  return jwt.sign(payload, refreshSign, { expiresIn: '4h' });
+  return jwt.sign(payload, refreshSign, { expiresIn: '45d' });
 }
 
 export function decodeRefreshToken(token: string) {

@@ -1,24 +1,7 @@
-import type { Province } from '~/models/PostTypes';
+import { PROVINCES } from '~/models/types/Post';
 
-function getProvinces(): Province[] {
-  return [
-    'Pinar del Río',
-    'Artemisa',
-    'La Habana',
-    'Mayabeque',
-    'Matanzas',
-    'Villa Clara',
-    'Cienfuegos',
-    'Sancti Spíritus',
-    'Ciego de Ávila',
-    'Camagüey',
-    'Las Tunas',
-    'Holguín',
-    'Granma',
-    'Santiago de Cuba',
-    'Guantánamo',
-    'Isla de la Juventud',
-  ];
+function getProvinces(): PROVINCES[] {
+  return Object.values(PROVINCES);
 }
 
 function getMunicipalities() {
@@ -224,7 +207,7 @@ function getMunicipalities() {
   };
 }
 
-function defaultMunicipality(province: Province) {
+function defaultMunicipality(province: PROVINCES) {
   switch (province) {
     case 'Pinar del Río':
       return 'Pinar del Río';
@@ -263,7 +246,7 @@ function defaultMunicipality(province: Province) {
   }
 }
 
-function getMunicipalitiesByProvince(province: Province) {
+function getMunicipalitiesByProvince(province: PROVINCES) {
   return getMunicipalities()[province];
 }
 

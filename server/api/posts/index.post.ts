@@ -8,13 +8,13 @@ import {
   UnexpectedError,
   NotFoundError,
   MaxFileSizeImageError,
-} from '~/server/models/Error';
+} from '~/models/classes/server/Error';
 import {
-  postTypeSchema,
   insertSaleSchema,
   insertRentSchema,
   insertExchangeSchema,
-} from '~/server/models/ValSchema';
+} from '~/models/schemas/server/InsertSchema';
+import { postTypeSchema } from '~/models/schemas/server/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;

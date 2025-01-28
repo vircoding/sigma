@@ -1,32 +1,8 @@
-import type { PostData, PROVINCES, UserData } from '~/server/models/Types';
-import type {
-  Agent as AgentDB,
-  Client as ClientDB,
-  User as UserDB,
-  Avatar as AvatarDB,
-  Post as PostDB,
-  Sale as SaleDB,
-  Rent as RentDB,
-  Exchange as ExchangeDB,
-  Property as PropertyDB,
-  Image as ImageDB,
-} from '@prisma/client';
-import { UnexpectedError } from '../models/Error';
+import type { PostInstance, Post, PROVINCES } from '~/models/types/Post';
+import type { UserInstance, User } from '~/models/types/User';
+import { UnexpectedError } from '~/models/classes/server/Error';
 
-type UserInput = { agent: (AgentDB & { avatar: AvatarDB | null }) | null } & {
-  client: ClientDB | null;
-} & UserDB;
-
-type PostInput = PostDB & {
-  properties: PropertyDB[];
-  images: ImageDB[];
-  sale: SaleDB | null;
-  rent: RentDB | null;
-  exchange: ExchangeDB | null;
-  user: UserInput | null;
-};
-
-export function userTransformer(u: UserInput): UserData {
+export function userTransformer(u: UserInstance): User {
   if (u.type === 'client') {
     return {
       id: u.id,
@@ -45,7 +21,7 @@ export function userTransformer(u: UserInput): UserData {
   } else throw new UnexpectedError();
 }
 
-export function postTransformer(u: PostInput): PostData {
+export function postTransformer(u: PostInstance): Post {
   if (u.type === 'sale' && u.sale) {
     return {
       type: 'sale',
@@ -92,7 +68,7 @@ export function postTransformer(u: PostInput): PostData {
       type: 'rent',
       id: u.id,
       details: {
-        tax: u.rent.amount,
+        tax: u.rent.tax,
         currency: u.rent.currency,
         frequency: u.rent.frequency,
       },

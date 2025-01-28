@@ -18,6 +18,9 @@ onMounted(async () => {
 
     <!-- Modals Agent -->
     <UModals />
+
+    <!-- Notifications Agent -->
+    <UNotifications />
   </div>
 </template>
 

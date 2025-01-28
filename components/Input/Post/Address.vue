@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Province } from '~/models/PostTypes';
+import type { PROVINCES } from '~/models/types/Post';
 
 const props = defineProps<{
-  province: Province;
+  province: PROVINCES;
   municipality: string;
   index: number;
   provinceName: string;
@@ -13,7 +13,7 @@ const { getProvinces, getMunicipalitiesByProvince, defaultMunicipality } = usePr
 
 const provinces = getProvinces();
 
-const { value: provinceValue } = useField<Province>(() => props.provinceName, undefined, {
+const { value: provinceValue } = useField<PROVINCES>(() => props.provinceName, undefined, {
   syncVModel: 'province',
 });
 
@@ -21,7 +21,7 @@ const { value: municipalityValue } = useField<string>(() => props.municipalityNa
   syncVModel: 'municipality',
 });
 
-const state = ref<{ province: Province; municipality: string }>({
+const state = ref<{ province: PROVINCES; municipality: string }>({
   province: provinceValue.value,
   municipality: municipalityValue.value,
 });

@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ZodError } from 'zod';
-import { resetPasswordSchema } from '~/models/ValSchema';
+import { resetPasswordSchema } from '~/models/schemas/client/ResetPasswordSchema';
 import { ModalMinimalError } from '#components';
-import { ResetPasswordError, FormFieldError, BadRequestError } from '~/models/Error';
+import { ResetPasswordError, FormFieldError, BadRequestError } from '~/models/classes/client/Error';
 
 defineEmits<{
   (e: 'cancel'): void;
 }>();
 
 const { postResetPassword, putResetPassword, patchResetPassword } = useAuth();
+const toast = useToast();
 
 const progressInterval = setInterval(() => {
   if (timer.isRunning.value) {
@@ -225,6 +226,10 @@ async function submitPage3() {
       errorVisibility.value.repassword = false;
 
       await navigateTo({ name: 'index' });
+      toast.add({
+        timeout: 4000,
+        title: 'Sesión Iniciada',
+      });
     } catch (error) {
       if (error instanceof BadRequestError) {
         badRequestErrorModal.value?.openModal();
@@ -267,6 +272,12 @@ async function onResend() {
     openSubmitLoading();
 
     await postResetPassword({ email: state.email })
+      .then(() => {
+        toast.add({
+          timeout: 4000,
+          title: 'Correo Reenviado',
+        });
+      })
       .catch(() => showError(createError({ status: 500 })))
       .finally(async () => {
         closeSubmitLoading();

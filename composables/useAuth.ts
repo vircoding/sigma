@@ -1,5 +1,8 @@
 import { FetchError } from 'ofetch';
-import type { RegisterClientSchema, RegisterAgentSchema } from '~/models/ValSchema';
+import type {
+  RegisterClientSchema,
+  RegisterAgentSchema,
+} from '~/models/schemas/client/RegisterSchema';
 import {
   FormFieldError,
   BadRequestError,
@@ -10,9 +13,9 @@ import {
   BadCredentialsError,
   RefreshTokenExpiredError,
   InvalidRefreshTokenError,
-  AccessTokenExpiredError,
   ResetPasswordError,
-} from '~/models/Error';
+} from '~/models/classes/client/Error';
+import type { LoginSchema } from '~/models/schemas/client/LoginSchema';
 
 async function registerClient(body: RegisterClientSchema) {
   try {
@@ -37,15 +40,23 @@ async function registerClient(body: RegisterClientSchema) {
   }
 }
 
-async function registerAgent(
-  body: Omit<RegisterAgentSchema, 'code' | 'avatar'> & {
-    avatar?: Blob;
-  },
-) {
+async function registerAgent(body: RegisterAgentSchema) {
   try {
     const formData = new FormData();
-    formData.append('input', JSON.stringify({ type: 'agent', ...body }));
-    if (body.avatar) formData.append('avatar', body.avatar);
+    formData.append(
+      'input',
+      JSON.stringify({
+        type: 'agent',
+        email: body.email,
+        password: body.password,
+        repassword: body.repassword,
+        firstname: body.firstname,
+        lastname: body.lastname,
+        bio: body.bio,
+        phone: `+${body.phone.code}${body.phone.phone}`,
+      }),
+    );
+    formData.append('avatar', body.avatar);
 
     await $fetch('/api/auth/register', {
       method: 'POST',
@@ -89,7 +100,7 @@ async function resendVerificationEmail(email: string) {
   }
 }
 
-async function login(body: { email: string; password: string }) {
+async function login(body: LoginSchema) {
   const userStore = useUserStore();
 
   try {
@@ -147,47 +158,6 @@ async function logout() {
         userStore.$reset();
 
         throw new InvalidRefreshTokenError(error.message);
-      }
-    }
-    throw new FatalError();
-  }
-}
-
-async function updateAgent(body: {
-  firstname?: string;
-  lastname?: string;
-  phone?: string;
-  bio?: string;
-  avatar?: Blob;
-}) {
-  const userStore = useUserStore();
-
-  try {
-    const formData = new FormData();
-    formData.append('input', JSON.stringify({ type: 'agent', ...body }));
-    if (body.avatar) formData.append('avatar', body.avatar);
-
-    const data = await $fetch('/api/auth', {
-      method: 'PATCH',
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${useCookie('access_token').value}`,
-      },
-    });
-
-    userStore.setUser(data.user);
-  } catch (error) {
-    if (error instanceof FetchError) {
-      if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
-        throw new AccessTokenExpiredError(error.message);
-      }
-      if (error.status === 400) {
-        if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
-          throw new FormFieldError(error.message, error.data.data);
-        if (error.data.message === 'File exceeds the maximum allowed size of 5MB')
-          throw new MaxSizeError(error.message);
-        if (error.data.message === 'Invalid or missing access token') throw new FatalError();
-        throw new BadRequestError(error.message);
       }
     }
     throw new FatalError();
@@ -266,7 +236,6 @@ export default function () {
     login,
     refresh,
     logout,
-    updateAgent,
     postResetPassword,
     putResetPassword,
     patchResetPassword,

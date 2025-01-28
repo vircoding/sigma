@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Currency } from '~/models/PostTypes';
+import type { Currency } from '~/models/types/Post';
 
 const props = defineProps<{
   name: string;

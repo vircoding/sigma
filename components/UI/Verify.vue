@@ -1,7 +1,14 @@
 <script setup lang="ts">
-const emit = defineEmits<{
-  (e: 'resend' | 'return'): void;
+import { BadCredentialsError, ConflictError } from '~/models/classes/client/Error';
+import type { LoginInput } from '~/models/types/User';
+
+const props = defineProps<{
+  loginData: LoginInput;
 }>();
+
+const { openSubmitLoading, closeSubmitLoading } = useGlobal();
+const { resendVerificationEmail, login } = useAuth();
+const toast = useToast();
 
 const progressInterval = setInterval(() => {
   if (timer.isRunning.value) {
@@ -20,15 +27,12 @@ const disableButton = computed(() => {
 const isHelpOpen = ref(false);
 const showHelp = ref(false);
 const helpCounter = ref(0);
+const canLogin = ref(false);
 
-defineExpose<{
-  disableAndRestart: () => void;
-}>({
-  disableAndRestart: function () {
-    helpCounter.value += 1;
-    timer.restart();
-  },
-});
+function disableAndRestart() {
+  helpCounter.value += 1;
+  timer.restart();
+}
 
 function formatSeconds(seconds: number) {
   if (seconds >= 0 && seconds < 10) return `0${seconds}`;
@@ -37,9 +41,50 @@ function formatSeconds(seconds: number) {
 
 function handleVisibilityChange() {
   if (document.visibilityState === 'visible') {
-    emit('return');
     showHelp.value = true;
     document.removeEventListener('visibilitychange', handleVisibilityChange);
+    onReturn();
+  }
+}
+
+async function onReturn() {
+  if (!canLogin.value) {
+    canLogin.value = true;
+
+    const loginInterval = setInterval(async () => {
+      if (canLogin.value) {
+        try {
+          await login(props.loginData);
+          canLogin.value = false;
+          clearInterval(loginInterval);
+          await navigateTo({ name: 'index' });
+          toast.add({
+            timeout: 4000,
+            title: 'Registrado',
+          });
+        } catch (error) {
+          if (!(error instanceof BadCredentialsError)) showError(createError({ status: 500 }));
+        }
+      } else {
+        clearInterval(loginInterval);
+      }
+    }, 10000);
+  }
+}
+
+async function onResend() {
+  openSubmitLoading();
+  try {
+    await resendVerificationEmail(props.loginData.email);
+    toast.add({
+      timeout: 4000,
+      title: 'Correo Reenviado',
+    });
+  } catch (error) {
+    if (!(error instanceof ConflictError)) showError(createError({ status: 500 }));
+  } finally {
+    disableAndRestart();
+    closeSubmitLoading();
   }
 }
 
@@ -115,7 +160,7 @@ onUnmounted(() => {
         class="w-min font-semibold"
         :class="[useStyles().linkActiveState, useStyles().textSizeBase]"
         :disabled="disableButton"
-        @click="$emit('resend')"
+        @click="onResend"
       >
         Reenviar
       </button>

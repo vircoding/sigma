@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { PostData } from '~/server/models/Types';
+import type { Post } from '~/models/types/Post';
 
 defineEmits<{
   (e: 'share'): void;
 }>();
 
 const props = defineProps<{
-  post: PostData;
+  post: Post;
 }>();
 
 const { user } = useUserStore();

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type { Code } from '~/models/PostTypes';
+import type { Code } from '~/models/types/Post';
 
 const props = defineProps<{
   code: string;
   codeName: string;
+  labelAttrib: string;
   phone: string;
   phoneName: string;
   errorVisibility: boolean;
@@ -26,13 +27,17 @@ const { value: phoneValue, errorMessage: phoneErrorMessage } = useField<string>(
   },
 );
 
-function init() {
+function getCode() {
   const country = countries.find((country) => country.callingCode === codeValue.value);
   if (country) return country;
   else throw showError(createError({ status: 500 }));
 }
 
-const codeState = ref<Code>(init());
+watch(codeValue, () => {
+  codeState.value = getCode();
+});
+
+const codeState = ref<Code>(getCode());
 
 function removeAccents(str: string) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -54,11 +59,11 @@ function onCodeChange() {
 </script>
 
 <template>
-  <div class="mb-2.5 flex justify-between gap-x-3">
+  <div class="flex justify-between gap-x-2">
     <!-- Code -->
     <UFormGroup
       size="md"
-      label="Teléfono"
+      :label="props.labelAttrib"
       name="phone"
       :error="(valOnChange || props.errorVisibility) && phoneErrorMessage"
     >

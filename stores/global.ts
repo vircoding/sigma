@@ -1,4 +1,4 @@
-import type { PostType } from '~/models/PostTypes';
+import type { PostType } from '~/models/types/Post';
 
 export const useGlobalStore = defineStore('Global', () => {
   // State

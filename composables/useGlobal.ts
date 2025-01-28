@@ -1,5 +1,5 @@
+import type { PostType } from '~/models/types/Post';
 import { ModalLoadingAnimation } from '#components';
-import type { PostType } from '~/models/PostTypes';
 
 function openSubmitLoading() {
   const modals = useModal();

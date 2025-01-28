@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostType } from '~/models/PostTypes';
+import type { PostType } from '~/models/types/Post';
 
 const props = defineProps<{
   isLoggedIn: boolean;

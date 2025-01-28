@@ -1,7 +1,7 @@
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { BodyError, CredentialsError } from '~/server/models/Error';
-import { loginSchema } from '~/server/models/ValSchema';
+import { BodyError, CredentialsError } from '~/models/classes/server/Error';
+import { loginSchema } from '~/models/schemas/server/LoginSchema';
 
 export default defineEventHandler(async (event) => {
   try {

@@ -1,9 +1,5 @@
 import { FetchError } from 'ofetch';
-import type {
-  InsertSaleFormSchema,
-  InsertRentFormSchema,
-  InsertExchangeFormSchema,
-} from '~/models/ValSchema';
+import type { InsertSchema } from '~/models/schemas/client/InsertSchema';
 import {
   AccessTokenExpiredError,
   AgentMaxError,
@@ -11,16 +7,14 @@ import {
   ClientMaxError,
   FatalError,
   MaxImageSizeError,
-} from '~/models/Error';
+} from '~/models/classes/client/Error';
 
-function getInputByType(
-  body: InsertSaleFormSchema | InsertRentFormSchema | InsertExchangeFormSchema,
-) {
+function getInputByType(body: InsertSchema) {
   switch (body.type) {
     case 'rent':
       return JSON.stringify({
         type: body.type,
-        amount: body.rentTax,
+        tax: body.rentTax,
         currency: body.rentCurrency,
         frequency: body.rentFrequency,
         description: body.description,
@@ -51,9 +45,7 @@ function getInputByType(
   }
 }
 
-async function insert(
-  body: InsertSaleFormSchema | InsertRentFormSchema | InsertExchangeFormSchema,
-) {
+async function insert(body: InsertSchema) {
   try {
     const formData = new FormData();
     formData.append('input', getInputByType(body));

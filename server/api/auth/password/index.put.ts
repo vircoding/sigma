@@ -1,7 +1,7 @@
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { passwordCodeSchema } from '~/server/models/ValSchema';
-import { BodyError, PasswordCodeError } from '~/server/models/Error';
+import { passwordCodeSchema } from '~/models/schemas/server/ResetPasswordSchema';
+import { BodyError, PasswordCodeError } from '~/models/classes/server/Error';
 
 export default defineEventHandler(async (event) => {
   try {

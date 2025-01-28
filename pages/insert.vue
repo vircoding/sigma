@@ -3,7 +3,8 @@ definePageMeta({
   middleware: ['auth'],
 });
 
-const appConfig = useAppConfig();
+const { resetUIPrimary } = useGlobal();
+
 const contactModal = useTemplateRef('contact');
 
 function onAgent() {
@@ -12,7 +13,7 @@ function onAgent() {
 }
 
 onUnmounted(() => {
-  appConfig.ui.primary = 'azure';
+  resetUIPrimary();
 });
 </script>
 

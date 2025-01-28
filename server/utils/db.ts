@@ -2,14 +2,16 @@ import fs from 'fs';
 import { PrismaClient, Prisma } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import type {
-  ClientRegisterData,
-  AgentRegisterData,
-  UserLoginData,
-  AgentUpdateData,
-  SaleInsertData,
-  RentInsertData,
-  ExchangeInsertData,
-} from '~/server/models/ValSchema';
+  InsertSaleSchema,
+  InsertRentSchema,
+  InsertExchangeSchema,
+} from '~/models/schemas/server/InsertSchema';
+import type { LoginSchema } from '~/models/schemas/server/LoginSchema';
+import type { UpdateAgentSchema } from '~/models/schemas/server/UpdateAgentSchema';
+import type {
+  RegisterClientSchema,
+  RegisterAgentSchema,
+} from '~/models/schemas/server/RegisterSchema';
 
 import {
   ConflictError,
@@ -20,7 +22,7 @@ import {
   RefreshTokenError,
   PasswordCodeError,
   MaxPostLengthError,
-} from '../models/Error';
+} from '~/models/classes/server/Error';
 import { UAParser } from 'ua-parser-js';
 
 type AvatarData = {
@@ -35,7 +37,7 @@ type ImagesData = {
 
 const prisma = new PrismaClient();
 
-export function registerClient(clientData: ClientRegisterData) {
+export function registerClient(clientData: RegisterClientSchema) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
       where: { email: clientData.email },
@@ -105,7 +107,7 @@ export function registerClient(clientData: ClientRegisterData) {
   });
 }
 
-export function registerAgent(agentData: AgentRegisterData, avatarData: AvatarData) {
+export function registerAgent(agentData: RegisterAgentSchema, avatarData: AvatarData) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
       where: { email: agentData.email },
@@ -247,7 +249,7 @@ export function resetVerificationCode(email: string) {
   });
 }
 
-export function loginUser(userData: UserLoginData, ua: string | undefined) {
+export function loginUser(userData: LoginSchema, ua: string | undefined) {
   return prisma.$transaction(async (tx) => {
     // Find the verified user by email
     const user = await tx.user.findUnique({
@@ -354,7 +356,7 @@ export function logoutUser(id: string, code: string) {
 
 export async function updateAgent(
   id: string,
-  agentData: AgentUpdateData,
+  agentData: UpdateAgentSchema,
   avatarData: AvatarData | undefined = undefined,
 ) {
   const user = await prisma.user
@@ -503,7 +505,7 @@ export async function updatePassword(email: string, password: string) {
     });
 }
 
-export function insertSale(saleData: SaleInsertData, userId: string, images: ImagesData) {
+export function insertSale(saleData: InsertSaleSchema, userId: string, images: ImagesData) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
       where: { id: userId, verified: true },
@@ -573,7 +575,7 @@ export function insertSale(saleData: SaleInsertData, userId: string, images: Ima
   });
 }
 
-export function insertRent(rentData: RentInsertData, userId: string, images: ImagesData) {
+export function insertRent(rentData: InsertRentSchema, userId: string, images: ImagesData) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
       where: { id: userId, verified: true },
@@ -601,7 +603,7 @@ export function insertRent(rentData: RentInsertData, userId: string, images: Ima
         phone: rentData.phone,
         rent: {
           create: {
-            amount: rentData.amount,
+            tax: rentData.tax,
             currency: rentData.currency,
             frequency: rentData.frequency,
           },
@@ -645,7 +647,7 @@ export function insertRent(rentData: RentInsertData, userId: string, images: Ima
 }
 
 export function insertExchange(
-  exchangeData: ExchangeInsertData,
+  exchangeData: InsertExchangeSchema,
   userId: string,
   images: ImagesData,
 ) {

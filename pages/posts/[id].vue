@@ -6,7 +6,7 @@ definePageMeta({
 const { setUIPrimary, resetUIPrimary } = useGlobal();
 const { params } = useRoute();
 
-const { status, data, error } = await useLazyFetch(`/api/posts/${params.id}`);
+const { status, data, error } = useLazyFetch(`/api/posts/${params.id}`);
 
 function onStatus() {
   if (status.value === 'success' && data.value) {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Frequency } from '~/models/PostTypes';
+import type { Frequency } from '~/models/types/Post';
 
 const props = defineProps<{
   name: string;

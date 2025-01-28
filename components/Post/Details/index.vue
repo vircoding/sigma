@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import type { PostType } from '~/models/PostTypes';
-import type { SaleDetails, RentDetails, ExchangeDetails, Details } from '~/server/models/Types';
+import type {
+  PostType,
+  SaleDetails,
+  RentDetails,
+  ExchangeDetails,
+  Details,
+} from '~/models/types/Post';
 
 const props = defineProps<{
   type: PostType;

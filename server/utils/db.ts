@@ -12,7 +12,12 @@ import type {
   RegisterClientSchema,
   RegisterAgentSchema,
 } from '~/models/schemas/server/RegisterSchema';
-
+import type {
+  UpdateSaleSchema,
+  UpdateRentSchema,
+  UpdateExchangeSchema,
+  MapSchema,
+} from '~/models/schemas/server/UpdatePostSchema';
 import {
   ConflictError,
   VerificationTokenError,
@@ -22,6 +27,8 @@ import {
   RefreshTokenError,
   PasswordCodeError,
   MaxPostLengthError,
+  ForbiddenError,
+  BadRequestError,
 } from '~/models/classes/server/Error';
 import { UAParser } from 'ua-parser-js';
 
@@ -517,10 +524,10 @@ export function insertSale(saleData: InsertSaleSchema, userId: string, images: I
     if (!founded) throw new NotFoundError('User not found');
 
     if (founded.type === 'client') {
-      if (founded.posts.length > 1)
+      if (founded.posts.length >= 1)
         throw new MaxPostLengthError('Clients are limited to a maximum of 1 post');
     } else {
-      if (founded.posts.length > 35)
+      if (founded.posts.length >= 35)
         throw new MaxPostLengthError('Agents are limited to a maximum of 35 posts');
     }
 
@@ -587,10 +594,10 @@ export function insertRent(rentData: InsertRentSchema, userId: string, images: I
     if (!founded) throw new NotFoundError('User not found');
 
     if (founded.type === 'client') {
-      if (founded.posts.length > 1)
+      if (founded.posts.length >= 1)
         throw new MaxPostLengthError('Clients are limited to a maximum of 1 post');
     } else {
-      if (founded.posts.length > 35)
+      if (founded.posts.length >= 35)
         throw new MaxPostLengthError('Agents are limited to a maximum of 35 posts');
     }
 
@@ -662,10 +669,10 @@ export function insertExchange(
     if (!founded) throw new NotFoundError('User not found');
 
     if (founded.type === 'client') {
-      if (founded.posts.length > 1)
+      if (founded.posts.length >= 1)
         throw new MaxPostLengthError('Clients are limited to a maximum of 1 post');
     } else {
-      if (founded.posts.length > 35)
+      if (founded.posts.length >= 35)
         throw new MaxPostLengthError('Agents are limited to a maximum of 35 posts');
     }
 
@@ -743,4 +750,395 @@ export async function findPostById(id: string) {
   if (!post) throw new NotFoundError('Post not found');
 
   return post;
+}
+
+export async function updateSale(
+  userId: string,
+  postId: string,
+  data: UpdateSaleSchema,
+  images: ImagesData,
+  map: MapSchema,
+) {
+  return prisma.$transaction(async (tx) => {
+    if (images.length !== map.new.length) throw new BadRequestError('Invalid multipart form');
+
+    map.removed.forEach((index) => {
+      if (map.new.includes(index)) throw new BadRequestError('Invalid multipart form');
+    });
+
+    const foundedUser = await tx.user.findUnique({
+      where: { id: userId, verified: true },
+      include: {
+        posts: true,
+      },
+    });
+
+    if (!foundedUser) throw new NotFoundError('User not found');
+
+    const foundedPost = await tx.post.findUnique({
+      where: { id: postId, type: 'sale' },
+      include: {
+        images: true,
+      },
+    });
+
+    if (!foundedPost) throw new NotFoundError('Post not found');
+
+    if (foundedPost.userId !== foundedUser.id)
+      throw new ForbiddenError('User has not access to this post');
+
+    const postImages = foundedPost.images;
+    const removedImages: string[] = [];
+    const newImages: ImagesData = [];
+
+    map.removed.forEach((index) => {
+      if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');
+    });
+
+    postImages.forEach((image, index) => {
+      const newIndex = map.new.indexOf(index);
+
+      if (newIndex >= 0) {
+        newImages.push(images[newIndex]);
+        removedImages.push(image.path);
+      } else {
+        if (map.removed.includes(index)) removedImages.push(image.path);
+        else newImages.push({ path: image.path, url: image.url });
+      }
+    });
+
+    map.new.forEach((newIndex, imageIndex) => {
+      if (newIndex >= postImages.length) newImages.push(images[imageIndex]);
+    });
+
+    if (newImages.length > 10 || newImages.length < 1)
+      throw new BadRequestError('Invalid multipart form');
+
+    const updatedPost = await tx.post.update({
+      where: { id: postId, userId: userId },
+      data: {
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+        description:
+          data.description !== undefined
+            ? data.description.length > 0
+              ? data.description
+              : { unset: true }
+            : undefined,
+        sale: {
+          update: {
+            amount: data.amount,
+            currency: data.currency,
+          },
+        },
+        properties: data.properties
+          ? {
+              deleteMany: { postId },
+              create: [
+                {
+                  address: {
+                    province: data.properties[0].address.province,
+                    municipality: data.properties[0].address.municipality,
+                  },
+                  features: {
+                    bed: data.properties[0].features.bed,
+                    bath: data.properties[0].features.bath,
+                    garage: data.properties[0].features.garage,
+                    garden: data.properties[0].features.garden,
+                    pool: data.properties[0].features.pool,
+                    furnished: data.properties[0].features.furnished,
+                  },
+                },
+              ],
+            }
+          : {},
+        images: {
+          deleteMany: { postId },
+          create: newImages.map((item) => ({
+            path: item.path,
+            url: item.url,
+          })),
+        },
+      },
+      include: {
+        sale: true,
+        rent: true,
+        exchange: true,
+        properties: true,
+        images: true,
+        user: {
+          include: {
+            client: true,
+            agent: {
+              include: {
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return { updatedPost, removedImages };
+  });
+}
+
+export async function updateRent(
+  userId: string,
+  postId: string,
+  data: UpdateRentSchema,
+  images: ImagesData,
+  map: MapSchema,
+) {
+  return prisma.$transaction(async (tx) => {
+    if (images.length !== map.new.length) throw new BadRequestError('Invalid multipart form');
+
+    map.removed.forEach((index) => {
+      if (map.new.includes(index)) throw new BadRequestError('Invalid multipart form');
+    });
+
+    const foundedUser = await tx.user.findUnique({
+      where: { id: userId, verified: true },
+      include: {
+        posts: true,
+      },
+    });
+
+    if (!foundedUser) throw new NotFoundError('User not found');
+
+    const foundedPost = await tx.post.findUnique({
+      where: { id: postId, type: 'rent' },
+      include: {
+        images: true,
+      },
+    });
+
+    if (!foundedPost) throw new NotFoundError('Post not found');
+
+    if (foundedPost.userId !== foundedUser.id)
+      throw new ForbiddenError('User has not access to this post');
+
+    const postImages = foundedPost.images;
+    const removedImages: string[] = [];
+    const newImages: ImagesData = [];
+
+    map.removed.forEach((index) => {
+      if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');
+    });
+
+    postImages.forEach((image, index) => {
+      const newIndex = map.new.indexOf(index);
+
+      if (newIndex >= 0) {
+        newImages.push(images[newIndex]);
+        removedImages.push(image.path);
+      } else {
+        if (map.removed.includes(index)) removedImages.push(image.path);
+        else newImages.push({ path: image.path, url: image.url });
+      }
+    });
+
+    map.new.forEach((newIndex, imageIndex) => {
+      if (newIndex >= postImages.length) newImages.push(images[imageIndex]);
+    });
+
+    if (newImages.length > 10 || newImages.length < 1)
+      throw new BadRequestError('Invalid multipart form');
+
+    const updatedPost = await tx.post.update({
+      where: { id: postId, userId: userId },
+      data: {
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+        description:
+          data.description !== undefined
+            ? data.description.length > 0
+              ? data.description
+              : { unset: true }
+            : undefined,
+        rent: {
+          update: {
+            tax: data.tax,
+            currency: data.currency,
+          },
+        },
+        properties: data.properties
+          ? {
+              deleteMany: { postId },
+              create: [
+                {
+                  address: {
+                    province: data.properties[0].address.province,
+                    municipality: data.properties[0].address.municipality,
+                  },
+                  features: {
+                    bed: data.properties[0].features.bed,
+                    bath: data.properties[0].features.bath,
+                    garage: data.properties[0].features.garage,
+                    garden: data.properties[0].features.garden,
+                    pool: data.properties[0].features.pool,
+                    furnished: data.properties[0].features.furnished,
+                  },
+                },
+              ],
+            }
+          : {},
+        images: {
+          deleteMany: { postId },
+          create: newImages.map((item) => ({
+            path: item.path,
+            url: item.url,
+          })),
+        },
+      },
+      include: {
+        sale: true,
+        rent: true,
+        exchange: true,
+        properties: true,
+        images: true,
+        user: {
+          include: {
+            client: true,
+            agent: {
+              include: {
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return { updatedPost, removedImages };
+  });
+}
+
+export async function updateExchange(
+  userId: string,
+  postId: string,
+  data: UpdateExchangeSchema,
+  images: ImagesData,
+  map: MapSchema,
+) {
+  return prisma.$transaction(async (tx) => {
+    if (images.length !== map.new.length) throw new BadRequestError('Invalid multipart form');
+
+    map.removed.forEach((index) => {
+      if (map.new.includes(index)) throw new BadRequestError('Invalid multipart form');
+    });
+
+    const foundedUser = await tx.user.findUnique({
+      where: { id: userId, verified: true },
+      include: {
+        posts: true,
+      },
+    });
+
+    if (!foundedUser) throw new NotFoundError('User not found');
+
+    const foundedPost = await tx.post.findUnique({
+      where: { id: postId, type: 'exchange' },
+      include: {
+        images: true,
+      },
+    });
+
+    if (!foundedPost) throw new NotFoundError('Post not found');
+
+    if (foundedPost.userId !== foundedUser.id)
+      throw new ForbiddenError('User has not access to this post');
+
+    const postImages = foundedPost.images;
+    const removedImages: string[] = [];
+    const newImages: ImagesData = [];
+
+    map.removed.forEach((index) => {
+      if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');
+    });
+
+    postImages.forEach((image, index) => {
+      const newIndex = map.new.indexOf(index);
+
+      if (newIndex >= 0) {
+        newImages.push(images[newIndex]);
+        removedImages.push(image.path);
+      } else {
+        if (map.removed.includes(index)) removedImages.push(image.path);
+        else newImages.push({ path: image.path, url: image.url });
+      }
+    });
+
+    map.new.forEach((newIndex, imageIndex) => {
+      if (newIndex >= postImages.length) newImages.push(images[imageIndex]);
+    });
+
+    if (newImages.length > 10 || newImages.length < 1)
+      throw new BadRequestError('Invalid multipart form');
+
+    const updatedPost = await tx.post.update({
+      where: { id: postId, userId: userId },
+      data: {
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+        description:
+          data.description !== undefined
+            ? data.description.length > 0
+              ? data.description
+              : { unset: true }
+            : undefined,
+        exchange: {
+          update: {
+            offers: data.offers,
+            needs: data.needs,
+          },
+        },
+        properties: data.properties
+          ? {
+              deleteMany: { postId },
+              create: data.properties.map((item) => ({
+                address: {
+                  province: item.address.province,
+                  municipality: item.address.municipality,
+                },
+                features: {
+                  bed: item.features.bed,
+                  bath: item.features.bath,
+                  garage: item.features.garage,
+                  garden: item.features.garden,
+                  pool: item.features.pool,
+                  furnished: item.features.furnished,
+                },
+              })),
+            }
+          : {},
+        images: {
+          deleteMany: { postId },
+          create: newImages.map((item) => ({
+            path: item.path,
+            url: item.url,
+          })),
+        },
+      },
+      include: {
+        sale: true,
+        rent: true,
+        exchange: true,
+        properties: true,
+        images: true,
+        user: {
+          include: {
+            client: true,
+            agent: {
+              include: {
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return { updatedPost, removedImages };
+  });
 }

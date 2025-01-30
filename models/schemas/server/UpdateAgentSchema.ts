@@ -41,5 +41,6 @@ export const updateAgentSchema = z.object({
       }
 
       return parsed.number;
-    }),
+    })
+    .optional(),
 });

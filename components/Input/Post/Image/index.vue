@@ -82,7 +82,7 @@ defineExpose<{
           <!-- Items -->
           <InputPostImageItem
             v-for="(image, index) in fields"
-            :key="index"
+            :key="image.value.imageURL"
             :index="index"
             :image="image.value.imageURL"
             :backend-error="backendErrors[index]"

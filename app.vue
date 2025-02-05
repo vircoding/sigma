@@ -3,6 +3,8 @@ const initLoading = ref(true);
 
 onMounted(async () => {
   initLoading.value = false;
+  const config = useRuntimeConfig();
+  console.log(config);
 });
 </script>
 

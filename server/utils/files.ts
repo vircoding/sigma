@@ -3,8 +3,9 @@ import { join } from 'path';
 import type formidable from 'formidable';
 import { UnexpectedError } from '~/models/classes/server/Error';
 import type { H3Event, EventHandlerRequest } from 'h3';
-
 import type { File } from 'formidable';
+
+const config = useRuntimeConfig();
 
 export function parseMultipart(
   event: H3Event<EventHandlerRequest>,
@@ -24,8 +25,8 @@ export function parseMultipart(
 }
 
 export function parseAvatar(avatar: File) {
-  const path = join(process.cwd(), 'public/uploads/avatars', `${avatar.newFilename}.jpeg`);
-  const url = `${useRuntimeConfig().origin}/uploads/avatars/${avatar.newFilename}.jpeg`;
+  const path = join('public/uploads/avatars', `${avatar.newFilename}.jpeg`);
+  const url = `${config.public.baseURL}/uploads/avatars/${avatar.newFilename}.jpeg`;
 
   fs.rename(avatar.filepath, path, (error) => {
     if (error) throw new UnexpectedError();
@@ -35,8 +36,8 @@ export function parseAvatar(avatar: File) {
 }
 
 export function parseImage(image: File) {
-  const path = join(process.cwd(), 'public/uploads/images', `${image.newFilename}.jpeg`);
-  const url = `${useRuntimeConfig().origin}/uploads/images/${image.newFilename}.jpeg`;
+  const path = join('public/uploads/images', `${image.newFilename}.jpeg`);
+  const url = `${config.public.baseURL}/uploads/images/${image.newFilename}.jpeg`;
 
   fs.rename(image.filepath, path, (error) => {
     if (error) throw new UnexpectedError();

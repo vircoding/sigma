@@ -6,9 +6,15 @@ import {
   FatalError,
   MaxSizeError,
   AccessTokenExpiredError,
+  MaxImageSizeError,
 } from '~/models/classes/client/Error';
-
 import parsePhoneNumber from 'libphonenumber-js';
+import type {
+  UpdateSaleSchema,
+  UpdateRentSchema,
+  UpdateExchangeSchema,
+} from '~/models/schemas/client/UpdatePostSchema';
+
 const countries = useCountries().countries;
 
 function parsePhone(phone: string) {
@@ -73,9 +79,196 @@ async function updateAgent(body: UpdateAgentSchema) {
   }
 }
 
+async function updateSale(
+  body: UpdateSaleSchema,
+  id: string,
+  map: {
+    new: number[];
+    removed: number[];
+  },
+) {
+  try {
+    const formData = new FormData();
+    formData.append(
+      'input',
+      JSON.stringify({
+        type: 'sale',
+        amount: body.amount,
+        currency: body.currency,
+        description: body.description,
+        properties: body.properties,
+        phone: `+${body.phone.code}${body.phone.phone}`,
+        whatsapp: body.whatsapp,
+      }),
+    );
+
+    body.images.forEach((image) => {
+      formData.append('images', image.blob);
+    });
+
+    formData.append('map', JSON.stringify(map));
+
+    const data = await $fetch(`/api/posts/${id}`, {
+      method: 'PATCH',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${useCookie('access_token').value}`,
+      },
+    });
+
+    return { postId: data.postId };
+  } catch (error) {
+    if (error instanceof FetchError) {
+      if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
+        throw new AccessTokenExpiredError(error.message);
+      }
+      if (error.status === 400) {
+        if (error.data.message === 'Invalid or missing required parameters')
+          throw new BadRequestError(error.message);
+        if (
+          error.data.message === 'File exceeds the maximum allowed size of 5MB' &&
+          'data' in error.data &&
+          'index' in error.data.data
+        )
+          throw new MaxImageSizeError(error.message, error.data.data.index);
+        if (error.data.message === 'Invalid or missing access token') throw new FatalError();
+        throw new BadRequestError(error.message);
+      }
+    }
+    throw new FatalError();
+  }
+}
+
+async function updateRent(
+  body: UpdateRentSchema,
+  id: string,
+  map: {
+    new: number[];
+    removed: number[];
+  },
+) {
+  try {
+    const formData = new FormData();
+    formData.append(
+      'input',
+      JSON.stringify({
+        type: 'rent',
+        tax: body.tax,
+        currency: body.currency,
+        frequency: body.frequency,
+        description: body.description,
+        properties: body.properties,
+        phone: `+${body.phone.code}${body.phone.phone}`,
+        whatsapp: body.whatsapp,
+      }),
+    );
+
+    body.images.forEach((image) => {
+      formData.append('images', image.blob);
+    });
+
+    console.log(map);
+    console.log(body.images);
+
+    formData.append('map', JSON.stringify(map));
+
+    const data = await $fetch(`/api/posts/${id}`, {
+      method: 'PATCH',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${useCookie('access_token').value}`,
+      },
+    });
+
+    return { postId: data.postId };
+  } catch (error) {
+    if (error instanceof FetchError) {
+      if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
+        throw new AccessTokenExpiredError(error.message);
+      }
+      if (error.status === 400) {
+        if (error.data.message === 'Invalid or missing required parameters')
+          throw new BadRequestError(error.message);
+        if (
+          error.data.message === 'File exceeds the maximum allowed size of 5MB' &&
+          'data' in error.data &&
+          'index' in error.data.data
+        )
+          throw new MaxImageSizeError(error.message, error.data.data.index);
+        if (error.data.message === 'Invalid or missing access token') throw new FatalError();
+        throw new BadRequestError(error.message);
+      }
+    }
+    throw new FatalError();
+  }
+}
+
+async function updateExchange(
+  body: UpdateExchangeSchema,
+  id: string,
+  map: {
+    new: number[];
+    removed: number[];
+  },
+) {
+  try {
+    const formData = new FormData();
+    formData.append(
+      'input',
+      JSON.stringify({
+        type: 'exchange',
+        offers: body.offers,
+        needs: body.needs,
+        description: body.description,
+        properties: body.properties,
+        phone: `+${body.phone.code}${body.phone.phone}`,
+        whatsapp: body.whatsapp,
+      }),
+    );
+
+    body.images.forEach((image) => {
+      formData.append('images', image.blob);
+    });
+
+    formData.append('map', JSON.stringify(map));
+
+    const data = await $fetch(`/api/posts/${id}`, {
+      method: 'PATCH',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${useCookie('access_token').value}`,
+      },
+    });
+
+    return { postId: data.postId };
+  } catch (error) {
+    if (error instanceof FetchError) {
+      if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
+        throw new AccessTokenExpiredError(error.message);
+      }
+      if (error.status === 400) {
+        if (error.data.message === 'Invalid or missing required parameters')
+          throw new BadRequestError(error.message);
+        if (
+          error.data.message === 'File exceeds the maximum allowed size of 5MB' &&
+          'data' in error.data &&
+          'index' in error.data.data
+        )
+          throw new MaxImageSizeError(error.message, error.data.data.index);
+        if (error.data.message === 'Invalid or missing access token') throw new FatalError();
+        throw new BadRequestError(error.message);
+      }
+    }
+    throw new FatalError();
+  }
+}
+
 export default function () {
   return {
     updateAgent,
+    updateSale,
+    updateRent,
+    updateExchange,
     parsePhone,
   };
 }

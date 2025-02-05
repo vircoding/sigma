@@ -85,6 +85,18 @@ function loadAvatar(event: Event) {
     event.target.value = '';
   }
 }
+
+function onReset() {
+  croppedURL.value = undefined;
+}
+
+defineExpose<{
+  reset: () => void;
+}>({
+  reset: function () {
+    onReset();
+  },
+});
 </script>
 
 <template>

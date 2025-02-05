@@ -88,6 +88,46 @@ export type InsertInput = {
   description: string;
 };
 
+export type UpdateSaleInput = {
+  amount: string;
+  currency: Currency;
+  phone: {
+    phone: string;
+    code: string;
+  };
+  whatsapp: boolean;
+  properties: PropertyInput[];
+  images: Image[];
+  description: string;
+};
+
+export type UpdateRentInput = {
+  tax: string;
+  currency: Currency;
+  frequency: Frequency;
+  phone: {
+    phone: string;
+    code: string;
+  };
+  whatsapp: boolean;
+  properties: PropertyInput[];
+  images: Image[];
+  description: string;
+};
+
+export type UpdateExchangeInput = {
+  offers: Offers;
+  needs: Needs;
+  phone: {
+    phone: string;
+    code: string;
+  };
+  whatsapp: boolean;
+  properties: PropertyInput[];
+  images: Image[];
+  description: string;
+};
+
 export type SaleDetails = {
   amount: number;
   currency: Currency;
@@ -121,27 +161,31 @@ type Contact = {
   phone: string;
 };
 
-export type Post = {
+type PostPartial = {
   id: string;
   description: string;
   contact: Contact;
   images: string[];
   author: Author;
   properties: Property[];
-} & (
-  | {
-      type: 'sale';
-      details: SaleDetails;
-    }
-  | {
-      type: 'rent';
-      details: RentDetails;
-    }
-  | {
-      type: 'exchange';
-      details: ExchangeDetails;
-    }
-);
+};
+
+export type Sale = PostPartial & {
+  type: 'sale';
+  details: SaleDetails;
+};
+
+export type Rent = PostPartial & {
+  type: 'rent';
+  details: RentDetails;
+};
+
+export type Exchange = PostPartial & {
+  type: 'exchange';
+  details: ExchangeDetails;
+};
+
+export type Post = Sale | Rent | Exchange;
 
 export type PostInstance = PostDB & {
   properties: PropertyDB[];
@@ -150,6 +194,11 @@ export type PostInstance = PostDB & {
   rent: RentDB | null;
   exchange: ExchangeDB | null;
   user: UserInstance | null;
+};
+
+export type Map = {
+  new: number[];
+  removed: number[];
 };
 
 export enum PROVINCES {

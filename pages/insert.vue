@@ -12,7 +12,7 @@ function onAgent() {
   contactModal.value?.openModal();
 }
 
-onUnmounted(() => {
+onBeforeRouteLeave(() => {
   resetUIPrimary();
 });
 </script>

@@ -80,7 +80,13 @@ onMounted(() => {
       indicators
     >
       <template #default="{ item }">
-        <img :src="item" class="w-full" draggable="true" @touchend="touched = true" />
+        <img
+          :src="item"
+          class="w-full"
+          draggable="true"
+          @touchend="touched = true"
+          @click="touched = true"
+        />
       </template>
 
       <!-- Indicators -->

@@ -11,7 +11,9 @@ export default defineNuxtConfig({
     nodemailerHost: process.env.EMAIL_HOST,
     nodemailerUser: process.env.EMAIL_USER,
     nodemailerPassword: process.env.EMAIL_PASSWORD,
-    origin: process.env.ORIGIN,
+    public: {
+      baseURL: process.env.BASE_URL,
+    },
   },
   modules: [
     '@nuxt/eslint',

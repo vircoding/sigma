@@ -22,6 +22,7 @@ const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 const toast = useToast();
 
 const badRequestErrorModal = useTemplateRef('badRequest');
+const avatarInput = useTemplateRef('avatarInput');
 
 const errorVisibility = ref(true);
 const previousAvatar = ref<string>(user.value.avatar);
@@ -52,36 +53,35 @@ function onReset() {
   state.bio = user.value.bio;
   state.phone.code = code;
   state.phone.phone = phone;
+  state.avatar = undefined;
+
+  if (avatarInput.value) avatarInput.value.reset();
+  else showError(createError({ status: 500 }));
 }
 
-const onSubmit = handleSubmit(
-  async (values) => {
-    try {
-      openSubmitLoading();
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    openSubmitLoading();
 
-      await updateAgent(values);
-      onReset();
-      toast.add({
-        timeout: 4000,
-        title: 'Datos Actualizados',
-      });
-    } catch (error) {
-      if (error instanceof AccessTokenExpiredError) {
-        await refresh().catch(() => showError(createError({ status: 500 })));
-        onSubmit();
-      } else if (error instanceof MaxSizeError) {
-        setFieldError('avatar', 'La imagen es muy grande');
-      } else if (error instanceof BadRequestError || error instanceof FormFieldError) {
-        badRequestErrorModal.value?.openModal();
-      } else showError(createError({ status: 500 }));
-    } finally {
-      closeSubmitLoading();
-    }
-  },
-  () => {
-    errorVisibility.value = true;
-  },
-);
+    await updateAgent(values);
+    onReset();
+    toast.add({
+      timeout: 4000,
+      title: 'Datos Actualizados',
+    });
+  } catch (error) {
+    if (error instanceof AccessTokenExpiredError) {
+      await refresh().catch(() => showError(createError({ status: 500 })));
+      onSubmit();
+    } else if (error instanceof MaxSizeError) {
+      setFieldError('avatar', 'La imagen es muy grande');
+    } else if (error instanceof BadRequestError || error instanceof FormFieldError) {
+      badRequestErrorModal.value?.openModal();
+    } else showError(createError({ status: 500 }));
+  } finally {
+    closeSubmitLoading();
+  }
+});
 
 defineExpose<{
   syncData: () => void;
@@ -111,6 +111,7 @@ defineExpose<{
         <div class="flex gap-2">
           <!-- Avatar -->
           <InputUserAvatar
+            ref="avatarInput"
             v-model="state.avatar"
             name="avatar"
             :previous-avatar="previousAvatar"
@@ -162,6 +163,7 @@ defineExpose<{
         class="mb-6"
       />
 
+      <!-- CTA's -->
       <div class="grid grid-cols-2 gap-x-4">
         <!-- Reset -->
         <UButton
@@ -182,7 +184,7 @@ defineExpose<{
           :disabled="isSubmitting"
           :ui="useUIConfigs().acceptButtonConfig"
           class="font-bold"
-          >Registrarse</UButton
+          >Guardar</UButton
         >
       </div>
     </div>

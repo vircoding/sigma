@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
 
     // Get the postId
     const postId = getRouterParam(event, 'id');
-    if (!postId) throw new BadRequestError('Invalid or missing post id');
+    if (!postId) throw new UnexpectedError();
 
     // Parse the multipart form
     const { fields, files } = await parseMultipart(event, form).catch((error) => {
@@ -109,7 +109,8 @@ export default defineEventHandler(async (event) => {
           console.error('An error has ocurred while deleting an image\n', error);
         }
       });
-      return { post: postTransformer(post) };
+
+      return { postId: post.id };
     }
 
     // Rent
@@ -132,7 +133,8 @@ export default defineEventHandler(async (event) => {
           console.error('An error has ocurred while deleting an image\n', error);
         }
       });
-      return { post: postTransformer(post) };
+
+      return { postId: post.id };
     }
 
     // Exchange
@@ -155,7 +157,8 @@ export default defineEventHandler(async (event) => {
           console.error('An error has ocurred while deleting an image\n', error);
         }
       });
-      return { post: postTransformer(post) };
+
+      return { postId: post.id };
     }
 
     throw new UnexpectedError();

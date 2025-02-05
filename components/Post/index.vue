@@ -47,7 +47,7 @@ const isOwn = computed(() => {
         />
 
         <!-- Desktop Divider -->
-        <UDivider type="dashed" class="hidden lg:block" />
+        <UDivider v-if="props.post.author.agent" type="dashed" class="hidden lg:block" />
 
         <!-- Desktop Author -->
         <PostAuthor
@@ -73,7 +73,7 @@ const isOwn = computed(() => {
       </div>
 
       <!-- Divider -->
-      <UDivider type="dashed" class="lg:hidden" />
+      <UDivider v-if="props.post.author.agent" type="dashed" class="lg:hidden" />
 
       <!-- Mobile Author -->
       <PostAuthor

@@ -4,9 +4,9 @@ definePageMeta({
 });
 
 const { setUIPrimary, resetUIPrimary } = useGlobal();
-const { params } = useRoute();
+const { id } = useRoute().params;
 
-const { status, data, error } = useLazyFetch(`/api/posts/${params.id}`);
+const { status, data, error } = useLazyFetch(`/api/posts/${id}`);
 
 function onStatus() {
   if (status.value === 'success' && data.value) {
@@ -26,14 +26,13 @@ onMounted(() => {
   onStatus();
 });
 
-onUnmounted(() => {
+onBeforeRouteLeave(() => {
   resetUIPrimary();
 });
 </script>
 
 <template>
   <UContainer class="w-full px-0 min-[350px]:px-4" :class="[useStyles().pageContainer]">
-    {{ error }}
     <!-- Skeleton -->
     <div v-if="status === 'pending'">
       <SkeletonPost />

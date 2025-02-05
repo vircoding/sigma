@@ -3,12 +3,11 @@ import parsePhoneNumber from 'libphonenumber-js';
 import { PROVINCES } from '~/models/types/Post';
 import { getMunicipalities } from '~/server/utils/provinces';
 
-export type InsertSaleSchema = z.output<typeof insertSaleSchema>;
-export type InsertRentSchema = z.output<typeof insertRentSchema>;
-export type InsertExchangeSchema = z.output<typeof _insertExchangeSchema>;
-export type InsertSchema = InsertSaleSchema | InsertRentSchema | InsertExchangeSchema;
+export type UpdateSaleSchema = z.output<typeof updateSaleSchema>;
+export type UpdateRentSchema = z.output<typeof updateRentSchema>;
+export type UpdateExchangeSchema = z.output<typeof _updateExchangeSchema>;
 
-const insertPartialSchema = z.object({
+const updatePartialSchema = z.object({
   whatsapp: z.boolean(),
   phone: z
     .object({
@@ -52,35 +51,31 @@ const insertPartialSchema = z.object({
       blob: z.instanceof(Blob),
     })
     .array()
-    .min(1, 'Debe contener al menos 1 imagen')
     .max(10, 'Máximo 10 imágenes'),
 });
 
-const insertSalePartialSchema = z.object({
-  type: z.literal('sale'),
-  saleAmount: z.coerce
+const updateSalePartialSchema = z.object({
+  amount: z.coerce
     .number({ message: 'Debe ser un precio válido' })
     .int('Debe ser un precio válido')
     .gte(1, 'Debe ser un precio válido')
     .lte(999999999, 'Debe ser un precio válido'),
-  saleCurrency: z.enum(['USD', 'CUP']),
+  currency: z.enum(['USD', 'CUP']),
 });
 
-const insertRentPartialSchema = z.object({
-  type: z.literal('rent'),
-  rentTax: z.coerce
+const updateRentPartialSchema = z.object({
+  tax: z.coerce
     .number({ message: 'Debe ser una tarifa válida' })
     .int('Debe ser una tarifa válida')
     .gte(1, 'Debe ser una tarifa válida')
     .lte(999999999, 'Debe ser una tarifa válida'),
-  rentCurrency: z.enum(['USD', 'CUP']),
-  rentFrequency: z.enum(['daily', 'monthly']),
+  currency: z.enum(['USD', 'CUP']),
+  frequency: z.enum(['daily', 'monthly']),
 });
 
-const insertExchangePartialSchema = z.object({
-  type: z.literal('exchange'),
-  exchangeOffers: z.number().int().gte(1).lte(3),
-  exchangeNeeds: z.number().int().gte(0).lte(3),
+const updateExchangePartialSchema = z.object({
+  offers: z.number().int().gte(1).lte(3),
+  needs: z.number().int().gte(0).lte(3),
 });
 
 const insertPropertyPartialSchema = z.object({
@@ -111,20 +106,20 @@ const insertPropertyPartialSchema = z.object({
   }),
 });
 
-export const insertSaleSchema = insertPartialSchema.extend(insertSalePartialSchema.shape).extend({
+export const updateSaleSchema = updatePartialSchema.extend(updateSalePartialSchema.shape).extend({
   properties: z.object(insertPropertyPartialSchema.shape).array().length(1),
 });
 
-export const insertRentSchema = insertPartialSchema.extend(insertRentPartialSchema.shape).extend({
+export const updateRentSchema = updatePartialSchema.extend(updateRentPartialSchema.shape).extend({
   properties: z.object(insertPropertyPartialSchema.shape).array().length(1),
 });
 
-const _insertExchangeSchema = insertPartialSchema.extend(insertExchangePartialSchema.shape).extend({
+const _updateExchangeSchema = updatePartialSchema.extend(updateExchangePartialSchema.shape).extend({
   properties: z.object(insertPropertyPartialSchema.shape).array(),
 });
 
-export function getInsertExchangeSchema(propertyCount: 1 | 2 | 3) {
-  return insertPartialSchema.extend(insertExchangePartialSchema.shape).extend({
+export function getUpdateExchangeSchema(propertyCount: 1 | 2 | 3) {
+  return updatePartialSchema.extend(updateExchangePartialSchema.shape).extend({
     properties: z.object(insertPropertyPartialSchema.shape).array().length(propertyCount),
   });
 }

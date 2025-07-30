@@ -3,6 +3,7 @@ export default function useStyles() {
     textColorPrimary: 'text-azure-950 dark:text-gray-200',
     textColorSecondary: 'text-gray-500 dark:text-gray-400',
     textColorDisabled: 'text-gray-400 dark:text-gray-800',
+    textColorDisabledSecondary: 'text-gray-400 dark:text-gray-600',
     textColorError: 'text-red-500 dark:text-red-400',
     textSizeXS: 'text-xs md:text-sm',
     textSizeSM: 'text-sm md:text-base',
@@ -16,5 +17,6 @@ export default function useStyles() {
     textSize7XL: 'text-7xl md:text-8xl',
     pageContainer: 'max-w-lg lg:max-w-full lg:px-12 xl:px-20',
     linkActiveState: `${useDevice().isMobile ? 'active:text-azure-900 dark:active:text-azure-200' : ''} ${useDevice().isDesktop ? 'hover:text-azure-900 dark:hover:text-azure-200' : 'hover:text-azure-950 dark:hover:text-gray-200'} text-azure-950 dark:text-gray-200 disabled:text-neutral-300 disabled:dark:text-neutral-700`,
+    textColorCardHero: 'text-white dark:text-gray-900',
   };
 }

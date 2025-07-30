@@ -4,7 +4,8 @@ import {
   BadRequestError,
   FormFieldError,
 } from '~/models/classes/client/Error';
-import { loginSchema, type LoginSchema } from '~/models/schemas/client/LoginSchema';
+import { loginSchema } from '~/models/schemas/client/LoginSchema';
+import type { LoginSchema } from '~/models/schemas/client/LoginSchema';
 import type { LoginInput } from '~/models/types/User';
 
 defineEmits<{

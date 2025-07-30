@@ -4,7 +4,8 @@ import {
   BadRequestError,
   MaxImageSizeError,
 } from '~/models/classes/client/Error';
-import { updateSaleSchema, type UpdateSaleSchema } from '~/models/schemas/client/UpdatePostSchema';
+import { updateSaleSchema } from '~/models/schemas/client/UpdatePostSchema';
+import type { UpdateSaleSchema } from '~/models/schemas/client/UpdatePostSchema';
 import type { Map, Sale, UpdateSaleInput } from '~/models/types/Post';
 
 const props = defineProps<{
@@ -40,10 +41,10 @@ const state = reactive<UpdateSaleInput>({
       features: {
         bed: props.post.properties[0].features.bed.toString(),
         bath: props.post.properties[0].features.bath.toString(),
+        backyard: props.post.properties[0].features.backyard,
+        balcony: props.post.properties[0].features.balcony,
         garage: props.post.properties[0].features.garage,
-        garden: props.post.properties[0].features.garden,
         pool: props.post.properties[0].features.pool,
-        furnished: props.post.properties[0].features.furnished,
       },
     },
   ],
@@ -74,10 +75,10 @@ function onReset() {
   state.properties[0].address.municipality = props.post.properties[0].address.municipality;
   state.properties[0].features.bed = props.post.properties[0].features.bed.toString();
   state.properties[0].features.bath = props.post.properties[0].features.bath.toString();
+  state.properties[0].features.backyard = props.post.properties[0].features.backyard;
+  state.properties[0].features.balcony = props.post.properties[0].features.balcony;
   state.properties[0].features.garage = props.post.properties[0].features.garage;
-  state.properties[0].features.garden = props.post.properties[0].features.garden;
   state.properties[0].features.pool = props.post.properties[0].features.pool;
-  state.properties[0].features.furnished = props.post.properties[0].features.furnished;
   state.images = [];
   map.value = {
     new: [],
@@ -228,6 +229,26 @@ const onSubmit = handleSubmit(async (values) => {
           <div
             class="flex w-min max-w-xs flex-col flex-wrap place-content-center gap-x-0 lg:w-full lg:flex-row"
           >
+            <!-- Backyard -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[0].features.backyard"
+                label="Patio"
+                name="properties[0].features.backtard"
+                name-attrib="backyard-1"
+              />
+            </div>
+
+            <!-- Balcony -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[0].features.balcony"
+                label="Balcón"
+                name="properties[0].features.balcony"
+                name-attrib="balcony-1"
+              />
+            </div>
+
             <!-- Garage -->
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
@@ -238,16 +259,6 @@ const onSubmit = handleSubmit(async (values) => {
               />
             </div>
 
-            <!-- Garden -->
-            <div class="mb-2 lg:min-w-[125px]">
-              <InputCheckbox
-                v-model="state.properties[0].features.garden"
-                label="Jardín"
-                name="properties[0].features.garden"
-                name-attrib="garden-1"
-              />
-            </div>
-
             <!-- Pool -->
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
@@ -255,16 +266,6 @@ const onSubmit = handleSubmit(async (values) => {
                 label="Piscina"
                 name="properties[0].features.pool"
                 name-attrib="pool-1"
-              />
-            </div>
-
-            <!-- Furnished -->
-            <div class="mb-2 lg:min-w-[125px]">
-              <InputCheckbox
-                v-model="state.properties[0].features.furnished"
-                label="Amueblada"
-                name="properties[0].features.furnished"
-                name-attrib="furnished-1"
               />
             </div>
           </div>

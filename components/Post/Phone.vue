@@ -24,7 +24,7 @@ https://sigmacuba.com/posts/${props.id}`;
 <template>
   <nav class="sticky bottom-3 z-50 md:bottom-5 lg:relative lg:bottom-0 lg:z-0">
     <div
-      class="relative -left-2 grid w-[calc(100vw-16px)] max-w-lg grid-cols-2 gap-x-2 rounded-2xl bg-gray-300/30 p-2 backdrop-blur-md min-[350px]:-left-4 min-[350px]:w-[calc(100vw-32px)] lg:left-0 lg:w-full lg:max-w-none lg:gap-x-3 lg:bg-transparent lg:p-0 lg:backdrop-blur-none dark:bg-gray-500/30 lg:dark:bg-transparent"
+      class="relative grid max-w-lg grid-cols-2 gap-x-2 rounded-2xl bg-gray-300/30 p-2 backdrop-blur-md lg:left-0 lg:w-full lg:max-w-none lg:gap-x-3 lg:bg-transparent lg:p-0 lg:backdrop-blur-none dark:bg-gray-500/30 lg:dark:bg-transparent"
     >
       <!-- Call -->
       <UButton

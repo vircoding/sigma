@@ -5,10 +5,8 @@ import {
   MaxSizeError,
   BadRequestError,
 } from '~/models/classes/client/Error';
-import {
-  updateAgentSchema,
-  type UpdateAgentSchema,
-} from '~/models/schemas/client/UpdateAgentSchema';
+import { updateAgentSchema } from '~/models/schemas/client/UpdateAgentSchema';
+import type { UpdateAgentSchema } from '~/models/schemas/client/UpdateAgentSchema';
 import type { UpdateAgentInput } from '~/models/types/User';
 
 const userStore = useUserStore();

@@ -3,9 +3,10 @@ import {
   insertSaleSchema,
   insertRentSchema,
   getInsertExchangeSchema,
-  type InsertSchema,
 } from '~/models/schemas/client/InsertSchema';
-import { type InsertInput, PROVINCES } from '~/models/types/Post';
+import type { InsertSchema } from '~/models/schemas/client/InsertSchema';
+import { PROVINCES } from '~/models/types/Post';
+import type { InsertInput } from '~/models/types/Post';
 import {
   AccessTokenExpiredError,
   FormFieldError,
@@ -62,10 +63,10 @@ const state = reactive<InsertInput>({
       features: {
         bed: '0',
         bath: '0',
+        backyard: false,
+        balcony: false,
         garage: false,
-        garden: false,
         pool: false,
-        furnished: false,
       },
     },
     {
@@ -76,10 +77,10 @@ const state = reactive<InsertInput>({
       features: {
         bed: '0',
         bath: '0',
+        backyard: false,
+        balcony: false,
         garage: false,
-        garden: false,
         pool: false,
-        furnished: false,
       },
     },
     {
@@ -90,10 +91,10 @@ const state = reactive<InsertInput>({
       features: {
         bed: '0',
         bath: '0',
+        backyard: false,
+        balcony: false,
         garage: false,
-        garden: false,
         pool: false,
-        furnished: false,
       },
     },
   ],
@@ -264,7 +265,7 @@ onMounted(() => {
     </div>
 
     <!-- Properties -->
-    <div v-for="(property, index) in state.properties" :key="`property-${index + 1}`">
+    <div v-for="(_, index) in state.properties" :key="`property-${index + 1}`">
       <div
         v-if="(state.type === 'exchange' && index <= state.exchange.offers - 1) || index === 0"
         class="mb-4 flex flex-col gap-x-3 rounded-xl border border-gray-300 px-3 pb-3 pt-4 lg:flex-row lg:px-5 lg:pt-[18px] dark:border-gray-700"
@@ -309,6 +310,26 @@ onMounted(() => {
           <div
             class="flex w-min max-w-xs flex-col flex-wrap place-content-center gap-x-0 lg:w-full lg:flex-row"
           >
+            <!-- Backyard -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[index].features.backyard"
+                label="Patio"
+                :name="`properties[${index}].features.backyard`"
+                :name-attrib="`backyard-${index + 1}`"
+              />
+            </div>
+
+            <!-- Balcony -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[index].features.balcony"
+                label="Balcón"
+                :name="`properties[${index}].features.balcony`"
+                :name-attrib="`balcony-${index + 1}`"
+              />
+            </div>
+
             <!-- Garage -->
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
@@ -319,16 +340,6 @@ onMounted(() => {
               />
             </div>
 
-            <!-- Garden -->
-            <div class="mb-2 lg:min-w-[125px]">
-              <InputCheckbox
-                v-model="state.properties[index].features.garden"
-                label="Jardín"
-                :name="`properties[${index}].features.garden`"
-                :name-attrib="`garden-${index + 1}`"
-              />
-            </div>
-
             <!-- Pool -->
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
@@ -336,16 +347,6 @@ onMounted(() => {
                 label="Piscina"
                 :name="`properties[${index}].features.pool`"
                 :name-attrib="`pool-${index + 1}`"
-              />
-            </div>
-
-            <!-- Furnished -->
-            <div class="mb-2 lg:min-w-[125px]">
-              <InputCheckbox
-                v-model="state.properties[index].features.furnished"
-                label="Amueblada"
-                :name="`properties[${index}].features.furnished`"
-                :name-attrib="`furnished-${index + 1}`"
               />
             </div>
           </div>

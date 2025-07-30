@@ -8,6 +8,7 @@ import {
   FatalError,
   MaxImageSizeError,
 } from '~/models/classes/client/Error';
+import type { Frequency } from '~/models/types/Post';
 
 function getInputByType(body: InsertSchema) {
   switch (body.type) {
@@ -102,15 +103,21 @@ function formatAmount(amount: number, withSuffix: boolean = false) {
   }
 
   if (length >= 5) {
-    return new Intl.NumberFormat().format(amount);
+    return new Intl.NumberFormat().format(amount).replace('.', ',');
   }
 
   return stringAmount;
+}
+
+function formatFrequency(frequency: Frequency) {
+  if (frequency === 'daily') return 'día';
+  else return 'mes';
 }
 
 export default function () {
   return {
     insert,
     formatAmount,
+    formatFrequency,
   };
 }

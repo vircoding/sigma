@@ -66,7 +66,7 @@ async function updateAgent(body: UpdateAgentSchema) {
       if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
         throw new AccessTokenExpiredError(error.message);
       }
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
           throw new FormFieldError(error.message, error.data.data);
         if (error.data.message === 'File exceeds the maximum allowed size of 5MB')
@@ -75,6 +75,7 @@ async function updateAgent(body: UpdateAgentSchema) {
         throw new BadRequestError(error.message);
       }
     }
+
     throw new FatalError();
   }
 }
@@ -122,7 +123,7 @@ async function updateSale(
       if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
         throw new AccessTokenExpiredError(error.message);
       }
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters')
           throw new BadRequestError(error.message);
         if (
@@ -135,6 +136,7 @@ async function updateSale(
         throw new BadRequestError(error.message);
       }
     }
+
     throw new FatalError();
   }
 }
@@ -186,7 +188,7 @@ async function updateRent(
       if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
         throw new AccessTokenExpiredError(error.message);
       }
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters')
           throw new BadRequestError(error.message);
         if (
@@ -199,6 +201,7 @@ async function updateRent(
         throw new BadRequestError(error.message);
       }
     }
+
     throw new FatalError();
   }
 }
@@ -246,7 +249,7 @@ async function updateExchange(
       if (error.statusCode === 401 && error.data.message === 'The access token has expired') {
         throw new AccessTokenExpiredError(error.message);
       }
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters')
           throw new BadRequestError(error.message);
         if (
@@ -259,6 +262,27 @@ async function updateExchange(
         throw new BadRequestError(error.message);
       }
     }
+
+    throw new FatalError();
+  }
+}
+
+async function deletePost(id: string) {
+  try {
+    await $fetch(`/api/posts/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${useCookie('access_token').value}`,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof FetchError &&
+      error.statusCode === 401 &&
+      error.data.message === 'The access token has expired'
+    )
+      throw new AccessTokenExpiredError(error.message);
+
     throw new FatalError();
   }
 }
@@ -269,6 +293,7 @@ export default function () {
     updateSale,
     updateRent,
     updateExchange,
+    deletePost,
     parsePhone,
   };
 }

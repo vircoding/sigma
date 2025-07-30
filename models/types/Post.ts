@@ -23,19 +23,19 @@ type Address = {
 export type Features = {
   bed: number;
   bath: number;
+  backyard: boolean;
+  balcony: boolean;
   garage: boolean;
-  garden: boolean;
   pool: boolean;
-  furnished: boolean;
 };
 
 type FeaturesInput = {
   bed: string;
   bath: string;
+  backyard: boolean;
+  balcony: boolean;
   garage: boolean;
-  garden: boolean;
   pool: boolean;
-  furnished: boolean;
 };
 
 export type Property = {
@@ -170,7 +170,19 @@ type PostPartial = {
   properties: Property[];
 };
 
+type UserPostPartial = {
+  id: string;
+  description: string;
+  contact: Contact;
+  properties: Property[];
+};
+
 export type Sale = PostPartial & {
+  type: 'sale';
+  details: SaleDetails;
+};
+
+export type UserSale = UserPostPartial & {
   type: 'sale';
   details: SaleDetails;
 };
@@ -180,12 +192,24 @@ export type Rent = PostPartial & {
   details: RentDetails;
 };
 
+export type UserRent = UserPostPartial & {
+  type: 'rent';
+  details: RentDetails;
+};
+
 export type Exchange = PostPartial & {
   type: 'exchange';
   details: ExchangeDetails;
 };
 
+export type UserExchange = UserPostPartial & {
+  type: 'exchange';
+  details: ExchangeDetails;
+};
+
 export type Post = Sale | Rent | Exchange;
+
+export type UserPost = UserSale | UserRent | UserExchange;
 
 export type PostInstance = PostDB & {
   properties: PropertyDB[];
@@ -194,6 +218,13 @@ export type PostInstance = PostDB & {
   rent: RentDB | null;
   exchange: ExchangeDB | null;
   user: UserInstance | null;
+};
+
+export type UserPostInstance = PostDB & {
+  properties: PropertyDB[];
+  sale: SaleDB | null;
+  rent: RentDB | null;
+  exchange: ExchangeDB | null;
 };
 
 export type Map = {

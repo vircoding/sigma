@@ -14,7 +14,6 @@ const { value } = useField<PostType>(() => props.name, undefined, {
 });
 
 const state = ref(0);
-
 $listen('navigation:insert', (type) => {
   switch (type) {
     case 'rent':

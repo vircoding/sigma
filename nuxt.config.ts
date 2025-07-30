@@ -1,7 +1,5 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
-  css: ['~/assets/css/main.css'],
   devtools: {
     enabled: true,
   },
@@ -12,10 +10,12 @@ export default defineNuxtConfig({
     nodemailerHost: process.env.EMAIL_HOST,
     nodemailerUser: process.env.EMAIL_USER,
     nodemailerPassword: process.env.EMAIL_PASSWORD,
+    databaseUrl: process.env.DATABASE_URL,
     public: {
       baseURL: process.env.BASE_URL,
     },
   },
+  css: ['~/assets/css/main.css'],
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',

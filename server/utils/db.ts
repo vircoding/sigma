@@ -42,7 +42,15 @@ type ImagesData = {
   url: string;
 }[];
 
-const prisma = new PrismaClient();
+const config = useRuntimeConfig();
+
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: config.databaseUrl,
+    },
+  },
+});
 
 export function registerClient(clientData: RegisterClientSchema) {
   return prisma.$transaction(async (tx) => {
@@ -554,10 +562,10 @@ export function insertSale(saleData: InsertSaleSchema, userId: string, images: I
               features: {
                 bed: saleData.properties[0].features.bed,
                 bath: saleData.properties[0].features.bath,
+                backyard: saleData.properties[0].features.backyard,
+                balcony: saleData.properties[0].features.balcony,
                 garage: saleData.properties[0].features.garage,
-                garden: saleData.properties[0].features.garden,
                 pool: saleData.properties[0].features.pool,
-                furnished: saleData.properties[0].features.furnished,
               },
             },
           ],
@@ -625,10 +633,10 @@ export function insertRent(rentData: InsertRentSchema, userId: string, images: I
               features: {
                 bed: rentData.properties[0].features.bed,
                 bath: rentData.properties[0].features.bath,
+                backyard: rentData.properties[0].features.backyard,
+                balcony: rentData.properties[0].features.balcony,
                 garage: rentData.properties[0].features.garage,
-                garden: rentData.properties[0].features.garden,
                 pool: rentData.properties[0].features.pool,
-                furnished: rentData.properties[0].features.furnished,
               },
             },
           ],
@@ -698,10 +706,10 @@ export function insertExchange(
             features: {
               bed: item.features.bed,
               bath: item.features.bath,
+              backyard: item.features.backyard,
+              balcony: item.features.balcony,
               garage: item.features.garage,
-              garden: item.features.garden,
               pool: item.features.pool,
-              furnished: item.features.furnished,
             },
           })),
         },
@@ -750,6 +758,63 @@ export async function findPostById(id: string) {
   if (!post) throw new NotFoundError('Post not found');
 
   return post;
+}
+
+export async function deletePost(userId: string, postId: string) {
+  return prisma.$transaction(async (tx) => {
+    const foundedUser = await tx.user.findUnique({
+      where: { id: userId, verified: true },
+      include: {
+        posts: true,
+      },
+    });
+
+    if (!foundedUser) throw new NotFoundError('User not found');
+
+    console.log('User founded');
+
+    const foundedPost = await tx.post.findUnique({
+      where: { id: postId },
+      include: {
+        images: true,
+      },
+    });
+
+    if (!foundedPost) throw new NotFoundError('Post not found');
+
+    console.log('User founded');
+
+    if (foundedPost.userId !== foundedUser.id)
+      throw new ForbiddenError('User has not access to this post');
+
+    const deletedPost = await tx.post.delete({
+      where: { id: postId, userId: userId },
+      include: {
+        sale: true,
+        rent: true,
+        exchange: true,
+        properties: true,
+        images: true,
+        user: {
+          include: {
+            client: true,
+            agent: {
+              include: {
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const removedImages: string[] = [];
+    deletedPost.images.forEach((image) => {
+      removedImages.push(image.path);
+    });
+
+    return removedImages;
+  });
 }
 
 export async function updateSale(
@@ -844,9 +909,9 @@ export async function updateSale(
                     bed: data.properties[0].features.bed,
                     bath: data.properties[0].features.bath,
                     garage: data.properties[0].features.garage,
-                    garden: data.properties[0].features.garden,
+                    backyard: data.properties[0].features.backyard,
                     pool: data.properties[0].features.pool,
-                    furnished: data.properties[0].features.furnished,
+                    balcony: data.properties[0].features.balcony,
                   },
                 },
               ],
@@ -974,10 +1039,10 @@ export async function updateRent(
                   features: {
                     bed: data.properties[0].features.bed,
                     bath: data.properties[0].features.bath,
+                    backyard: data.properties[0].features.backyard,
+                    balcony: data.properties[0].features.balcony,
                     garage: data.properties[0].features.garage,
-                    garden: data.properties[0].features.garden,
                     pool: data.properties[0].features.pool,
-                    furnished: data.properties[0].features.furnished,
                   },
                 },
               ],
@@ -1104,10 +1169,10 @@ export async function updateExchange(
                 features: {
                   bed: item.features.bed,
                   bath: item.features.bath,
+                  backyard: item.features.backyard,
+                  balcony: item.features.balcony,
                   garage: item.features.garage,
-                  garden: item.features.garden,
                   pool: item.features.pool,
-                  furnished: item.features.furnished,
                 },
               })),
             }
@@ -1141,4 +1206,18 @@ export async function updateExchange(
 
     return { updatedPost, removedImages };
   });
+}
+
+export async function findUserPosts(userId: string) {
+  const posts = await prisma.post.findMany({
+    where: { userId },
+    include: {
+      sale: true,
+      rent: true,
+      exchange: true,
+      properties: true,
+    },
+  });
+
+  return posts;
 }

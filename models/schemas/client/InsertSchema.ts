@@ -104,10 +104,10 @@ const insertPropertyPartialSchema = z.object({
       .int('Entre 0 y 9')
       .gte(0, 'Entre 0 y 9')
       .lte(9, 'Entre 0 y 9'),
+    backyard: z.boolean(),
+    balcony: z.boolean(),
     garage: z.boolean(),
-    garden: z.boolean(),
     pool: z.boolean(),
-    furnished: z.boolean(),
   }),
 });
 

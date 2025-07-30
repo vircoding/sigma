@@ -1,2 +1,3 @@
-@import 'tailwindcss';
-@import '@nuxt/ui';
+@import url('~/assets/css/scrollbar.css');
+@import url('~/assets/css/loader.css');
+@import url('~/assets/css/cropper.css');

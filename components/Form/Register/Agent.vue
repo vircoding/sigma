@@ -5,10 +5,8 @@ import {
   FormFieldError,
   MaxSizeError,
 } from '~/models/classes/client/Error';
-import {
-  registerAgentSchema,
-  type RegisterAgentSchema,
-} from '~/models/schemas/client/RegisterSchema';
+import { registerAgentSchema } from '~/models/schemas/client/RegisterSchema';
+import type { RegisterAgentSchema } from '~/models/schemas/client/RegisterSchema';
 import type { LoginInput, RegisterAgentInput } from '~/models/types/User';
 
 const emit = defineEmits<{

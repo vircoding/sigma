@@ -3,71 +3,80 @@ import type { Features } from '~/models/types/Post';
 
 const props = defineProps<{
   features: Features;
+  color: string;
+  gapCompress: boolean;
 }>();
 </script>
 
 <template>
-  <section class="grid grid-cols-4 grid-rows-2 gap-y-2 pb-5 pt-3 md:pb-7 md:pt-5 lg:pt-1">
+  <section
+    class="grid grid-cols-3 grid-rows-2 gap-x-3 gap-y-1.5"
+    :class="{ 'md:gap-y-3': !props.gapCompress }"
+  >
     <!-- Bed -->
-    <PostFeaturesNumeric
-      label="Cuartos"
+    <CardMinimalPostFeatureNumeric
       :count="props.features.bed"
+      :color="props.color"
       class="col-start-1 row-start-1"
     >
       <template #icon>
         <IconFeatureBed />
       </template>
-    </PostFeaturesNumeric>
+    </CardMinimalPostFeatureNumeric>
 
     <!-- Bath -->
-    <PostFeaturesNumeric label="Baños" :count="props.features.bath" class="col-start-2 row-start-1">
+    <CardMinimalPostFeatureNumeric
+      :count="props.features.bath"
+      :color="props.color"
+      class="col-start-2 row-start-1"
+    >
       <template #icon>
         <IconFeatureBath />
       </template>
-    </PostFeaturesNumeric>
+    </CardMinimalPostFeatureNumeric>
 
     <!-- Backyard -->
-    <PostFeaturesBoolean
-      label="Patio"
+    <CardMinimalPostFeatureBoolean
       :state="props.features.backyard"
+      :color="props.color"
       class="col-start-1 row-start-2"
     >
       <template #icon>
         <IconFeatureBackyard />
       </template>
-    </PostFeaturesBoolean>
+    </CardMinimalPostFeatureBoolean>
 
     <!-- Balcony -->
-    <PostFeaturesBoolean
-      label="Balcón"
+    <CardMinimalPostFeatureBoolean
       :state="props.features.balcony"
+      :color="props.color"
       class="col-start-3 row-start-2"
     >
       <template #icon>
         <IconFeatureBalcony />
       </template>
-    </PostFeaturesBoolean>
+    </CardMinimalPostFeatureBoolean>
 
     <!-- Garage -->
-    <PostFeaturesBoolean
-      label="Garage"
+    <CardMinimalPostFeatureBoolean
       :state="props.features.garage"
+      :color="props.color"
       class="col-start-3 row-start-1"
     >
       <template #icon>
         <IconFeatureGarage />
       </template>
-    </PostFeaturesBoolean>
+    </CardMinimalPostFeatureBoolean>
 
     <!-- Pool -->
-    <PostFeaturesBoolean
-      label="Piscina"
+    <CardMinimalPostFeatureBoolean
       :state="props.features.pool"
+      :color="props.color"
       class="col-start-2 row-start-2"
     >
       <template #icon>
         <IconFeaturePool />
       </template>
-    </PostFeaturesBoolean>
+    </CardMinimalPostFeatureBoolean>
   </section>
 </template>

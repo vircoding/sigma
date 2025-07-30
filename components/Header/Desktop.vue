@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { ModalUserPosts } from '#components';
+
 const props = defineProps<{
   isLoggedIn: boolean;
 }>();
+
+const modals = useModal();
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -85,6 +89,9 @@ const clientAccountItems = [
     {
       label: 'Tu Casa',
       icon: 'i-solar-home-smile-angle-broken',
+      click: () => {
+        modals.open(ModalUserPosts);
+      },
     },
     {
       label: 'Favoritos',
@@ -122,6 +129,9 @@ const getAccountLink = computed(() => {
           {
             label: 'Tus Anuncios',
             icon: 'i-solar-home-smile-angle-broken',
+            click: () => {
+              modals.open(ModalUserPosts);
+            },
           },
           {
             label: 'Favoritos',

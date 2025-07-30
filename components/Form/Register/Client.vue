@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { BadRequestError, ConflictError, FormFieldError } from '~/models/classes/client/Error';
-import {
-  registerClientSchema,
-  type RegisterClientSchema,
-} from '~/models/schemas/client/RegisterSchema';
+import { registerClientSchema } from '~/models/schemas/client/RegisterSchema';
+import type { RegisterClientSchema } from '~/models/schemas/client/RegisterSchema';
 import type { LoginInput, RegisterClientInput } from '~/models/types/User';
 
 const emit = defineEmits<{

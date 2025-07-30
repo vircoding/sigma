@@ -30,7 +30,7 @@ async function registerClient(body: RegisterClientSchema) {
     if (error instanceof FetchError) {
       if (error.statusCode === 409 && error.data.message === 'User exists already')
         throw new ConflictError(error.message);
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
           throw new FormFieldError(error.message, error.data.data);
         throw new BadRequestError(error.message);
@@ -66,7 +66,7 @@ async function registerAgent(body: RegisterAgentSchema) {
     if (error instanceof FetchError) {
       if (error.statusCode === 409 && error.data.message === 'User exists already')
         throw new ConflictError(error.message);
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
           throw new FormFieldError(error.message, error.data.data);
         if (error.data.message === 'File exceeds the maximum allowed size of 5MB')
@@ -90,7 +90,7 @@ async function resendVerificationEmail(email: string) {
         throw new NotFoundError(error.message);
       if (error.statusCode === 409 && error.data.message === 'This account is verified already')
         throw new ConflictError(error.message);
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
           throw new FormFieldError(error.message, error.data.data);
         throw new BadRequestError(error.message);
@@ -112,7 +112,7 @@ async function login(body: LoginSchema) {
     if (error instanceof FetchError) {
       if (error.statusCode === 401 && error.data.message === 'Bad credentials')
         throw new BadCredentialsError(error.message);
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
           throw new FormFieldError(error.message, error.data.data);
         throw new BadRequestError(error.message);
@@ -130,7 +130,7 @@ async function refresh() {
     if (error instanceof FetchError) {
       if (error.statusCode === 401 && error.data.message === 'The refresh token has expired')
         throw new RefreshTokenExpiredError(error.message);
-      if (error.status === 400 && error.data.message === 'Invalid or missing refresh token') {
+      if (error.statusCode === 400 && error.data.message === 'Invalid or missing refresh token') {
         throw new InvalidRefreshTokenError(error.message);
       }
     }
@@ -153,7 +153,7 @@ async function logout() {
 
         throw new RefreshTokenExpiredError(error.message);
       }
-      if (error.status === 400 && error.data.message === 'Invalid or missing refresh token') {
+      if (error.statusCode === 400 && error.data.message === 'Invalid or missing refresh token') {
         useCookie('access_token').value = null;
         userStore.$reset();
 
@@ -172,7 +172,7 @@ async function postResetPassword(body: { email: string }) {
     });
   } catch (error) {
     if (error instanceof FetchError) {
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
           throw new FormFieldError(error.message, error.data.data);
         throw new BadRequestError(error.message);
@@ -192,7 +192,7 @@ async function putResetPassword(body: { email: string; code: string }) {
     if (error instanceof FetchError) {
       if (error.statusCode === 401 && error.data.message === 'Code validation fails')
         throw new ResetPasswordError(error.message);
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
           throw new FormFieldError(error.message, error.data.data);
         throw new BadRequestError(error.message);
@@ -218,7 +218,7 @@ async function patchResetPassword(body: { email: string; password: string; repas
     if (error instanceof FetchError) {
       if (error.statusCode === 401 && error.data.message === 'Unable to reset the password')
         throw new ResetPasswordError(error.message);
-      if (error.status === 400) {
+      if (error.statusCode === 400) {
         if (error.data.message === 'Invalid or missing required parameters' && 'data' in error.data)
           throw new FormFieldError(error.message, error.data.data);
         throw new BadRequestError(error.message);

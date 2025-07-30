@@ -6,7 +6,7 @@ const props = defineProps<{
   modelValue: boolean;
 }>();
 
-const { value, errorMessage } = useField<boolean>(() => props.name, undefined, {
+const { value } = useField<boolean>(() => props.name, undefined, {
   syncVModel: true,
 });
 </script>

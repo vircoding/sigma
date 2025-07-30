@@ -4,18 +4,10 @@ import {
   BadRequestError,
   MaxImageSizeError,
 } from '~/models/classes/client/Error';
-import {
-  getUpdateExchangeSchema,
-  type UpdateExchangeSchema,
-} from '~/models/schemas/client/UpdatePostSchema';
-import {
-  type Exchange,
-  type Offers,
-  type Needs,
-  type UpdateExchangeInput,
-  PROVINCES,
-  type Map,
-} from '~/models/types/Post';
+import { getUpdateExchangeSchema } from '~/models/schemas/client/UpdatePostSchema';
+import type { UpdateExchangeSchema } from '~/models/schemas/client/UpdatePostSchema';
+import { PROVINCES } from '~/models/types/Post';
+import type { Exchange, Offers, Needs, UpdateExchangeInput, Map } from '~/models/types/Post';
 
 const props = defineProps<{
   id: string;
@@ -55,10 +47,10 @@ const state = reactive<UpdateExchangeInput>({
       features: {
         bed: props.post.properties[0].features.bed.toString(),
         bath: props.post.properties[0].features.bath.toString(),
+        backyard: props.post.properties[0].features.backyard,
+        balcony: props.post.properties[0].features.balcony,
         garage: props.post.properties[0].features.garage,
-        garden: props.post.properties[0].features.garden,
         pool: props.post.properties[0].features.pool,
-        furnished: props.post.properties[0].features.furnished,
       },
     },
     {
@@ -73,10 +65,10 @@ const state = reactive<UpdateExchangeInput>({
       features: {
         bed: props.post.properties[1] ? props.post.properties[1].features.bed.toString() : '0',
         bath: props.post.properties[1] ? props.post.properties[1].features.bath.toString() : '0',
+        backyard: props.post.properties[1] ? props.post.properties[1].features.backyard : false,
+        balcony: props.post.properties[1] ? props.post.properties[1].features.balcony : false,
         garage: props.post.properties[1] ? props.post.properties[1].features.garage : false,
-        garden: props.post.properties[1] ? props.post.properties[1].features.garden : false,
         pool: props.post.properties[1] ? props.post.properties[1].features.pool : false,
-        furnished: props.post.properties[1] ? props.post.properties[1].features.furnished : false,
       },
     },
     {
@@ -91,10 +83,10 @@ const state = reactive<UpdateExchangeInput>({
       features: {
         bed: props.post.properties[2] ? props.post.properties[2].features.bed.toString() : '0',
         bath: props.post.properties[2] ? props.post.properties[2].features.bath.toString() : '0',
+        backyard: props.post.properties[2] ? props.post.properties[2].features.backyard : false,
+        balcony: props.post.properties[2] ? props.post.properties[2].features.balcony : false,
         garage: props.post.properties[2] ? props.post.properties[2].features.garage : false,
-        garden: props.post.properties[2] ? props.post.properties[2].features.garden : false,
         pool: props.post.properties[2] ? props.post.properties[2].features.pool : false,
-        furnished: props.post.properties[2] ? props.post.properties[2].features.furnished : false,
       },
     },
   ],
@@ -147,12 +139,14 @@ function onReset() {
         bath: props.post.properties[index]
           ? props.post.properties[index].features.bath.toString()
           : '0',
-        garage: props.post.properties[index] ? props.post.properties[index].features.garage : false,
-        garden: props.post.properties[index] ? props.post.properties[index].features.garden : false,
-        pool: props.post.properties[index] ? props.post.properties[index].features.pool : false,
-        furnished: props.post.properties[index]
-          ? props.post.properties[index].features.furnished
+        backyard: props.post.properties[index]
+          ? props.post.properties[index].features.backyard
           : false,
+        balcony: props.post.properties[index]
+          ? props.post.properties[index].features.balcony
+          : false,
+        garage: props.post.properties[index] ? props.post.properties[index].features.garage : false,
+        pool: props.post.properties[index] ? props.post.properties[index].features.pool : false,
       },
     };
   });
@@ -301,6 +295,26 @@ const onSubmit = handleSubmit(async (values) => {
           <div
             class="flex w-min max-w-xs flex-col flex-wrap place-content-center gap-x-0 lg:w-full lg:flex-row"
           >
+            <!-- Backyard -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[index].features.backyard"
+                label="Patio"
+                :name="`properties[${index}].features.backyard`"
+                :name-attrib="`backyard-${index + 1}`"
+              />
+            </div>
+
+            <!-- Balcony -->
+            <div class="mb-2 lg:min-w-[125px]">
+              <InputCheckbox
+                v-model="state.properties[index].features.balcony"
+                label="Balcón"
+                :name="`properties[${index}].features.balcony`"
+                :name-attrib="`balcony-${index + 1}`"
+              />
+            </div>
+
             <!-- Garage -->
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
@@ -311,16 +325,6 @@ const onSubmit = handleSubmit(async (values) => {
               />
             </div>
 
-            <!-- Garden -->
-            <div class="mb-2 lg:min-w-[125px]">
-              <InputCheckbox
-                v-model="state.properties[index].features.garden"
-                label="Jardín"
-                :name="`properties[${index}].features.garden`"
-                :name-attrib="`garden-${index + 1}`"
-              />
-            </div>
-
             <!-- Pool -->
             <div class="mb-2 lg:min-w-[125px]">
               <InputCheckbox
@@ -328,16 +332,6 @@ const onSubmit = handleSubmit(async (values) => {
                 label="Piscina"
                 :name="`properties[${index}].features.pool`"
                 :name-attrib="`pool-${index + 1}`"
-              />
-            </div>
-
-            <!-- Furnished -->
-            <div class="mb-2 lg:min-w-[125px]">
-              <InputCheckbox
-                v-model="state.properties[index].features.furnished"
-                label="Amueblada"
-                :name="`properties[${index}].features.furnished`"
-                :name-attrib="`furnished-${index + 1}`"
               />
             </div>
           </div>

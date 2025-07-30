@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PostType } from '~/models/types/Post';
+import { ModalUserPosts } from '#components';
 
 const props = defineProps<{
   isLoggedIn: boolean;
@@ -8,6 +9,7 @@ const props = defineProps<{
 const { $event } = useNuxtApp();
 const { setInsertType } = useGlobalStore();
 
+const modals = useModal();
 const { logout } = useAuth();
 const { openSubmitLoading, closeSubmitLoading } = useGlobal();
 
@@ -27,6 +29,11 @@ const linkTitleStyles = `font-semibold ${useStyles().textSizeLG} ${useStyles().t
 function openAccountModal() {
   isSlideoverOpen.value = false;
   isAccountModalOpen.value = true;
+}
+
+function onUserPosts() {
+  isAccountModalOpen.value = false;
+  modals.open(ModalUserPosts);
 }
 
 async function handleLogout() {
@@ -265,12 +272,14 @@ function onNavigateToInsert(type: PostType) {
               v-if="user?.type === 'client'"
               class="flex w-[40%] items-center gap-x-1.5 rounded-lg bg-gray-100 px-2 py-1 dark:bg-gray-800"
             >
-              <UIcon
-                name="i-solar-home-smile-angle-broken"
-                class="h-6 w-6 min-[354px]:h-7 min-[354px]:w-7"
-                :class="[useStyles().textColorSecondary]"
-              />
-              <span class="w-full truncate font-semibold">Tu Casa</span>
+              <button class="flex w-full items-center gap-x-1.5" @click="onUserPosts">
+                <UIcon
+                  name="i-solar-home-smile-angle-broken"
+                  class="h-6 w-6 min-[354px]:h-7 min-[354px]:w-7"
+                  :class="[useStyles().textColorSecondary]"
+                />
+                <span class="w-full truncate font-semibold">Tu Casa</span>
+              </button>
             </li>
 
             <!-- Agent Posts -->
@@ -278,18 +287,20 @@ function onNavigateToInsert(type: PostType) {
               v-else-if="user?.type === 'agent'"
               class="flex w-[40%] items-center gap-x-1.5 rounded-lg bg-gray-100 px-2 py-1 dark:bg-gray-800"
             >
-              <UIcon
-                name="i-solar-home-smile-angle-broken"
-                class="h-6 w-6 min-[354px]:h-7 min-[354px]:w-7"
-                :class="[useStyles().textColorSecondary]"
-              />
-              <span class="w-full truncate font-semibold">Tus Casas</span>
+              <button class="flex w-full items-center gap-x-1.5" @click="onUserPosts">
+                <UIcon
+                  name="i-solar-home-smile-angle-broken"
+                  class="h-6 w-6 min-[354px]:h-7 min-[354px]:w-7"
+                  :class="[useStyles().textColorSecondary]"
+                />
+                <span class="w-full truncate font-semibold">Tus Casas</span>
+              </button>
             </li>
 
             <!-- Become an Agent -->
             <li
               v-if="user?.type === 'client'"
-              class="flex w-[60%] items-center gap-x-1 rounded-lg bg-gray-100 px-2 py-1 dark:bg-gray-800"
+              class="w-[60%] rounded-lg bg-gray-100 px-2 py-1 dark:bg-gray-800"
             >
               <UIcon
                 name="i-solar-user-plus-broken"

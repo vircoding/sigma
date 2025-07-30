@@ -42,10 +42,10 @@ const insertPropertyPartialSchema = z.object({
   features: z.object({
     bed: z.number().int().gte(0).lte(9),
     bath: z.number().int().gte(0).lte(9),
+    backyard: z.boolean(),
+    balcony: z.boolean(),
     garage: z.boolean(),
-    garden: z.boolean(),
     pool: z.boolean(),
-    furnished: z.boolean(),
   }),
 });
 

@@ -26,6 +26,11 @@ export type Agent = {
 
 export type User = Client | Agent;
 
+export type AvatarData = {
+  path: string;
+  url: string;
+};
+
 export type LoginInput = {
   email: string;
   password: string;

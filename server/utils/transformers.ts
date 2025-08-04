@@ -4,6 +4,9 @@ import type {
   Post,
   UserPost,
   PROVINCES,
+  SearchResultInstance,
+  SearchResult,
+  Details,
 } from '~/models/types/Post';
 import type { UserInstance, User } from '~/models/types/User';
 import { UnexpectedError } from '~/models/classes/server/Error';
@@ -25,6 +28,60 @@ export function userTransformer(u: UserInstance): User {
       bio: u.agent.bio || '',
     };
   } else throw new UnexpectedError();
+}
+
+export function searchResultTransformer(u: SearchResultInstance): SearchResult {
+  const result: SearchResult = [];
+
+  u.forEach((post) => {
+    let details: Details;
+
+    if (post.type === 'sale' && post.sale) {
+      details = {
+        amount: post.sale.amount,
+        currency: post.sale.currency,
+      };
+    } else if (post.type === 'rent' && post.rent) {
+      details = {
+        tax: post.rent.tax,
+        currency: post.rent.currency,
+        frequency: post.rent.frequency,
+      };
+    } else if (post.type === 'exchange' && post.exchange) {
+      details = {
+        needs: post.exchange.needs,
+        offers: post.exchange.offers,
+      };
+    } else throw new UnexpectedError();
+
+    result.push({
+      type: post.type,
+      id: post.id,
+      details,
+      description: post.description || '',
+      contact: {
+        whatsapp: post.whatsapp,
+        phone: post.phone,
+      },
+      images: post.images.map((item) => item.url),
+      properties: post.properties.map((item) => ({
+        address: {
+          province: item.address.province as PROVINCES,
+          municipality: item.address.municipality,
+        },
+        features: {
+          bed: item.features.bed,
+          bath: item.features.bath,
+          backyard: item.features.backyard,
+          balcony: item.features.balcony,
+          garage: item.features.garage,
+          pool: item.features.pool,
+        },
+      })),
+    });
+  });
+
+  return result;
 }
 
 export function postTransformer(u: PostInstance): Post {

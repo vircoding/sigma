@@ -9,21 +9,19 @@ onMounted(async () => {
 </script>
 
 <template>
-  <UApp>
-    <div class="font-quicksand" :class="[useStyles().textColorSecondary, useStyles().textSizeBase]">
-      <!-- Init Loading -->
-      <UIInit v-if="initLoading" />
+  <div class="font-quicksand" :class="[useStyles().textColorSecondary, useStyles().textSizeBase]">
+    <!-- Init Loading -->
+    <UIInit v-if="initLoading" />
 
-      <!-- Content -->
-      <NuxtLayout :class="{ hidden: initLoading }">
-        <NuxtPage />
-      </NuxtLayout>
+    <!-- Content -->
+    <NuxtLayout :class="{ hidden: initLoading }">
+      <NuxtPage />
+    </NuxtLayout>
 
-      <!-- Modals Agent -->
-      <UModals />
+    <!-- Modals Agent -->
+    <UModals />
 
-      <!-- Notifications Agent -->
-      <UNotifications />
-    </div>
-  </UApp>
+    <!-- Notifications Agent -->
+    <UNotifications />
+  </div>
 </template>

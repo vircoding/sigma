@@ -9,6 +9,7 @@ import {
   NotFoundError,
   MaxFileSizeImageError,
 } from '~/models/classes/server/Error';
+import type { PostType } from '~/models/types/Post';
 import {
   insertSaleSchema,
   insertRentSchema,
@@ -67,7 +68,7 @@ export default defineEventHandler(async (event) => {
     else throw new BadRequestError('Invalid multipart form');
 
     // Validate the post type
-    let type: 'sale' | 'rent' | 'exchange';
+    let type: PostType;
     if (input.type) type = (await postTypeSchema.parseAsync({ type: input.type })).type;
     else throw new BadRequestError('Invalid multipart form');
 

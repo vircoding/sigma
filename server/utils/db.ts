@@ -30,17 +30,14 @@ import {
   ForbiddenError,
   BadRequestError,
 } from '~/models/classes/server/Error';
+import type { ImageData, SearchPagination } from '~/models/types/Post';
+import type { AvatarData } from '~/models/types/User';
 import { UAParser } from 'ua-parser-js';
-
-type AvatarData = {
-  path: string;
-  url: string;
-};
-
-type ImagesData = {
-  path: string;
-  url: string;
-}[];
+import type {
+  SearchSaleSchema,
+  SearchRentSchema,
+  SearchExchangeSchema,
+} from '~/models/schemas/server/SearchSchema';
 
 const config = useRuntimeConfig();
 
@@ -520,7 +517,7 @@ export async function updatePassword(email: string, password: string) {
     });
 }
 
-export function insertSale(saleData: InsertSaleSchema, userId: string, images: ImagesData) {
+export function insertSale(saleData: InsertSaleSchema, userId: string, images: ImageData) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
       where: { id: userId, verified: true },
@@ -590,7 +587,7 @@ export function insertSale(saleData: InsertSaleSchema, userId: string, images: I
   });
 }
 
-export function insertRent(rentData: InsertRentSchema, userId: string, images: ImagesData) {
+export function insertRent(rentData: InsertRentSchema, userId: string, images: ImageData) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
       where: { id: userId, verified: true },
@@ -664,7 +661,7 @@ export function insertRent(rentData: InsertRentSchema, userId: string, images: I
 export function insertExchange(
   exchangeData: InsertExchangeSchema,
   userId: string,
-  images: ImagesData,
+  images: ImageData,
 ) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
@@ -821,7 +818,7 @@ export async function updateSale(
   userId: string,
   postId: string,
   data: UpdateSaleSchema,
-  images: ImagesData,
+  images: ImageData,
   map: MapSchema,
 ) {
   return prisma.$transaction(async (tx) => {
@@ -854,7 +851,7 @@ export async function updateSale(
 
     const postImages = foundedPost.images;
     const removedImages: string[] = [];
-    const newImages: ImagesData = [];
+    const newImages: ImageData = [];
 
     map.removed.forEach((index) => {
       if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');
@@ -952,7 +949,7 @@ export async function updateRent(
   userId: string,
   postId: string,
   data: UpdateRentSchema,
-  images: ImagesData,
+  images: ImageData,
   map: MapSchema,
 ) {
   return prisma.$transaction(async (tx) => {
@@ -985,7 +982,7 @@ export async function updateRent(
 
     const postImages = foundedPost.images;
     const removedImages: string[] = [];
-    const newImages: ImagesData = [];
+    const newImages: ImageData = [];
 
     map.removed.forEach((index) => {
       if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');
@@ -1083,7 +1080,7 @@ export async function updateExchange(
   userId: string,
   postId: string,
   data: UpdateExchangeSchema,
-  images: ImagesData,
+  images: ImageData,
   map: MapSchema,
 ) {
   return prisma.$transaction(async (tx) => {
@@ -1116,7 +1113,7 @@ export async function updateExchange(
 
     const postImages = foundedPost.images;
     const removedImages: string[] = [];
-    const newImages: ImagesData = [];
+    const newImages: ImageData = [];
 
     map.removed.forEach((index) => {
       if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');
@@ -1217,6 +1214,197 @@ export async function findUserPosts(userId: string) {
       exchange: true,
       properties: true,
     },
+  });
+
+  return posts;
+}
+
+export async function searchSale(
+  filters: SearchSaleSchema,
+  pagination: SearchPagination = { skip: 0, take: 12 },
+) {
+  const posts = await prisma.post.findMany({
+    where: {
+      type: 'sale',
+      sale: filters.amount
+        ? {
+            is: {
+              currency: filters.amount.currency,
+              amount: {
+                gte: filters.amount.gte,
+                lte: filters.amount.lte,
+              },
+            },
+          }
+        : undefined,
+      properties: {
+        some: {
+          address: filters.address
+            ? {
+                is: {
+                  province: filters.address.province,
+                  municipality: filters.address.municipality,
+                },
+              }
+            : undefined,
+          features: filters.features
+            ? {
+                is: {
+                  bed: filters.features.bed
+                    ? {
+                        gte: filters.features.bed.gte,
+                        lte: filters.features.bed.lte,
+                      }
+                    : undefined,
+                  bath: filters.features.bath
+                    ? {
+                        gte: filters.features.bath.gte,
+                        lte: filters.features.bath.lte,
+                      }
+                    : undefined,
+                  backyard: filters.features.backyard,
+                  balcony: filters.features.balcony,
+                  garage: filters.features.garage,
+                  pool: filters.features.pool,
+                },
+              }
+            : undefined,
+        },
+      },
+    },
+    include: {
+      sale: true,
+      rent: true,
+      exchange: true,
+      properties: true,
+      images: true,
+    },
+    skip: pagination.skip,
+    take: pagination.take,
+  });
+
+  return posts;
+}
+
+export async function searchRent(
+  filters: SearchRentSchema,
+  pagination: SearchPagination = { skip: 0, take: 12 },
+) {
+  const posts = await prisma.post.findMany({
+    where: {
+      type: 'rent',
+      rent: filters.tax
+        ? {
+            is: {
+              currency: filters.tax.currency,
+              frequency: filters.tax.frequency,
+              tax: {
+                gte: filters.tax.gte,
+                lte: filters.tax.lte,
+              },
+            },
+          }
+        : undefined,
+      properties: {
+        some: {
+          address: filters.address
+            ? {
+                is: {
+                  province: filters.address.province,
+                  municipality: filters.address.municipality || undefined,
+                },
+              }
+            : undefined,
+          features: filters.features
+            ? {
+                is: {
+                  bed: filters.features.bed
+                    ? {
+                        gte: filters.features.bed.gte,
+                        lte: filters.features.bed.lte,
+                      }
+                    : undefined,
+                  bath: filters.features.bath
+                    ? {
+                        gte: filters.features.bath.gte,
+                        lte: filters.features.bath.lte,
+                      }
+                    : undefined,
+                  backyard: filters.features.backyard,
+                  balcony: filters.features.balcony,
+                  garage: filters.features.garage,
+                  pool: filters.features.pool,
+                },
+              }
+            : undefined,
+        },
+      },
+    },
+    include: {
+      sale: true,
+      rent: true,
+      exchange: true,
+      properties: true,
+      images: true,
+    },
+    skip: pagination.skip,
+    take: pagination.take,
+  });
+
+  return posts;
+}
+
+export async function searchExchange(
+  filters: SearchExchangeSchema,
+  pagination: SearchPagination = { skip: 0, take: 12 },
+) {
+  const posts = await prisma.post.findMany({
+    where: {
+      type: 'exchange',
+      properties: {
+        some: {
+          address: filters.address
+            ? {
+                is: {
+                  province: filters.address.province,
+                  municipality: filters.address.municipality || undefined,
+                },
+              }
+            : undefined,
+          features: filters.features
+            ? {
+                is: {
+                  bed: filters.features.bed
+                    ? {
+                        gte: filters.features.bed.gte,
+                        lte: filters.features.bed.lte,
+                      }
+                    : undefined,
+                  bath: filters.features.bath
+                    ? {
+                        gte: filters.features.bath.gte,
+                        lte: filters.features.bath.lte,
+                      }
+                    : undefined,
+                  backyard: filters.features.backyard,
+                  balcony: filters.features.balcony,
+                  garage: filters.features.garage,
+                  pool: filters.features.pool,
+                },
+              }
+            : undefined,
+        },
+      },
+    },
+    include: {
+      sale: true,
+      rent: true,
+      exchange: true,
+      properties: true,
+      images: true,
+    },
+    skip: pagination.skip,
+    take: pagination.take,
   });
 
   return posts;

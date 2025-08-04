@@ -209,7 +209,19 @@ export type UserExchange = UserPostPartial & {
 
 export type Post = Sale | Rent | Exchange;
 
+export type SearchPagination = {
+  skip: number;
+  take: number;
+};
+
+export type SearchResult = Omit<Post, 'author'>[];
+
 export type UserPost = UserSale | UserRent | UserExchange;
+
+export type ImageData = {
+  path: string;
+  url: string;
+}[];
 
 export type PostInstance = PostDB & {
   properties: PropertyDB[];
@@ -219,6 +231,8 @@ export type PostInstance = PostDB & {
   exchange: ExchangeDB | null;
   user: UserInstance | null;
 };
+
+export type SearchResultInstance = Omit<PostInstance, 'user'>[];
 
 export type UserPostInstance = PostDB & {
   properties: PropertyDB[];

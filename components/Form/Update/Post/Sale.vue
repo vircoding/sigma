@@ -234,7 +234,7 @@ const onSubmit = handleSubmit(async (values) => {
               <InputCheckbox
                 v-model="state.properties[0].features.backyard"
                 label="Patio"
-                name="properties[0].features.backtard"
+                name="properties[0].features.backyard"
                 name-attrib="backyard-1"
               />
             </div>

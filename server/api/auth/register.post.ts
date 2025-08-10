@@ -2,9 +2,9 @@ import fs from 'fs';
 import formidable from 'formidable';
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { ConflictError, UnexpectedError, BadRequestError } from '~/models/classes/server/Error';
-import { registerClientSchema, registerAgentSchema } from '~/models/schemas/server/RegisterSchema';
-import { userTypeSchema } from '~/models/schemas/server/GlobalSchema';
+import { ConflictError, UnexpectedError, BadRequestError } from '~~/server/classes/Error';
+import { registerClientSchema, registerAgentSchema } from '~~/server/schemas/RegisterSchema';
+import { userTypeSchema } from '~~/server/schemas/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;

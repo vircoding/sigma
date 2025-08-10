@@ -1,15 +1,4 @@
-import type {
-  PostInstance,
-  UserPostInstance,
-  Post,
-  UserPost,
-  PROVINCES,
-  SearchResultInstance,
-  SearchResult,
-  Details,
-} from '~/models/types/Post';
-import type { UserInstance, User } from '~/models/types/User';
-import { UnexpectedError } from '~/models/classes/server/Error';
+import { UnexpectedError } from '~~/server/classes/Error';
 
 export function userTransformer(u: UserInstance): User {
   if (u.type === 'client') {
@@ -30,55 +19,99 @@ export function userTransformer(u: UserInstance): User {
   } else throw new UnexpectedError();
 }
 
-export function searchResultTransformer(u: SearchResultInstance): SearchResult {
-  const result: SearchResult = [];
+export function searchResultTransformer(u: SearchResultInstance[]): SearchResult[] {
+  const result: SearchResult[] = [];
 
   u.forEach((post) => {
-    let details: Details;
-
     if (post.type === 'sale' && post.sale) {
-      details = {
-        amount: post.sale.amount,
-        currency: post.sale.currency,
-      };
+      result.push({
+        type: 'sale',
+        id: post.id,
+        details: {
+          amount: post.sale.amount,
+          currency: post.sale.currency,
+        },
+        description: post.description || '',
+        contact: {
+          whatsapp: post.whatsapp,
+          phone: post.phone,
+        },
+        images: post.images.map((item) => item.url),
+        properties: post.properties.map((item) => ({
+          address: {
+            province: item.address.province as PROVINCES,
+            municipality: item.address.municipality,
+          },
+          features: {
+            bed: item.features.bed,
+            bath: item.features.bath,
+            backyard: item.features.backyard,
+            balcony: item.features.balcony,
+            garage: item.features.garage,
+            pool: item.features.pool,
+          },
+        })),
+      });
     } else if (post.type === 'rent' && post.rent) {
-      details = {
-        tax: post.rent.tax,
-        currency: post.rent.currency,
-        frequency: post.rent.frequency,
-      };
+      result.push({
+        type: 'rent',
+        id: post.id,
+        details: {
+          tax: post.rent.tax,
+          currency: post.rent.currency,
+          frequency: post.rent.frequency,
+        },
+        description: post.description || '',
+        contact: {
+          whatsapp: post.whatsapp,
+          phone: post.phone,
+        },
+        images: post.images.map((item) => item.url),
+        properties: post.properties.map((item) => ({
+          address: {
+            province: item.address.province as PROVINCES,
+            municipality: item.address.municipality,
+          },
+          features: {
+            bed: item.features.bed,
+            bath: item.features.bath,
+            backyard: item.features.backyard,
+            balcony: item.features.balcony,
+            garage: item.features.garage,
+            pool: item.features.pool,
+          },
+        })),
+      });
     } else if (post.type === 'exchange' && post.exchange) {
-      details = {
-        needs: post.exchange.needs,
-        offers: post.exchange.offers,
-      };
+      result.push({
+        type: 'exchange',
+        id: post.id,
+        details: {
+          needs: post.exchange.needs,
+          offers: post.exchange.offers,
+        },
+        description: post.description || '',
+        contact: {
+          whatsapp: post.whatsapp,
+          phone: post.phone,
+        },
+        images: post.images.map((item) => item.url),
+        properties: post.properties.map((item) => ({
+          address: {
+            province: item.address.province as PROVINCES,
+            municipality: item.address.municipality,
+          },
+          features: {
+            bed: item.features.bed,
+            bath: item.features.bath,
+            backyard: item.features.backyard,
+            balcony: item.features.balcony,
+            garage: item.features.garage,
+            pool: item.features.pool,
+          },
+        })),
+      });
     } else throw new UnexpectedError();
-
-    result.push({
-      type: post.type,
-      id: post.id,
-      details,
-      description: post.description || '',
-      contact: {
-        whatsapp: post.whatsapp,
-        phone: post.phone,
-      },
-      images: post.images.map((item) => item.url),
-      properties: post.properties.map((item) => ({
-        address: {
-          province: item.address.province as PROVINCES,
-          municipality: item.address.municipality,
-        },
-        features: {
-          bed: item.features.bed,
-          bath: item.features.bath,
-          backyard: item.features.backyard,
-          balcony: item.features.balcony,
-          garage: item.features.garage,
-          pool: item.features.pool,
-        },
-      })),
-    });
   });
 
   return result;

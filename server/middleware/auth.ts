@@ -1,7 +1,7 @@
 import { H3Error } from 'h3';
 import jwt from 'jsonwebtoken';
 import { ZodError } from 'zod';
-import { accessTokenSchema, decodedAccessTokenSchema } from '~/models/schemas/server/GlobalSchema';
+import { accessTokenSchema, decodedAccessTokenSchema } from '~~/server/schemas/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   const endpoints = [

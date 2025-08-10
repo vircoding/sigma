@@ -9,7 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "nuxi typecheck"
+    "typecheck": "nuxt prepare && vue-tsc -b --noEmit"
   },
   "dependencies": {
     "@iconify-json/charm": "^1.2.3",
@@ -31,6 +31,7 @@
     "@types/validator": "^13.15.2",
     "@vee-validate/nuxt": "^4.15.1",
     "@vee-validate/zod": "^4.15.1",
+    "@vueuse/nuxt": "^13.6.0",
     "bcrypt": "^5.1.1",
     "formidable": "^3.5.4",
     "handlebars": "^4.7.8",
@@ -38,7 +39,7 @@
     "libphonenumber-js": "^1.12.9",
     "mitt": "^3.0.1",
     "nodemailer": "^6.9.16",
-    "nuxt": "^3.17.6",
+    "nuxt": "^4.0.3",
     "pinia": "^3.0.3",
     "swiper": "^11.2.10",
     "ua-parser-js": "^2.0.4",

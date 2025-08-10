@@ -1,11 +1,8 @@
 import { H3Error } from 'h3';
 import jwt from 'jsonwebtoken';
 import { ZodError } from 'zod';
-import { RefreshTokenError } from '~/models/classes/server/Error';
-import {
-  decodedRefreshTokenSchema,
-  refreshTokenSchema,
-} from '~/models/schemas/server/GlobalSchema';
+import { RefreshTokenError } from '~~/server/classes/Error';
+import { decodedRefreshTokenSchema, refreshTokenSchema } from '~~/server/schemas/GlobalSchema';
 
 export default defineEventHandler(async (event) => {
   try {

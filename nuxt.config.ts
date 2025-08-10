@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     '@nuxtjs/device',
     '@pinia/nuxt',
     '@vee-validate/nuxt',
+    '@vueuse/nuxt',
   ],
   veeValidate: {
     componentNames: {
@@ -30,6 +31,13 @@ export default defineNuxtConfig({
       Field: 'VeeField',
       FieldArray: 'VeeFieldArray',
       ErrorMessage: 'VeeErrorMessage',
+    },
+  },
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        noUncheckedIndexedAccess: false,
+      },
     },
   },
 });

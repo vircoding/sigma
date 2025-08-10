@@ -1,5 +1,5 @@
 import { H3Error } from 'h3';
-import { NotFoundError } from '~/models/classes/server/Error';
+import { NotFoundError } from '~~/server/classes/Error';
 
 export default defineEventHandler(async (event) => {
   try {

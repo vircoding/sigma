@@ -1,14 +1,13 @@
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { BadRequestError, UnexpectedError } from '~/models/classes/server/Error';
-import type { PostType } from '~/models/types/Post';
-import { postTypeSchema } from '~/models/schemas/server/GlobalSchema';
+import { BadRequestError, UnexpectedError } from '~~/server/classes/Error';
+import { postTypeSchema } from '~~/server/schemas/GlobalSchema';
 import {
   searchPageSchema,
   searchSaleSchema,
   searchRentSchema,
   searchExchangeSchema,
-} from '~/models/schemas/server/SearchSchema';
+} from '~~/server/schemas/SearchSchema';
 
 const limit = 12;
 
@@ -22,14 +21,15 @@ export default defineEventHandler(async (event) => {
     if (queryStr.data) {
       try {
         query = JSON.parse(queryStr.data as string);
+        console.log(query);
       } catch (error) {
         if (error instanceof Error) throw new BadRequestError('Invalid query');
         throw new UnexpectedError();
       }
-    } else throw new BadRequestError('Invalid query');
+    } else query = { type: 'sale' };
 
     // Parse the page
-    let page: number = 0;
+    let page: number = 1;
     if (queryStr.page) page = await searchPageSchema.parseAsync(queryStr.page);
 
     // Validate the post type

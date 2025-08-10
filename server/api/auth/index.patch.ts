@@ -2,8 +2,8 @@ import fs from 'fs';
 import formidable from 'formidable';
 import { H3Error } from 'h3';
 import { ZodError } from 'zod';
-import { BadRequestError, NotAgentError, NotFoundError } from '~/models/classes/server/Error';
-import { updateAgentSchema } from '~/models/schemas/server/UpdateAgentSchema';
+import { BadRequestError, NotAgentError, NotFoundError } from '~~/server/classes/Error';
+import { updateAgentSchema } from '~~/server/schemas/UpdateAgentSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;

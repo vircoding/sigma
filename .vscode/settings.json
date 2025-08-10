@@ -5,5 +5,6 @@
   "scss.lint.unknownAtRules": "ignore",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.format.enable": true,
-  "prettier.useEditorConfig": false
+  "prettier.useEditorConfig": false,
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

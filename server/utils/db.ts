@@ -1,23 +1,21 @@
 import fs from 'fs';
-import { PrismaClient, Prisma } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { PrismaClient, Prisma } from '@prisma/client';
+import { UAParser } from 'ua-parser-js';
 import type {
   InsertSaleSchema,
   InsertRentSchema,
   InsertExchangeSchema,
-} from '~/models/schemas/server/InsertSchema';
-import type { LoginSchema } from '~/models/schemas/server/LoginSchema';
-import type { UpdateAgentSchema } from '~/models/schemas/server/UpdateAgentSchema';
-import type {
-  RegisterClientSchema,
-  RegisterAgentSchema,
-} from '~/models/schemas/server/RegisterSchema';
+} from '~~/server/schemas/InsertSchema';
+import type { LoginSchema } from '~~/server/schemas/LoginSchema';
+import type { UpdateAgentSchema } from '~~/server/schemas/UpdateAgentSchema';
+import type { RegisterClientSchema, RegisterAgentSchema } from '~~/server/schemas/RegisterSchema';
 import type {
   UpdateSaleSchema,
   UpdateRentSchema,
   UpdateExchangeSchema,
   MapSchema,
-} from '~/models/schemas/server/UpdatePostSchema';
+} from '~~/server/schemas/UpdatePostSchema';
 import {
   ConflictError,
   VerificationTokenError,
@@ -29,15 +27,12 @@ import {
   MaxPostLengthError,
   ForbiddenError,
   BadRequestError,
-} from '~/models/classes/server/Error';
-import type { ImageData, SearchPagination } from '~/models/types/Post';
-import type { AvatarData } from '~/models/types/User';
-import { UAParser } from 'ua-parser-js';
+} from '~~/server/classes/Error';
 import type {
   SearchSaleSchema,
   SearchRentSchema,
   SearchExchangeSchema,
-} from '~/models/schemas/server/SearchSchema';
+} from '~~/server/schemas/SearchSchema';
 
 const config = useRuntimeConfig();
 
@@ -517,7 +512,7 @@ export async function updatePassword(email: string, password: string) {
     });
 }
 
-export function insertSale(saleData: InsertSaleSchema, userId: string, images: ImageData) {
+export function insertSale(saleData: InsertSaleSchema, userId: string, images: ImageFileData[]) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
       where: { id: userId, verified: true },
@@ -587,7 +582,7 @@ export function insertSale(saleData: InsertSaleSchema, userId: string, images: I
   });
 }
 
-export function insertRent(rentData: InsertRentSchema, userId: string, images: ImageData) {
+export function insertRent(rentData: InsertRentSchema, userId: string, images: ImageFileData[]) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
       where: { id: userId, verified: true },
@@ -661,7 +656,7 @@ export function insertRent(rentData: InsertRentSchema, userId: string, images: I
 export function insertExchange(
   exchangeData: InsertExchangeSchema,
   userId: string,
-  images: ImageData,
+  images: ImageFileData[],
 ) {
   return prisma.$transaction(async (tx) => {
     const founded = await tx.user.findUnique({
@@ -818,7 +813,7 @@ export async function updateSale(
   userId: string,
   postId: string,
   data: UpdateSaleSchema,
-  images: ImageData,
+  images: ImageFileData[],
   map: MapSchema,
 ) {
   return prisma.$transaction(async (tx) => {
@@ -851,7 +846,7 @@ export async function updateSale(
 
     const postImages = foundedPost.images;
     const removedImages: string[] = [];
-    const newImages: ImageData = [];
+    const newImages: ImageFileData[] = [];
 
     map.removed.forEach((index) => {
       if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');
@@ -949,7 +944,7 @@ export async function updateRent(
   userId: string,
   postId: string,
   data: UpdateRentSchema,
-  images: ImageData,
+  images: ImageFileData[],
   map: MapSchema,
 ) {
   return prisma.$transaction(async (tx) => {
@@ -982,7 +977,7 @@ export async function updateRent(
 
     const postImages = foundedPost.images;
     const removedImages: string[] = [];
-    const newImages: ImageData = [];
+    const newImages: ImageFileData[] = [];
 
     map.removed.forEach((index) => {
       if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');
@@ -1080,7 +1075,7 @@ export async function updateExchange(
   userId: string,
   postId: string,
   data: UpdateExchangeSchema,
-  images: ImageData,
+  images: ImageFileData[],
   map: MapSchema,
 ) {
   return prisma.$transaction(async (tx) => {
@@ -1113,7 +1108,7 @@ export async function updateExchange(
 
     const postImages = foundedPost.images;
     const removedImages: string[] = [];
-    const newImages: ImageData = [];
+    const newImages: ImageFileData[] = [];
 
     map.removed.forEach((index) => {
       if (index > postImages.length - 1) throw new BadRequestError('Invalid multipart form');

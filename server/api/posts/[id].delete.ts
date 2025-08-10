@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { H3Error } from 'h3';
-import { UnexpectedError, NotFoundError, ForbiddenError } from '~/models/classes/server/Error';
+import { UnexpectedError, NotFoundError, ForbiddenError } from '~~/server/classes/Error';
 
 export default defineEventHandler(async (event) => {
   try {

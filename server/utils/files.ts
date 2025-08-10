@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { join } from 'path';
 import type formidable from 'formidable';
-import { UnexpectedError } from '~/models/classes/server/Error';
+import { UnexpectedError } from '~~/server/classes/Error';
 import type { H3Event, EventHandlerRequest } from 'h3';
 import type { File } from 'formidable';
 

@@ -8,14 +8,14 @@ import {
   NotFoundError,
   ForbiddenError,
   UnexpectedError,
-} from '~/models/classes/server/Error';
-import { postTypeSchema } from '~/models/schemas/server/GlobalSchema';
+} from '~~/server/classes/Error';
+import { postTypeSchema } from '~~/server/schemas/GlobalSchema';
 import {
   updateSaleSchema,
   updateRentSchema,
   updateExchangeSchema,
   mapSchema,
-} from '~/models/schemas/server/UpdatePostSchema';
+} from '~~/server/schemas/UpdatePostSchema';
 
 export default defineEventHandler(async (event) => {
   let cancelUploads = false;
